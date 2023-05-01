@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "module": "NodeNext",
+    "esModuleInterop": true,
+    "moduleResolution": "NodeNext",
+    "allowJs": true,
+    "allowImportingTsExtensions": true,
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "sourceMap": true,
+    "strict": false,
+    "types": ["node", "jest"],
+    "typeRoots": ["./node_modules/@types"],
+    "incremental": true
+  },
+  "exclude": ["node_modules"],
+  "include": ["types/*.d.ts", "**/*.ts"]
+}

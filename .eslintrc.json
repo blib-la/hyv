@@ -1,0 +1,39 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "extends": ["typescript", "eslint:recommended", "xo", "plugin:prettier/recommended"],
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "jest": true,
+    "node": true
+  },
+  "plugins": ["@typescript-eslint", "unicorn", "import", "jest", "prettier"],
+  "ignorePatterns": ["*.d.ts"],
+  "rules": {
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "newlines-between": "always"
+      }
+    ],
+    "no-nested-ternary": "error",
+    "no-multiple-empty-lines": "error",
+    "object-curly-spacing": ["error", "always"],
+    "prettier/prettier": "error",
+    "arrow-body-style": ["error", "as-needed"],
+    "@typescript-eslint/consistent-type-imports": "warn"
+  },
+  "overrides": [
+    {
+      "files": "types.ts",
+      "rules": {
+        "no-unused-vars": "off"
+      }
+    }
+  ]
+}
