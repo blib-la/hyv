@@ -1,5 +1,5 @@
 import type { StoreAdapter } from "./store/types.js";
-import type { ModelAdapter, ModelMessage, Tool } from "./types.js";
+import type { AgentOptions, ModelAdapter, ModelMessage, Tool } from "./types.js";
 
 /**
  * Represents an agent that manages a model, a store, and a set of tools.
@@ -10,7 +10,10 @@ import type { ModelAdapter, ModelMessage, Tool } from "./types.js";
  * @class Agent
  * @property {Model} #model - The model instance.
  * @property {Store} #store - The store instance.
- * @property {Tool[]} #tools - An array of tools.
+ * @property {AgentOptions["tool"]} #tools - An array of tools.
+ * @property {AgentOptions["before"]} #before - A function that runs before the model.
+ * @property {AgentOptions["after"]} #after - A function that runs after the model.
+ * @property {AgentOptions["finally"]} #finally - A function that runs when the process is done.
  * @property {Promise<ModelMessage>} #task - A task of type ModelMessage.
  */
 export class Agent<
@@ -19,7 +22,10 @@ export class Agent<
 > {
 	#model: Model;
 	#store: Store;
-	#tools: Tool[];
+	#tools: Tool[] = [];
+	readonly before: AgentOptions["before"] = async <Message>(message): Promise<Message> => message;
+	readonly after: AgentOptions["after"] = async <Message>(message): Promise<Message> => message;
+	readonly finally: AgentOptions["finally"] = async messageId => messageId;
 	#task: Promise<ModelMessage>;
 
 	/**
@@ -27,12 +33,27 @@ export class Agent<
 	 *
 	 * @param {Model} model - The model instance.
 	 * @param {Store} store - The store instance.
-	 * @param {Tool[]} [tools] - An optional array of tools.
+	 * @param {AgentOptions<ModelMessage, ModelMessage>} options - The configuration for the agent
 	 */
-	constructor(model: Model, store: Store, tools?: Tool[]) {
+	constructor(
+		model: Model,
+		store: Store,
+		options: AgentOptions<ModelMessage, ModelMessage> = {}
+	) {
 		this.#model = model;
 		this.#store = store;
-		this.#tools = tools ?? [];
+
+		if (options.tools) {
+			this.#tools = options.tools;
+		}
+
+		if (options.before) {
+			this.before = options.before;
+		}
+
+		if (options.after) {
+			this.after = options.after;
+		}
 	}
 
 	/**
@@ -44,7 +65,8 @@ export class Agent<
 	 * @returns {Promise<string>} - A Promise that resolves to the next messageId.
 	 */
 	async #assign(messagePromise: Promise<ModelMessage>) {
-		const message = await this.#model.assign(await messagePromise);
+		const preparedMessage = await this.before(await messagePromise);
+		const message = await this.#model.assign(preparedMessage);
 		await Promise.all(
 			Object.entries(message).map(async ([prop, value]) => {
 				const tool = this.findTool(prop);
@@ -57,9 +79,9 @@ export class Agent<
 				return Promise.resolve();
 			})
 		);
-		const messageId = await this.#store.set(message);
+		const modifiedMessage = await this.after(message);
 
-		return this.#model.next(messageId, message);
+		return this.#store.set(modifiedMessage);
 	}
 
 	/**

@@ -5,31 +5,39 @@ import { FSAdapter } from "../src/store/index.js";
 import type { ModelMessage } from "../src/types.js";
 import { createInstruction, sprint } from "../src/utils.js";
 
+import { openai } from "./config.js";
+
 const sharedStore = new FSAdapter("out/translation");
 
 const translate = new Agent(
-	new GPTModelAdapter<GPT3Options>({
-		model: "gpt-3.5-turbo",
-		temperature: 0.5,
-		maxTokens: 256,
-		historySize: 1,
-		systemInstruction: createInstruction("AI", "Translate English text to German.", {
-			translation: "",
-		}),
-	}),
+	new GPTModelAdapter<GPT3Options>(
+		{
+			model: "gpt-3.5-turbo",
+			temperature: 0.5,
+			maxTokens: 256,
+			historySize: 1,
+			systemInstruction: createInstruction("AI", "Translate English text to German.", {
+				translation: "",
+			}),
+		},
+		openai
+	),
 	sharedStore
 );
 
 const paraphrase = new Agent(
-	new GPTModelAdapter<GPT3Options>({
-		model: "gpt-3.5-turbo",
-		temperature: 0.5,
-		maxTokens: 256,
-		historySize: 1,
-		systemInstruction: createInstruction("AI", "Paraphrase the summarized text.", {
-			paraphrase: "",
-		}),
-	}),
+	new GPTModelAdapter<GPT3Options>(
+		{
+			model: "gpt-3.5-turbo",
+			temperature: 0.5,
+			maxTokens: 256,
+			historySize: 1,
+			systemInstruction: createInstruction("AI", "Paraphrase the summarized text.", {
+				paraphrase: "",
+			}),
+		},
+		openai
+	),
 	sharedStore
 );
 

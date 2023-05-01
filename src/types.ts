@@ -10,30 +10,15 @@ export interface ModelMessage {
 }
 
 /**
- * Represents options for a model with a next function.
- *
- * @interface ModelOptions
- * @property {(messageId: string, data: ModelMessage) => Promise<string>} [next] - An optional function that takes
- *   a messageId and a ModelMessage, and returns a Promise that resolves to a string.
- */
-export interface ModelOptions {
-	next?(messageId: string, data: ModelMessage): Promise<string>;
-}
-
-/**
  * Represents a model adapter that can assign tasks and move to the next task.
  *
  * @interface ModelAdapter
  * @template Message - A type that extends ModelMessage.
  * @property {(task: Message) => Promise<Message>} assign - A function that takes a task of type Message and returns
  *   a Promise that resolves to a Message.
- * @property {(messageId: string, message: Message) => Promise<string>} next - A function that takes a messageId and
- *   a message of type Message, and returns a Promise that resolves to a string.
  */
 export interface ModelAdapter<Message extends ModelMessage> {
 	assign(task: Message): Promise<Message>;
-
-	next(messageId: string, message: Message): Promise<string>;
 }
 
 /**
@@ -56,3 +41,44 @@ export interface Tool {
  * @typedef {0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9} ReasonableTemperature
  */
 export type ReasonableTemperature = 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9;
+
+/**
+ * The configuration options for an Agent.
+ *
+ * @template InMessage - The input message type.
+ * @template OutMessage - The output message type.
+ */
+export interface AgentOptions<
+	InMessage extends ModelMessage = ModelMessage,
+	OutMessage extends ModelMessage = ModelMessage
+> {
+	/**
+	 * A function that transforms the input message before it is passed to the model.
+	 *
+	 * @param {InMessage} message - The input message.
+	 * @returns {Promise<Message>} - A Promise that resolves to the transformed message.
+	 */
+	before?<Message>(message: InMessage): Promise<Message>;
+
+	/**
+	 * A function that transforms the output message after it has been processed by the model.
+	 *
+	 * @param {OutMessage} message - The output message.
+	 * @returns {Promise<Message>} - A Promise that resolves to the transformed message.
+	 */
+	after?<Message>(message: OutMessage): Promise<Message>;
+
+	/**
+	 * A function that runs after the Agent has processed the output message.
+	 *
+	 * @param {string} messageId - The ID of the message that has been processed.
+	 * @param {OutMessage} message - The output message that has been processed.
+	 * @returns {Promise<string>} - A Promise that resolves to the ID of the next message to be processed.
+	 */
+	finally?(messageId: string, message: OutMessage): Promise<string>;
+
+	/**
+	 * An array of tools that the Agent can use.
+	 */
+	tools?: Tool[];
+}

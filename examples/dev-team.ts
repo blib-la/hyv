@@ -53,7 +53,7 @@ const testAgent = new Agent(
 		openai
 	),
 	store,
-	[fileWriter]
+	{ tools: [fileWriter] }
 );
 
 const devAgent = new Agent(
@@ -75,7 +75,7 @@ const devAgent = new Agent(
 		openai
 	),
 	store,
-	[fileWriter]
+	{ tools: [fileWriter] }
 );
 
 export interface ReviewMessage extends ModelMessage {
@@ -103,15 +103,17 @@ const reviewAgent = new Agent(
 					],
 				}
 			),
-			async next(messageId, data: ReviewMessage) {
-				return data.approved
-					? messageId
-					: getResult(await getResult(messageId, devAgent), reviewAgent);
-			},
 		},
 		openai
 	),
-	store
+	store,
+	{
+		async finally(messageId, message: ReviewMessage) {
+			return message.approved
+				? messageId
+				: getResult(await getResult(messageId, devAgent), reviewAgent);
+		},
+	}
 );
 
 // Example Process

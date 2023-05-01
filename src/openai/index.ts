@@ -48,22 +48,6 @@ export class GPTModelAdapter<Options extends GPTOptions> implements ModelAdapter
 	}
 
 	/**
-	 * Moves to the next task, if the next function is defined in options.
-	 *
-	 * @async
-	 * @param {string} messageId - The messageId to move to the next task.
-	 * @param {ModelMessage} message - The message of type ModelMessage.
-	 * @returns {Promise<string>} - A Promise that resolves to the next messageId.
-	 */
-	async next(messageId: string, message: ModelMessage): Promise<string> {
-		if (this.#options.next) {
-			return this.#options.next(messageId, message);
-		}
-
-		return messageId;
-	}
-
-	/**
 	 * Assigns a task to the GPT model adapter and returns the result.
 	 *
 	 * @async
@@ -87,14 +71,9 @@ export class GPTModelAdapter<Options extends GPTOptions> implements ModelAdapter
 			});
 
 			const { content } = completion.data.choices[0].message;
-			console.log("content");
-			console.log(content);
 			const jsonString = extractCode(content);
 			this.addMessageToHistory({ role: "assistant", content: jsonString });
-			const result = JSON.parse(jsonString);
-			console.log("result");
-			console.log(result);
-			return result;
+			return JSON.parse(jsonString);
 		} catch (error) {
 			throw new Error(`Error assigning task in GPTModelAdapter: ${error.message}`);
 		}

@@ -85,7 +85,7 @@ const author = new Agent(
     ),
   }),
   store,
-  [fileWriter]
+  { tools: [fileWriter] }
 );
 
 const illustrator = new Agent(
@@ -97,7 +97,7 @@ const illustrator = new Agent(
     }),
   }),
   store,
-  [fileWriter]
+  { tools: [fileWriter] }
 );
 
 try {

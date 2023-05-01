@@ -1,17 +1,16 @@
-import type { ModelOptions, ReasonableTemperature } from "../types.js";
+import type { ReasonableTemperature } from "../types.js";
 
 /**
  * Represents options for the GPT model.
  *
  * @interface GPTOptions
- * @extends ModelOptions
  * @property {string} model - The model name.
  * @property {ReasonableTemperature} temperature - The temperature value.
  * @property {number} maxTokens - The maximum number of tokens.
  * @property {number} historySize - The history size.
  * @property {string} systemInstruction - The system instruction.
  */
-export interface GPTOptions extends ModelOptions {
+export interface GPTOptions {
 	model: string;
 	temperature: ReasonableTemperature;
 	maxTokens: number;
