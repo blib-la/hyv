@@ -2,6 +2,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import type { Agent } from "./hive.js";
+import type { StoreAdapter } from "./store/types.js";
+import type { ModelAdapter, ModelMessage } from "./types.js";
 
 /**
  * Extracts the code block from a given string, if any.
@@ -132,4 +134,20 @@ export function createInstruction(role: string, tasks: string, format: Record<st
 export async function getResult(messageId: string, agent: Agent) {
 	agent.task = messageId;
 	return agent.result;
+}
+
+/**
+ * Runs a sequence of agents in a chain, passing the output of each agent as input to the next agent.
+ * @param featureId The ID of the feature or story being worked on.
+ * @param chain An array of agents to be executed in sequence.
+ * @returns The final message ID produced by the last agent in the chain.
+ */
+export async function sprint<Model extends ModelAdapter<ModelMessage>, Store extends StoreAdapter>(
+	featureId: string,
+	chain: Agent<Model, Store>[]
+) {
+	return chain.reduce(
+		async (messageId, agent) => getResult(await messageId, agent),
+		Promise.resolve(featureId)
+	);
 }

@@ -85,10 +85,14 @@ export class GPTModelAdapter<Options extends GPTOptions> implements ModelAdapter
 			});
 
 			const { content } = completion.data.choices[0].message;
+			console.log("content");
+			console.log(content);
 			const jsonString = extractCode(content);
 			this.addMessageToHistory({ role: "assistant", content: jsonString });
-
-			return JSON.parse(jsonString);
+			const result = JSON.parse(jsonString);
+			console.log("result");
+			console.log(result);
+			return result;
 		} catch (error) {
 			throw new Error(`Error assigning task in GPTModelAdapter: ${error.message}`);
 		}

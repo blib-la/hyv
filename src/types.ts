@@ -2,12 +2,12 @@
  * Represents a model message with an optional array of files.
  * Each file has a path and content.
  *
- * @typedef {Object} ModelMessage
+ * @interface ModelMessage
  * @property {Array<{ path: string; content: string }>} [files] - An optional array of files.
  */
-export type ModelMessage = {
+export interface ModelMessage {
 	files?: { path: string; content: string }[];
-};
+}
 
 /**
  * Represents options for a model with a next function.

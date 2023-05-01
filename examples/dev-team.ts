@@ -5,7 +5,7 @@ import { createFileWriter, FSAdapter } from "../src/store/index.js";
 import type { ModelMessage } from "../src/types.js";
 import { createInstruction, getResult } from "../src/utils.js";
 
-const dir = "testdir";
+const dir = "out/dev-team";
 const store = new FSAdapter(dir);
 
 const fileWriter = createFileWriter(dir);
