@@ -3,7 +3,7 @@ import type { ChatCompletionRequestMessage } from "openai";
 import type { ModelAdapter, ModelMessage } from "../types.js";
 import { extractCode } from "../utils.js";
 
-import { openai } from "./openai.js";
+import { openai } from "./config.js";
 import type { GPTOptions } from "./types.js";
 
 /**

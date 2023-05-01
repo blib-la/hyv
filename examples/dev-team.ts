@@ -1,9 +1,9 @@
-import { GPTModelAdapter } from "../src/gpt/index.js";
-import type { GPT4Options } from "../src/gpt/types.js";
-import { Agent } from "../src/hive.js";
+import { Agent } from "../src/index.js";
+import { GPTModelAdapter } from "../src/openai/index.js";
+import type { GPT4Options } from "../src/openai/types.js";
 import { createFileWriter, FSAdapter } from "../src/store/index.js";
 import type { ModelMessage } from "../src/types.js";
-import { createInstruction, getResult } from "../src/utils.js";
+import { createInstruction, getResult, sprint } from "../src/utils.js";
 
 const dir = "out/dev-team";
 const store = new FSAdapter(dir);
@@ -98,13 +98,16 @@ const reviewAgent = new Agent(
 	store
 );
 
-const firstTask: ModelMessage & { feature: string } = {
+// Example Process
+
+const message: ModelMessage & { feature: string } = {
 	feature: "Counter Component",
 };
 
-const firstId = await store.set(firstTask);
-
-getResult(firstId, pmAgent)
-	.then(messageId => getResult(messageId, testAgent))
-	.then(messageId => getResult(messageId, devAgent));
-// .then(messageId => getResult(messageId, reviewAgent));
+try {
+	const messageId = await store.set(message);
+	await sprint(messageId, [pmAgent, testAgent, devAgent]);
+	console.log("Done");
+} catch (error) {
+	console.error("Error:", error);
+}
