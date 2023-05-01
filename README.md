@@ -45,11 +45,22 @@ npm install "@hyv/core" "@hyv/openai" "@hyv/store"
 ```
 
 ```typescript
+import process from "node:process";
 import { Agent, createInstruction, sprint } from "@hyv/core";
 import type { ModelMessage } from "@hyv/core";
 import { DallEModelAdapter, GPTModelAdapter } from "@hyv/openai";
 import type { DallEOptions, GPT3Options } from "@hyv/openai";
 import { createFileWriter, FSAdapter } from "@hyv/store";
+import { config } from "dotenv";
+import { Configuration, OpenAIApi } from "openai";
+
+config();
+
+export const openai = new OpenAIApi(
+  new Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+);
 
 const dir = "out/book";
 const store = new FSAdapter(dir);
@@ -98,12 +109,11 @@ try {
 }
 ```
 
-> While we develop this library, have fun reading this Story written by one of our Hyv Authors:
+> While we develop this library, have fun reading this story written by one of our Hyv authors:
 
 ## The Future and Beyond
 
 <img  align="left" src="assets/story/futuristic-cityscape.png" alt="logo" width="200"/>
-
 
 The year is 2050, and the world has changed drastically. With the rise of technology and the
 ever-growing demand for sustainability, humans have adapted to a new way of life. Cities have

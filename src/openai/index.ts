@@ -1,9 +1,8 @@
-import type { ChatCompletionRequestMessage } from "openai";
+import type { ChatCompletionRequestMessage, OpenAIApi } from "openai";
 
 import type { ModelAdapter, ModelMessage } from "../types.js";
 import { extractCode } from "../utils.js";
 
-import { openai } from "./config.js";
 import type { GPTOptions } from "./types.js";
 
 /**
@@ -17,15 +16,18 @@ import type { GPTOptions } from "./types.js";
  */
 export class GPTModelAdapter<Options extends GPTOptions> implements ModelAdapter<ModelMessage> {
 	#options: Options;
+	#openai: OpenAIApi;
 	readonly history: ChatCompletionRequestMessage[];
 
 	/**
 	 * Creates an instance of the GPTModelAdapter class.
 	 *
 	 * @param {Options} options - The GPT model options.
+	 * @param {OpenAIApi} openai - A configured openai API instance.
 	 */
-	constructor(options: Options) {
+	constructor(options: Options, openai: OpenAIApi) {
 		this.#options = options;
+		this.#openai = openai;
 		this.history = [];
 	}
 
@@ -73,7 +75,7 @@ export class GPTModelAdapter<Options extends GPTOptions> implements ModelAdapter
 		try {
 			this.addMessageToHistory({ role: "user", content: JSON.stringify(task) });
 
-			const completion = await openai.createChatCompletion({
+			const completion = await this.#openai.createChatCompletion({
 				model: this.#options.model,
 				// eslint-disable-next-line camelcase
 				max_tokens: this.#options.maxTokens,

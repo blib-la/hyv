@@ -5,6 +5,8 @@ import { createFileWriter, FSAdapter } from "../src/store/index.js";
 import type { ModelMessage } from "../src/types.js";
 import { createInstruction, sprint } from "../src/utils.js";
 
+import { openai } from "./config.js";
+
 const dir = "out/book";
 const store = new FSAdapter(dir);
 const fileWriter = createFileWriter(dir);
@@ -13,20 +15,23 @@ const book: ModelMessage & { title: string } = {
 };
 
 const author = new Agent(
-	new GPTModelAdapter<GPT3Options>({
-		model: "gpt-3.5-turbo",
-		temperature: 0.5,
-		maxTokens: 512,
-		historySize: 1,
-		systemInstruction: createInstruction(
-			"Scientific Author",
-			"Write a story and describe required illustrations in detail",
-			{
-				illustrations: "string[]",
-				files: [{ path: "string", content: "markdown" }],
-			}
-		),
-	}),
+	new GPTModelAdapter<GPT3Options>(
+		{
+			model: "gpt-3.5-turbo",
+			temperature: 0.5,
+			maxTokens: 512,
+			historySize: 1,
+			systemInstruction: createInstruction(
+				"Scientific Author",
+				"Write a story and describe required illustrations in detail",
+				{
+					illustrations: "string[]",
+					files: [{ path: "string", content: "markdown" }],
+				}
+			),
+		},
+		openai
+	),
 	store,
 	[fileWriter]
 );
