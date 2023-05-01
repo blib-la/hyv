@@ -8,7 +8,8 @@
   "author": "Gregor Adams",
   "license": "MIT",
   "scripts": {
-    "demo": "ts-node-esm examples/translation.ts",
+    "demo:translation": "ts-node-esm examples/translation.ts",
+    "demo:book": "ts-node-esm examples/book.ts",
     "ncu": "npx npm-check-updates -u --dep='prod,dev'",
     "ncu:minor": "npm run ncu -- -t minor",
     "ncu:patch": "npm run ncu -- -t patch",
