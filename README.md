@@ -42,6 +42,7 @@ export const openai = new OpenAIApi(
 const dir = "out/book";
 const store = new FSAdapter(dir);
 const fileWriter = createFileWriter(dir);
+const imageWriter = createFileWriter(dir, "base64");
 const book: ModelMessage & { title: string } = {
   title: "The future and beyond",
 };
@@ -60,7 +61,7 @@ const author = new Agent(
         files: [{ path: "string", content: "markdown" }],
       }
     ),
-  }),
+  }, openai),
   store,
   { tools: [fileWriter] }
 );
@@ -69,12 +70,9 @@ const illustrator = new Agent(
   new DallEModelAdapter<DallEOptions>({
     size: "1024x1024",
     n: 1,
-    systemInstruction: createInstruction("Illustrator", "Create illustrations for the chapter.", {
-      files: [{ path: "string", content: "string" }],
-    }),
-  }),
+  }, openai),
   store,
-  { tools: [fileWriter] }
+  { tools: [imageWriter] }
 );
 
 try {
