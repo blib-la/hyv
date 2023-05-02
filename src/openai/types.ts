@@ -1,4 +1,8 @@
+import type { CreateImageRequest } from "openai/api.js";
+import type { Except } from "type-fest";
+
 import type { ReasonableTemperature } from "../types.js";
+import type { ModelMessage } from "../types.js";
 
 /**
  * Represents options for the GPT model.
@@ -43,3 +47,9 @@ export interface GPT4Options extends GPTOptions {
 	model: "gpt-4";
 	historySize: 1 | 2 | 3 | 4;
 }
+
+export interface ImageMessage extends ModelMessage {
+	images: [{ path: string; prompt: string }];
+}
+
+export type DallEOptions = Except<CreateImageRequest, "prompt" | "response_format">;

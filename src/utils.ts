@@ -53,9 +53,14 @@ export async function exists(pathLike: string) {
  * @async
  * @param {string} filePath - The path to the file to be written.
  * @param {string} content - The content to be written to the file.
+ * @param {BufferEncoding} [encoding="utf-8"] - the encoding that should vbe used when writing files
  * @returns {Promise<void>} - Resolves when the file is successfully written, otherwise throws an error.
  */
-export async function writeFile(filePath: string, content: string): Promise<void> {
+export async function writeFile(
+	filePath: string,
+	content: string,
+	encoding: BufferEncoding = "utf8"
+): Promise<void> {
 	try {
 		const { dir } = path.parse(filePath);
 
@@ -66,7 +71,7 @@ export async function writeFile(filePath: string, content: string): Promise<void
 		}
 
 		// Write the content to the file
-		await fs.writeFile(filePath, content);
+		await fs.writeFile(filePath, content, { encoding });
 	} catch (error) {
 		throw new Error(`Error writing file at path '${filePath}': ${error.message}`);
 	}
@@ -143,10 +148,10 @@ export async function getResult(messageId: string, agent: Agent) {
  * @param chain An array of agents to be executed in sequence.
  * @returns The final message ID produced by the last agent in the chain.
  */
-export async function sprint<Model extends ModelAdapter<ModelMessage>, Store extends StoreAdapter>(
-	featureId: string,
-	chain: Agent<Model, Store>[]
-) {
+export async function sprint<
+	Model extends ModelAdapter<ModelMessage> = ModelAdapter<ModelMessage>,
+	Store extends StoreAdapter = StoreAdapter
+>(featureId: string, chain: Agent<Model, Store>[]) {
 	return chain.reduce(
 		async (messageId, agent) => getResult(await messageId, agent),
 		Promise.resolve(featureId)

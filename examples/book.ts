@@ -1,9 +1,11 @@
 import { Agent } from "../src/index.js";
-import { GPTModelAdapter } from "../src/openai/index.js";
-import type { GPT3Options } from "../src/openai/types.js";
+import { DallEModelAdapter, GPTModelAdapter } from "../src/openai/index.js";
+import type { DallEOptions, GPT3Options } from "../src/openai/types.js";
 import { createFileWriter, FSAdapter } from "../src/store/index.js";
+import type { StoreAdapter } from "../src/store/types.js";
 import type { ModelMessage } from "../src/types.js";
 import type { AgentOptions } from "../src/types.js";
+import type { ModelAdapter } from "../src/types.js";
 import { createInstruction, sprint } from "../src/utils.js";
 
 import { openai } from "./config.js";
@@ -11,8 +13,9 @@ import { openai } from "./config.js";
 const dir = "out/book";
 const store = new FSAdapter(dir);
 const fileWriter = createFileWriter(dir);
+const imageWriter = createFileWriter(dir, "base64");
 const book: ModelMessage & { title: string } = {
-	title: "AGI can solve all problems",
+	title: "Mysteries of the pyramids",
 };
 
 interface AuthorData extends ModelMessage {
@@ -42,7 +45,7 @@ const author = new Agent(
 			historySize: 1,
 			systemInstruction: createInstruction(
 				"Scientific Author",
-				"Write a short story with inline images in markdown. Add a descriptive prompt for each images to be created",
+				"Write a brief story with inline images in markdown. Add a descriptive prompt for each images to be created",
 				{
 					images: [{ path: "string", prompt: "string" }],
 					files: [{ path: "string", content: "markdown" }],
@@ -55,24 +58,21 @@ const author = new Agent(
 	options
 );
 
-/*
-// Future API
 const illustrator = new Agent(
-	new DallEModelAdapter<DallEOptions>({
-		size: "1024x1024",
-		n: 1,
-		systemInstruction: createInstruction("Illustrator", "Create illustrations for the chapter.", {
-			files: [{ path: "string", content: "string" }],
-		}),
-	}),
+	new DallEModelAdapter<DallEOptions>(
+		{
+			size: "256x256",
+			n: 1,
+		},
+		openai
+	),
 	store,
-	[fileWriter]
+	{ tools: [imageWriter] }
 );
-*/
 
 try {
 	const messageId = await store.set(book);
-	await sprint(messageId, [author]);
+	await sprint<ModelAdapter<ModelMessage>, StoreAdapter>(messageId, [author, illustrator]);
 	console.log("Done");
 } catch (error) {
 	console.error("Error:", error);

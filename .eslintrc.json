@@ -8,6 +8,9 @@
     "jest": true,
     "node": true
   },
+  "globals": {
+    "BufferEncoding": "readonly"
+  },
   "plugins": ["@typescript-eslint", "unicorn", "unused-imports", "import", "jest", "prettier"],
   "ignorePatterns": ["*.d.ts"],
   "rules": {
