@@ -2,12 +2,9 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
+import type { ModelMessage, StoreAdapter } from "@hyv/core";
+import { writeFile } from "@hyv/core";
 import { nanoid } from "nanoid";
-
-import type { ModelMessage, Tool } from "../types.js";
-import { writeFile } from "../utils.js";
-
-import type { StoreAdapter } from "./types.js";
 
 /**
  * Represents a file system store adapter for storing and retrieving messages.
@@ -63,24 +60,4 @@ export class FSAdapter implements StoreAdapter {
 			throw new Error(`Error retrieving message with ID ${messageId}: ${error.message}`);
 		}
 	}
-}
-
-/**
- * Creates a file writer tool for writing output files.
- *
- * @param {string} dir - The directory where the output files should be written.
- * @param {BufferEncoding} [encoding="utf-8"] - the encoding that should vbe used when writing files
- * @returns {Tool} - The file writer tool instance.
- */
-export function createFileWriter(dir: string, encoding: BufferEncoding = "utf-8"): Tool {
-	return {
-		prop: "files",
-		async run(message: ModelMessage) {
-			await Promise.all(
-				message.files.map(async file =>
-					writeFile(path.join(dir, "output", file.path), file.content, encoding)
-				)
-			);
-		},
-	};
 }

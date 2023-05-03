@@ -18,14 +18,8 @@
     "sourceMap": true,
     "strict": false,
     "target": "ES2022",
-    "typeRoots": ["./node_modules/@types", "./types"],
-    "paths": {
-      "@hyv/core": ["./packages/core/src"],
-      "@hyv/openai": ["./packages/openai/src"],
-      "@hyv/store": ["./packages/store/src"]
-    },
-    "baseUrl": "./"
+    "typeRoots": ["./node_modules/@types", "./types"]
   },
-  "include": ["./types/*.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["**/*.d.ts", "**/*.ts", "**/*.ts"],
   "exclude": ["./node_modules"]
 }

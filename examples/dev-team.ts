@@ -1,9 +1,9 @@
-import { Agent } from "../src/index.js";
-import { GPTModelAdapter } from "../src/openai/index.js";
-import type { GPT4Options } from "../src/openai/types.js";
-import { createFileWriter, FSAdapter } from "../src/store/index.js";
-import type { ModelMessage } from "../src/types.js";
-import { createInstruction, getResult, sprint } from "../src/utils.js";
+import { Agent } from "../packages/core/src/agent.js";
+import type { ModelMessage } from "../packages/core/src/types.js";
+import { createInstruction, getResult, sprint } from "../packages/core/src/utils.js";
+import { GPTModelAdapter } from "../packages/openai/src/gpt-model-adapter.js";
+import type { GPT4Options } from "../packages/openai/src/types.js";
+import { createFileWriter, FSAdapter } from "../packages/store/src/index.js";
 
 import { openai } from "./config.js";
 

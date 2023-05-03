@@ -1,5 +1,4 @@
-import type { StoreAdapter } from "./store/types.js";
-import type { AgentOptions, ModelAdapter, ModelMessage, Tool } from "./types.js";
+import type { AgentOptions, ModelAdapter, ModelMessage, StoreAdapter, Tool } from "./types.js";
 
 /**
  * Represents an agent that manages a model, a store, and a set of tools.

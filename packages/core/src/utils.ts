@@ -1,10 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import type { StoreAdapter } from "./store/types.js";
-import type { ModelAdapter, ModelMessage } from "./types.js";
-
-import type { Agent } from "./index.js";
+import type { Agent } from "./agent.js";
+import type { ModelAdapter, ModelMessage, StoreAdapter } from "./types.js";
 
 /**
  * Extracts the code block from a given string, if any.
