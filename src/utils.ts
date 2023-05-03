@@ -107,6 +107,20 @@ export function minify(strings: TemplateStringsArray, ...values: string[]) {
 	return output.replace(/^\s+/gm, "").trim();
 }
 
+export function maybePeriod(text: string) {
+	if (
+		text.endsWith(".") ||
+		text.endsWith("!") ||
+		text.endsWith("?") ||
+		text.endsWith(":") ||
+		text.endsWith(";")
+	) {
+		return "";
+	}
+
+	return ". ";
+}
+
 /**
  * Creates an instruction string for the AI agent.
  *
@@ -117,11 +131,12 @@ export function minify(strings: TemplateStringsArray, ...values: string[]) {
  */
 export function createInstruction(role: string, tasks: string, format: Record<string, unknown>) {
 	return minify`
-		You are a ${role}.
-		Your tasks: ${tasks}.
+		You are a ${role}${maybePeriod(role)}
+		Your tasks: ${tasks}${maybePeriod(tasks)}
 		You NEVER explain or add notes.
-		You ONLY communicate **valid JSON**.
-		**You answer ONLY!!! as valid  JSON in this Format:**
+		ALL content will be inserted in JSON.
+		You EXCLUSIVELY communicate **valid JSON**.
+		**You answer EXCLUSIVELY!!! as valid  JSON in this Format**:
 		${""}
 		\`\`\`json
 		${JSON.stringify(format)}

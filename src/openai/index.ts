@@ -26,6 +26,8 @@ export class GPTModelAdapter<Options extends GPTOptions> implements ModelAdapter
 	 * @param {OpenAIApi} openai - A configured openai API instance.
 	 */
 	constructor(options: Options, openai: OpenAIApi) {
+		console.log("systemInstruction");
+		console.log(options.systemInstruction);
 		this.#options = options;
 		this.#openai = openai;
 		this.history = [];
@@ -71,6 +73,8 @@ export class GPTModelAdapter<Options extends GPTOptions> implements ModelAdapter
 			});
 
 			const { content } = completion.data.choices[0].message;
+			console.log("RAW");
+			console.log(content);
 			const jsonString = extractCode(content);
 			this.addMessageToHistory({ role: "assistant", content: jsonString });
 			return JSON.parse(jsonString);

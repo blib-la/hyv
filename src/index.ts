@@ -54,6 +54,10 @@ export class Agent<
 		if (options.after) {
 			this.after = options.after;
 		}
+
+		if (options.finally) {
+			this.finally = options.finally;
+		}
 	}
 
 	/**
@@ -80,8 +84,11 @@ export class Agent<
 			})
 		);
 		const modifiedMessage = await this.after(message);
+		console.log("modifiedMessage");
+		console.log(modifiedMessage);
 
-		return this.#store.set(modifiedMessage);
+		const messageId = await this.#store.set(modifiedMessage);
+		return this.finally(messageId, modifiedMessage);
 	}
 
 	/**
