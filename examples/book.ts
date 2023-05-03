@@ -1,21 +1,42 @@
+import slugify from "@sindresorhus/slugify";
+
 import { Agent } from "../src/index.js";
 import { DallEModelAdapter, GPTModelAdapter } from "../src/openai/index.js";
-import type { DallEOptions, GPT3Options } from "../src/openai/types.js";
+import type { DallEOptions, GPT4Options } from "../src/openai/types.js";
 import { createFileWriter, FSAdapter } from "../src/store/index.js";
 import type { StoreAdapter } from "../src/store/types.js";
 import type { ModelMessage } from "../src/types.js";
 import type { AgentOptions } from "../src/types.js";
 import type { ModelAdapter } from "../src/types.js";
-import { createInstruction, sprint } from "../src/utils.js";
+import { createInstruction, minify, sprint } from "../src/utils.js";
 
 import { openai } from "./config.js";
 
-const dir = "out/book";
+const title = "Wonderland";
+const genre = "Fantasy Novel";
+const illustrationStyle = "flat illustration";
+const writingStyle = "William Shakespeare";
+const context = "A universe in which all humans are treated equally";
+
+const dir = `out/stories/${slugify(title)}`;
 const store = new FSAdapter(dir);
 const fileWriter = createFileWriter(dir);
 const imageWriter = createFileWriter(dir, "base64");
-const book: ModelMessage & { title: string } = {
-	title: "Mysteries of the pyramids",
+
+const book: ModelMessage & {
+	title: string;
+	context: string;
+	genre: string;
+	maxImages: number;
+	illustrationStyle: string;
+	writingStyle: string;
+} = {
+	title,
+	context,
+	genre,
+	maxImages: 3,
+	illustrationStyle,
+	writingStyle,
 };
 
 interface AuthorData extends ModelMessage {
@@ -37,18 +58,24 @@ const options: AgentOptions<ModelMessage, AuthorData> = {
 };
 
 const author = new Agent(
-	new GPTModelAdapter<GPT3Options>(
+	new GPTModelAdapter<GPT4Options>(
 		{
-			model: "gpt-3.5-turbo",
-			temperature: 0.5,
-			maxTokens: 1024,
+			model: "gpt-4",
+			temperature: 0.7,
+			maxTokens: 4096,
 			historySize: 1,
 			systemInstruction: createInstruction(
-				"Scientific Author",
-				"Write a brief story with inline images in markdown. Add a descriptive prompt for each images to be created",
+				"Author",
+				minify`
+				1. Write a long bestseller story with several long paragraphs!
+				2. Write a Markdown document WITH IMAGE TAGS and short alt text!
+				3. INLINE all images (as Markdown) **as part of the story**!
+				4. All images should be LOCAL FILES!
+				5. Add a DETAILED, CLEAR and very DESCRIPTIVE prompt with "illustrationStyle" for each image to be generated.
+				`,
 				{
 					images: [{ path: "string", prompt: "string" }],
-					files: [{ path: "string", content: "markdown" }],
+					files: [{ path: "story.md", content: "markdown" }],
 				}
 			),
 		},
