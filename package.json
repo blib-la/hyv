@@ -6,7 +6,7 @@
   "type": "module",
   "keywords": [],
   "author": "Gregor Adams",
-  "license": "MIT",
+  "license": "AGPL",
   "scripts": {
     "demo:dev-team": "ts-node-esm examples/dev-team.ts",
     "demo:translation": "ts-node-esm examples/translation.ts",
