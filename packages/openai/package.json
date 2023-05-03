@@ -1,0 +1,32 @@
+{
+  "name": "@hyv/openai",
+  "version": "0.0.0",
+  "license": "AGPL",
+  "type": "module",
+  "main": "index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "clean": "npx rimraf dist"
+  },
+  "dependencies": {
+    "@hyv/core": "0.0.0",
+    "type-fest": "^3.9.0"
+  },
+  "devDependencies": {
+    "openai": "^3.2.1"
+  },
+  "peerDependencies": {
+    "openai": "^3.2.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

@@ -1,22 +1,22 @@
 import slugify from "@sindresorhus/slugify";
 
-import { Agent } from "../src/index.js";
-import { DallEModelAdapter, GPTModelAdapter } from "../src/openai/index.js";
-import type { DallEOptions, GPT4Options } from "../src/openai/types.js";
-import { createFileWriter, FSAdapter } from "../src/store/index.js";
-import type { StoreAdapter } from "../src/store/types.js";
-import type { ModelMessage } from "../src/types.js";
-import type { AgentOptions } from "../src/types.js";
-import type { ModelAdapter } from "../src/types.js";
-import { createInstruction, minify, sprint } from "../src/utils.js";
+import { Agent } from "../packages/core/src/agent.js";
+import type { ModelMessage } from "../packages/core/src/types.js";
+import type { AgentOptions } from "../packages/core/src/types.js";
+import type { ModelAdapter } from "../packages/core/src/types.js";
+import type { StoreAdapter } from "../packages/core/src/types.js";
+import { createInstruction, minify, sprint } from "../packages/core/src/utils.js";
+import { GPTModelAdapter } from "../packages/openai/src/gpt-model-adapter.js";
+import { DallEModelAdapter } from "../packages/openai/src/index.js";
+import type { GPT4Options } from "../packages/openai/src/types.js";
+import { createFileWriter, FSAdapter } from "../packages/store/src/index.js";
 
 import { openai } from "./config.js";
 
-const title = "Wonderland";
-const genre = "Fantasy Novel";
-const illustrationStyle = "flat illustration";
-const writingStyle = "William Shakespeare";
-const context = "A universe in which all humans are treated equally";
+const title = "The AIgent";
+const genre = "Science Fiction";
+const illustrationStyle = "watercolor illustration";
+const context = "AGI has become reality";
 
 const dir = `out/stories/${slugify(title)}`;
 const store = new FSAdapter(dir);
@@ -27,16 +27,16 @@ const book: ModelMessage & {
 	title: string;
 	context: string;
 	genre: string;
-	maxImages: number;
+	imageCount: number;
+	chapterCount: number;
 	illustrationStyle: string;
-	writingStyle: string;
 } = {
 	title,
 	context,
 	genre,
-	maxImages: 3,
+	imageCount: 3,
+	chapterCount: 3,
 	illustrationStyle,
-	writingStyle,
 };
 
 interface AuthorData extends ModelMessage {
@@ -67,7 +67,7 @@ const author = new Agent(
 			systemInstruction: createInstruction(
 				"Author",
 				minify`
-				1. Write a long bestseller story with several long paragraphs!
+				1. Write a long bestseller story (500-600 words long)!
 				2. Write a Markdown document WITH IMAGE TAGS and short alt text!
 				3. INLINE all images (as Markdown) **as part of the story**!
 				4. All images should be LOCAL FILES!
@@ -86,7 +86,7 @@ const author = new Agent(
 );
 
 const illustrator = new Agent(
-	new DallEModelAdapter<DallEOptions>(
+	new DallEModelAdapter(
 		{
 			size: "256x256",
 			n: 1,
