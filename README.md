@@ -15,7 +15,7 @@ Hyv is a modular software development library centered on AI collaboration that 
 
 ## Usage
 
-> ⚠️ This library has not yet been released, but it can be expected to work like this:
+> ⚠️ This library is currently in its test phase v0.0.x:
 
 ```shell
 npm install "@hyv/core" "@hyv/openai" "@hyv/store"
