@@ -4,7 +4,7 @@ import { swc } from "rollup-plugin-swc3";
 export default {
 	input: "src/index.ts",
 	output: {
-		dir: "dist",
+		file: "dist/index.js",
 		format: "es",
 	},
 	plugins: [
