@@ -15,6 +15,15 @@
     "name": "Gregor Adams",
     "email": "greg@pixelass.com"
   },
+  "keywords": [
+    "ai",
+    "agents",
+    "artificial-intelligence",
+    "openi",
+    "gpt",
+    "llama",
+    "alpacca"
+  ],
   "main": "index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
