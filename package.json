@@ -9,6 +9,7 @@
   "license": "AGPL",
   "private": true,
   "scripts": {
+    "demo:auto-book": "ts-node-esm examples/auto-book.ts",
     "demo:book": "ts-node-esm examples/book.ts",
     "demo:simple": "ts-node-esm examples/simple.ts",
     "prebuild": "npm run clean",
