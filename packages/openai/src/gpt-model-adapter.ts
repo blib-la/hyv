@@ -1,9 +1,22 @@
 import type { ModelAdapter, ModelMessage } from "@hyv/core";
 import { createInstruction, extractCode } from "@hyv/core";
-import type { ChatCompletionRequestMessage, OpenAIApi } from "openai";
+import type { ChatCompletionRequestMessage, CreateChatCompletionRequest, OpenAIApi } from "openai";
 
 import { defaultOpenAI } from "./config.js";
-import type { GPTOptions } from "./types.js";
+import type { GPT3Options, GPTOptions } from "./types.js";
+
+const defaultOptions: GPT3Options = {
+	temperature: 0.5,
+	model: "gpt-3.5-turbo",
+	historySize: 1,
+	maxTokens: 512,
+	systemInstruction: createInstruction("AI", "think, reason, reflect, answer", {
+		thought: "string",
+		reason: "string",
+		reflection: "string",
+		answer: "string",
+	}),
+};
 
 /**
  * Represents a GPT model adapter that can assign tasks and move to the next task.
@@ -27,22 +40,8 @@ export class GPTModelAdapter<Options extends GPTOptions = GPTOptions>
 	 * @param {Options} options - The GPT model options.
 	 * @param {OpenAIApi} openAI - A configured openAI API instance.
 	 */
-	constructor(
-		options: Options = {
-			temperature: 0.5,
-			model: "gpt-3.5-turbo",
-			historySize: 1,
-			maxTokens: 512,
-			systemInstruction: createInstruction("AI", "think, reason, reflect, answer", {
-				thought: "string",
-				reason: "string",
-				reflection: "string",
-				answer: "string",
-			}),
-		} as Options,
-		openAI: OpenAIApi = defaultOpenAI
-	) {
-		this.#options = options;
+	constructor(options: Options = defaultOptions as Options, openAI: OpenAIApi = defaultOpenAI) {
+		this.#options = { ...defaultOptions, ...options };
 		this.#openAI = openAI;
 		this.history = [];
 	}
@@ -74,8 +73,7 @@ export class GPTModelAdapter<Options extends GPTOptions = GPTOptions>
 	async assign(task: ModelMessage): Promise<ModelMessage> {
 		try {
 			this.addMessageToHistory({ role: "user", content: JSON.stringify(task) });
-
-			const completion = await this.#openAI.createChatCompletion({
+			const request: CreateChatCompletionRequest = {
 				model: this.#options.model,
 				// eslint-disable-next-line camelcase
 				max_tokens: this.#options.maxTokens,
@@ -84,7 +82,9 @@ export class GPTModelAdapter<Options extends GPTOptions = GPTOptions>
 					{ role: "system", content: this.#options.systemInstruction },
 					...this.history,
 				],
-			});
+			};
+			console.log(request);
+			const completion = await this.#openAI.createChatCompletion(request);
 
 			const { content } = completion.data.choices[0].message;
 			console.log("RAW");
