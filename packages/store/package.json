@@ -1,6 +1,6 @@
 {
   "name": "@hyv/store",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "AGPL",
   "type": "module",
   "homepage": "https://github.com/failfa-st/hyv/",
@@ -38,7 +38,7 @@
     "dist"
   ],
   "dependencies": {
-    "@hyv/core": "^0.0.2",
+    "@hyv/core": "^0.0.3",
     "nanoid": "4.0.2"
   },
   "publishConfig": {
