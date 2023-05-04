@@ -8,9 +8,8 @@ Hyv is a modular software development library centered on AI collaboration that 
 ## Features 🌟
 
 - 🚀 **Streamlined Task Management**: Hyv enhances your projects with efficient task distribution and coordination, simplifying resource utilization.
-- 🧩 **Flexible Modular Design**: Hyv's modular architecture allows seamless integration of various tools, models, and adapters, providing a customizable solution.
+- 🧩 **Flexible Modular Design**: Hyv's modular architecture allows seamless integration of various sideEffects, models, and adapters, providing a customizable solution.
 - 🌐 **Broad Compatibility**: Designed for various technologies, Hyv is a versatile option for developers working with diverse platforms and frameworks.
-- 📚 **Comprehensive Documentation**: Hyv includes detailed documentation and examples, aiding in understanding its features and effective implementation in projects.
 - 🌱 **Community-Driven**: Hyv is developed and maintained by a devoted community of developers, continually working to refine and extend its capabilities.
 
 ## Usage
@@ -22,63 +21,13 @@ npm install "@hyv/core" "@hyv/openai" "@hyv/store"
 ```
 
 ```typescript
-import process from "node:process";
-import { Agent, createInstruction, sprint } from "@hyv/core";
-import type { ModelMessage } from "@hyv/core";
-import { DallEModelAdapter, GPTModelAdapter } from "@hyv/openai";
-import type { DallEOptions, GPT3Options } from "@hyv/openai";
-import { createFileWriter, FSAdapter } from "@hyv/store";
-import { config } from "dotenv";
-import { Configuration, OpenAIApi } from "openai";
+import { Agent, sequence } from "@hyv/core";
+import { GPTModelAdapter } from "@hyv/openai";
 
-config();
-
-export const openai = new OpenAIApi(
-  new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  })
-);
-
-const dir = "out/book";
-const store = new FSAdapter(dir);
-const fileWriter = createFileWriter(dir);
-const imageWriter = createFileWriter(dir, "base64");
-const book: ModelMessage & { title: string } = {
-  title: "The future and beyond",
-};
-
-const author = new Agent(
-  new GPTModelAdapter<GPT3Options>({
-    model: "gpt-3.5-turbo",
-    temperature: 0.5,
-    maxTokens: 2048,
-    historySize: 1,
-    systemInstruction: createInstruction(
-      "Scientific Author",
-      "Write a story and describe required illustrations in detail",
-      {
-        illustrations: "string[]",
-        files: [{ path: "string", content: "markdown" }],
-      }
-    ),
-  }, openai),
-  store,
-  { tools: [fileWriter] }
-);
-
-const illustrator = new Agent(
-  new DallEModelAdapter<DallEOptions>({
-    size: "1024x1024",
-    n: 1,
-  }, openai),
-  store,
-  { tools: [imageWriter] }
-);
+const agent = new Agent(new GPTModelAdapter());
 
 try {
-  const messageId = await store.set(book);
-  await sprint(messageId, [author, illustrator]);
-  console.log("Done");
+  await sequence({ question: "What is life?" }, [agent]);
 } catch (error) {
   console.error("Error:", error);
 }
@@ -86,30 +35,30 @@ try {
 
 👇 While we develop this library, have fun reading this story written by one of our Hyv authors:
 
-## The Future and Beyond
+<br clear="both"/>
 
-<img  align="left" src="assets/story/futuristic-cityscape.png" alt="logo" width="200"/>
+## Beyond Horizon
 
-The year is 2050, and the world has changed drastically. With the rise of technology and the
-ever-growing demand for sustainability, humans have adapted to a new way of life. Cities have
-transformed into towering metropolises, with skyscrapers reaching the clouds and transportation
-systems that hover above the ground. The streets are clean, and the air is pure, thanks to the
-advancements in renewable energy.
+<br clear="both"/>
 
-<br clear="left"/>
-<img align="right" src="assets/story/spaceship.png" alt="logo" width="200"/>
+### Chapter 1: The Departure
 
-In this new world, space travel has become a common occurrence. Spaceships regularly depart from
-Earth to explore the vast expanse of the universe. Humans have even established colonies on other
-planets, where they continue to push the boundaries of science and technology.
+<br clear="both"/>
+<img align="left" src="assets/story/young_astronaut.jpg" alt="Young astronaut preparing for their journey" width="256"/>
 
-<br clear="right"/>
-<img  align="left" src="assets/story/robot.png" alt="logo" width="200"/>
+In the distant future, Earth was facing an imminent crisis. Resources were scarce, and humanity was struggling to survive. A young astronaut named Alex was chosen to embark on a thrilling interstellar journey to find a new home for humanity. With determination in their eyes, Alex stood in front of their spacecraft, knowing that the fate of their species rested on their shoulders.
 
-But it's not just humans who have evolved. Robots have become an integral part of society, with
-advanced AI that can perform tasks beyond human capabilities. They work alongside humans, helping to
-build and maintain the cities of the future.
+As the spacecraft took off, Alex watched Earth disappear behind them, unsure if they would ever return. The journey through the cosmos was awe-inspiring, with countless stars and planets passing by the spacecraft's windows.
 
-As we look to the future and beyond, we can only imagine what other marvels await us. But one thing
-is for sure, with our determination and ingenuity, we will continue to push the limits of what is
-possible.
+<br clear="both"/>
+
+### Chapter 2: A New World
+
+<br clear="both"/>
+<img align="right" src="assets/story/alien_planet.jpg" alt="Astronaut standing on an alien planet" width="256"/>
+
+After years of travel and facing numerous challenges along the way, Alex finally arrived at a promising planet. Stepping out of the spacecraft, they marveled at the breathtaking landscape before them. The alien planet was filled with unusual plants, towering structures, and a sky filled with unfamiliar celestial bodies.
+
+Exploring the planet further, Alex uncovered the secrets of the universe and the potential for a new, prosperous life for humanity. With newfound hope, Alex sent a message back to Earth, sharing the coordinates of this new paradise.
+
+As the people of Earth prepared to embark on their own journey to this new world, Alex continued to explore the planet, knowing that they had secured a brighter future for their species.

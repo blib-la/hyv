@@ -1,6 +1,6 @@
 {
   "name": "@hyv/core",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "license": "AGPL",
   "type": "module",
   "homepage": "https://github.com/failfa-st/hyv/",
@@ -27,8 +27,9 @@
   "main": "index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "exports": {
-    ".": "./index.js"
+  ".": {
+    "types": "./dist/index.d.ts",
+    "default": "./index.js"
   },
   "files": [
     "dist"
@@ -36,6 +37,10 @@
   "scripts": {
     "build": "rollup -c",
     "clean": "npx rimraf dist"
+  },
+  "dependencies": {
+    "lru-cache": "9.1.1",
+    "nanoid": "4.0.2"
   },
   "publishConfig": {
     "access": "public"

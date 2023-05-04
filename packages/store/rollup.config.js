@@ -21,11 +21,6 @@ export default [
 			file: "dist/index.d.ts",
 			format: "es",
 		},
-		plugins: [
-			swc({
-				tsconfig: "tsconfig.production.json",
-			}),
-			dts(),
-		],
+		plugins: [dts()],
 	},
 ];

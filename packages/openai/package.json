@@ -1,6 +1,6 @@
 {
   "name": "@hyv/openai",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "license": "AGPL",
   "type": "module",
   "homepage": "https://github.com/failfa-st/hyv/",
@@ -28,7 +28,10 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": "./index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./index.js"
+    }
   },
   "files": [
     "dist"
@@ -38,14 +41,10 @@
     "clean": "npx rimraf dist"
   },
   "dependencies": {
-    "@hyv/core": "^0.0.3",
-    "type-fest": "^3.9.0"
-  },
-  "devDependencies": {
-    "openai": "^3.2.1"
-  },
-  "peerDependencies": {
-    "openai": "^3.2.1"
+    "@hyv/core": "^0.1.0",
+    "dotenv": "16.0.3",
+    "openai": "3.2.1",
+    "type-fest": "3.9.0"
   },
   "publishConfig": {
     "access": "public"
