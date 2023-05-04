@@ -1,31 +1,33 @@
 import type { ModelAdapter, ModelMessage } from "@hyv/core";
 import type { OpenAIApi } from "openai";
 
+import { defaultOpenAI } from "./config.js";
 import type { DallEOptions, ImageMessage } from "./types.js";
 
-export class DallEModelAdapter<
-	Options extends DallEOptions = DallEOptions,
-	Message extends ModelMessage = ModelMessage
-> implements ModelAdapter<Message>
+export class DallEModelAdapter<Message extends ModelMessage = ModelMessage>
+	implements ModelAdapter<Message>
 {
-	#options: Options;
-	#openai: OpenAIApi;
+	#options: DallEOptions;
+	#openAI: OpenAIApi;
 	/**
 	 * Creates an instance of the DallEModelAdapter class.
 	 *
 	 * @param {Options} options - The DALL-E model options.
-	 * @param {OpenAIApi} openai - A configured openai API instance.
+	 * @param {OpenAIApi} openAI - A configured openAI API instance.
 	 */
-	constructor(options: Options, openai: OpenAIApi) {
+	constructor(
+		options: DallEOptions = { size: "256x256", n: 1 },
+		openAI: OpenAIApi = defaultOpenAI
+	) {
 		this.#options = options;
-		this.#openai = openai;
+		this.#openAI = openAI;
 	}
 
 	async assign(task: Message & ImageMessage): Promise<Message> {
 		try {
 			const files = await Promise.all(
 				task.images.map(async image => {
-					const response = await this.#openai.createImage({
+					const response = await this.#openAI.createImage({
 						...this.#options,
 						prompt: image.prompt,
 						// eslint-disable-next-line camelcase

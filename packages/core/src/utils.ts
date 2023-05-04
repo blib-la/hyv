@@ -2,7 +2,14 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import type { Agent } from "./agent.js";
-import type { ModelAdapter, ModelMessage, StoreAdapter } from "./types.js";
+import { memoryStore } from "./agent.js";
+import type {
+	FileContentWithPath,
+	ModelAdapter,
+	ModelMessage,
+	SideEffect,
+	StoreAdapter,
+} from "./types.js";
 
 /**
  * Extracts the code block from a given string, if any.
@@ -76,6 +83,29 @@ export async function writeFile(
 }
 
 /**
+ * Creates a file writer for writing output files.
+ *
+ * @param {string} dir - The directory where the output files should be written.
+ * @param {BufferEncoding} [encoding="utf-8"] - the encoding that should vbe used when writing files
+ * @returns {SideEffect} - The file writer instance.
+ */
+export function createFileWriter(
+	dir: string,
+	encoding: BufferEncoding = "utf-8"
+): SideEffect<FileContentWithPath[]> {
+	return {
+		prop: "files",
+		async run(files) {
+			await Promise.all(
+				files.map(async file =>
+					writeFile(path.join(dir, file.path), file.content, encoding)
+				)
+			);
+		},
+	};
+}
+
+/**
  * Minifies a template literal by removing leading and trailing whitespace.
  *
  * @param {TemplateStringsArray} strings - The string parts of the template literal.
@@ -143,30 +173,20 @@ export function createInstruction(role: string, tasks: string, format: Record<st
 }
 
 /**
- * Gets the result of an AI agent task.
- *
- * @async
- * @param {string} messageId - The messageId of the task.
- * @param {Agent} agent - The AI agent instance.
- * @returns {Promise<unknown>} - A Promise that resolves to the result of the AI agent task.
- */
-export async function getResult(messageId: string, agent: Agent) {
-	agent.task = messageId;
-	return agent.result;
-}
-
-/**
  * Runs a sequence of agents in a chain, passing the output of each agent as input to the next agent.
- * @param featureId The ID of the feature or story being worked on.
+ * @param message
  * @param chain An array of agents to be executed in sequence.
+ * @param store The store for the messages
  * @returns The final message ID produced by the last agent in the chain.
  */
-export async function sprint<
-	Model extends ModelAdapter<ModelMessage> = ModelAdapter<ModelMessage>,
-	Store extends StoreAdapter = StoreAdapter
->(featureId: string, chain: Agent<Model, Store>[]) {
+export async function sequence<Store extends StoreAdapter = StoreAdapter>(
+	message: ModelMessage,
+	chain: Agent<ModelAdapter<ModelMessage>, Store>[],
+	store = memoryStore
+) {
+	const featureId = await store.set(message);
 	return chain.reduce(
-		async (messageId, agent) => getResult(await messageId, agent),
+		async (messageId, agent) => agent.do(await messageId),
 		Promise.resolve(featureId)
 	);
 }

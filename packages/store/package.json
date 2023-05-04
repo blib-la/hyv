@@ -28,7 +28,10 @@
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
-    ".": "./index.js"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./index.js"
+    }
   },
   "scripts": {
     "build": "rollup -c",
@@ -38,7 +41,7 @@
     "dist"
   ],
   "dependencies": {
-    "@hyv/core": "^0.0.3",
+    "@hyv/core": "0.0.3",
     "nanoid": "4.0.2"
   },
   "publishConfig": {

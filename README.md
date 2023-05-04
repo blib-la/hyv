@@ -8,7 +8,7 @@ Hyv is a modular software development library centered on AI collaboration that 
 ## Features 🌟
 
 - 🚀 **Streamlined Task Management**: Hyv enhances your projects with efficient task distribution and coordination, simplifying resource utilization.
-- 🧩 **Flexible Modular Design**: Hyv's modular architecture allows seamless integration of various tools, models, and adapters, providing a customizable solution.
+- 🧩 **Flexible Modular Design**: Hyv's modular architecture allows seamless integration of various sideEffects, models, and adapters, providing a customizable solution.
 - 🌐 **Broad Compatibility**: Designed for various technologies, Hyv is a versatile option for developers working with diverse platforms and frameworks.
 - 📚 **Comprehensive Documentation**: Hyv includes detailed documentation and examples, aiding in understanding its features and effective implementation in projects.
 - 🌱 **Community-Driven**: Hyv is developed and maintained by a devoted community of developers, continually working to refine and extend its capabilities.
@@ -23,7 +23,7 @@ npm install "@hyv/core" "@hyv/openai" "@hyv/store"
 
 ```typescript
 import process from "node:process";
-import { Agent, createInstruction, sprint } from "@hyv/core";
+import { Agent, createInstruction, sequence } from "@hyv/core";
 import type { ModelMessage } from "@hyv/core";
 import { DallEModelAdapter, GPTModelAdapter } from "@hyv/openai";
 import type { DallEOptions, GPT3Options } from "@hyv/openai";
@@ -63,7 +63,7 @@ const author = new Agent(
     ),
   }, openai),
   store,
-  { tools: [fileWriter] }
+  { sideEffects: [fileWriter] }
 );
 
 const illustrator = new Agent(
@@ -72,12 +72,12 @@ const illustrator = new Agent(
     n: 1,
   }, openai),
   store,
-  { tools: [imageWriter] }
+  { sideEffects: [imageWriter] }
 );
 
 try {
   const messageId = await store.set(book);
-  await sprint(messageId, [author, illustrator]);
+  await sequence(messageId, [author, illustrator]);
   console.log("Done");
 } catch (error) {
   console.error("Error:", error);

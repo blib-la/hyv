@@ -9,9 +9,8 @@
   "license": "AGPL",
   "private": true,
   "scripts": {
-    "demo:dev-team": "ts-node-esm examples/dev-team.ts",
-    "demo:translation": "ts-node-esm examples/translation.ts",
     "demo:book": "ts-node-esm examples/book.ts",
+    "demo:simple": "ts-node-esm examples/simple.ts",
     "prebuild": "npm run clean",
     "build": "npx lerna run build",
     "clean": "npx lerna run clean",

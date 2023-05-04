@@ -1,7 +1,8 @@
 import type { ModelAdapter, ModelMessage } from "@hyv/core";
-import { extractCode } from "@hyv/core";
+import { createInstruction, extractCode } from "@hyv/core";
 import type { ChatCompletionRequestMessage, OpenAIApi } from "openai";
 
+import { defaultOpenAI } from "./config.js";
 import type { GPTOptions } from "./types.js";
 
 /**
@@ -13,22 +14,36 @@ import type { GPTOptions } from "./types.js";
  * @property {Options} #options - The GPT model options.
  * @property {ChatCompletionRequestMessage[]} history - An array of chat completion request messages.
  */
-export class GPTModelAdapter<Options extends GPTOptions> implements ModelAdapter<ModelMessage> {
+export class GPTModelAdapter<Options extends GPTOptions = GPTOptions>
+	implements ModelAdapter<ModelMessage>
+{
 	#options: Options;
-	#openai: OpenAIApi;
+	#openAI: OpenAIApi;
 	readonly history: ChatCompletionRequestMessage[];
 
 	/**
 	 * Creates an instance of the GPTModelAdapter class.
 	 *
 	 * @param {Options} options - The GPT model options.
-	 * @param {OpenAIApi} openai - A configured openai API instance.
+	 * @param {OpenAIApi} openAI - A configured openAI API instance.
 	 */
-	constructor(options: Options, openai: OpenAIApi) {
-		console.log("systemInstruction");
-		console.log(options.systemInstruction);
+	constructor(
+		options: Options = {
+			temperature: 0.5,
+			model: "gpt-3.5-turbo",
+			historySize: 1,
+			maxTokens: 512,
+			systemInstruction: createInstruction("AI", "think, reason, reflect, answer", {
+				thought: "string",
+				reason: "string",
+				reflection: "string",
+				answer: "string",
+			}),
+		} as Options,
+		openAI: OpenAIApi = defaultOpenAI
+	) {
 		this.#options = options;
-		this.#openai = openai;
+		this.#openAI = openAI;
 		this.history = [];
 	}
 
@@ -60,7 +75,7 @@ export class GPTModelAdapter<Options extends GPTOptions> implements ModelAdapter
 		try {
 			this.addMessageToHistory({ role: "user", content: JSON.stringify(task) });
 
-			const completion = await this.#openai.createChatCompletion({
+			const completion = await this.#openAI.createChatCompletion({
 				model: this.#options.model,
 				// eslint-disable-next-line camelcase
 				max_tokens: this.#options.maxTokens,
@@ -80,5 +95,37 @@ export class GPTModelAdapter<Options extends GPTOptions> implements ModelAdapter
 		} catch (error) {
 			throw new Error(`Error assigning task in GPTModelAdapter: ${error.message}`);
 		}
+	}
+
+	get systemInstruction() {
+		return this.#options.systemInstruction;
+	}
+
+	set systemInstruction(systemInstruction: string) {
+		this.#options.systemInstruction = systemInstruction;
+	}
+
+	get maxTokens() {
+		return this.#options.maxTokens;
+	}
+
+	set maxTokens(maxTokens: number) {
+		this.#options.maxTokens = maxTokens;
+	}
+
+	get temperature() {
+		return this.#options.temperature;
+	}
+
+	set temperature(temperature: number) {
+		this.#options.maxTokens = temperature;
+	}
+
+	get historySize() {
+		return this.#options.temperature;
+	}
+
+	set historySize(historySize: number) {
+		this.#options.maxTokens = historySize;
 	}
 }

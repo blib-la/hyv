@@ -13,11 +13,11 @@ import type { Except } from "type-fest";
  * @property {string} systemInstruction - The system instruction.
  */
 export interface GPTOptions {
-	model: string;
-	temperature: ReasonableTemperature;
-	maxTokens: number;
-	historySize: number;
-	systemInstruction: string;
+	model?: string;
+	temperature?: ReasonableTemperature;
+	maxTokens?: number;
+	historySize?: number;
+	systemInstruction?: string;
 }
 
 /**
@@ -30,7 +30,7 @@ export interface GPTOptions {
  */
 export interface GPT3Options extends GPTOptions {
 	model: "gpt-3.5-turbo";
-	historySize: 1 | 2;
+	historySize?: 1 | 2;
 }
 
 /**
@@ -43,7 +43,7 @@ export interface GPT3Options extends GPTOptions {
  */
 export interface GPT4Options extends GPTOptions {
 	model: "gpt-4";
-	historySize: 1 | 2 | 3 | 4;
+	historySize?: 1 | 2 | 3 | 4;
 }
 
 export interface ImageMessage {

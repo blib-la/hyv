@@ -1,12 +1,25 @@
 /**
+ * Represents a file with its associated content and path.
+ *
+ * @interface FileContentWithPath
+ * @property {string} path - The path to the file.
+ * @property {string} content - The content of the file.
+ */
+export interface FileContentWithPath {
+	path: string;
+
+	content: string;
+}
+
+/**
  * Represents a model message with an optional array of files.
  * Each file has a path and content.
  *
  * @interface ModelMessage
  * @property {Array<{ path: string; content: string }>} [files] - An optional array of files.
  */
-export interface ModelMessage {
-	files?: { path: string; content: string }[];
+export interface ModelMessage extends Record<string, unknown> {
+	files?: FileContentWithPath[];
 }
 
 /**
@@ -22,17 +35,16 @@ export interface ModelAdapter<Message extends ModelMessage> {
 }
 
 /**
- * Represents a tool with a property and a run method.
+ * Represents a side effect with a property and a run method. The side effect is run on the property
  *
- * @interface Tool
+ * @interface SideEffect
  * @property {string} prop - A string property.
  * @property {(message: ModelMessage) => Promise<void>} run - A function that takes a ModelMessage and returns
  *   a Promise that resolves to void.
  */
-export interface Tool {
+export interface SideEffect<T = unknown> {
 	prop: string;
-
-	run(message: ModelMessage): Promise<void>;
+	run(value: T): Promise<void>;
 }
 
 /**
@@ -49,7 +61,8 @@ export type ReasonableTemperature = 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 
  * @template OutMessage - The output message type.
  */
 export interface AgentOptions<
-	InMessage extends ModelMessage = ModelMessage,
+	Store extends StoreAdapter = StoreAdapter,
+	Message extends ModelMessage = ModelMessage,
 	OutMessage extends ModelMessage = ModelMessage
 > {
 	/**
@@ -58,7 +71,7 @@ export interface AgentOptions<
 	 * @param {InMessage} message - The input message.
 	 * @returns {Promise<Message>} - A Promise that resolves to the transformed message.
 	 */
-	before?<Message>(message: InMessage): Promise<Message>;
+	before?<InMessage extends Message>(message: Message): Promise<InMessage>;
 
 	/**
 	 * A function that transforms the output message after it has been processed by the model.
@@ -66,7 +79,7 @@ export interface AgentOptions<
 	 * @param {OutMessage} message - The output message.
 	 * @returns {Promise<Message>} - A Promise that resolves to the transformed message.
 	 */
-	after?<Message>(message: OutMessage): Promise<Message>;
+	after?<OriginalMessage extends Message>(message: OriginalMessage): Promise<OutMessage>;
 
 	/**
 	 * A function that runs after the Agent has processed the output message.
@@ -78,9 +91,11 @@ export interface AgentOptions<
 	finally?(messageId: string, message: OutMessage): Promise<string>;
 
 	/**
-	 * An array of tools that the Agent can use.
+	 * An array of sideEffects that the Agent can use.
 	 */
-	tools?: Tool[];
+	sideEffects?: SideEffect[];
+
+	store?: Store;
 }
 
 /**
