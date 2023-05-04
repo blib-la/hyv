@@ -10,7 +10,6 @@ Hyv is a modular software development library centered on AI collaboration that 
 - 🚀 **Streamlined Task Management**: Hyv enhances your projects with efficient task distribution and coordination, simplifying resource utilization.
 - 🧩 **Flexible Modular Design**: Hyv's modular architecture allows seamless integration of various sideEffects, models, and adapters, providing a customizable solution.
 - 🌐 **Broad Compatibility**: Designed for various technologies, Hyv is a versatile option for developers working with diverse platforms and frameworks.
-- 📚 **Comprehensive Documentation**: Hyv includes detailed documentation and examples, aiding in understanding its features and effective implementation in projects.
 - 🌱 **Community-Driven**: Hyv is developed and maintained by a devoted community of developers, continually working to refine and extend its capabilities.
 
 ## Usage
@@ -22,63 +21,13 @@ npm install "@hyv/core" "@hyv/openai" "@hyv/store"
 ```
 
 ```typescript
-import process from "node:process";
-import { Agent, createInstruction, sequence } from "@hyv/core";
-import type { ModelMessage } from "@hyv/core";
-import { DallEModelAdapter, GPTModelAdapter } from "@hyv/openai";
-import type { DallEOptions, GPT3Options } from "@hyv/openai";
-import { createFileWriter, FSAdapter } from "@hyv/store";
-import { config } from "dotenv";
-import { Configuration, OpenAIApi } from "openai";
+import { Agent, sequence } from "@hyv/core";
+import { GPTModelAdapter } from "@hyv/openai";
 
-config();
-
-export const openai = new OpenAIApi(
-  new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  })
-);
-
-const dir = "out/book";
-const store = new FSAdapter(dir);
-const fileWriter = createFileWriter(dir);
-const imageWriter = createFileWriter(dir, "base64");
-const book: ModelMessage & { title: string } = {
-  title: "The future and beyond",
-};
-
-const author = new Agent(
-  new GPTModelAdapter<GPT3Options>({
-    model: "gpt-3.5-turbo",
-    temperature: 0.5,
-    maxTokens: 2048,
-    historySize: 1,
-    systemInstruction: createInstruction(
-      "Scientific Author",
-      "Write a story and describe required illustrations in detail",
-      {
-        illustrations: "string[]",
-        files: [{ path: "string", content: "markdown" }],
-      }
-    ),
-  }, openai),
-  store,
-  { sideEffects: [fileWriter] }
-);
-
-const illustrator = new Agent(
-  new DallEModelAdapter<DallEOptions>({
-    size: "1024x1024",
-    n: 1,
-  }, openai),
-  store,
-  { sideEffects: [imageWriter] }
-);
+const agent = new Agent(new GPTModelAdapter());
 
 try {
-  const messageId = await store.set(book);
-  await sequence(messageId, [author, illustrator]);
-  console.log("Done");
+  await sequence({ question: "What is life?" }, [agent]);
 } catch (error) {
   console.error("Error:", error);
 }
