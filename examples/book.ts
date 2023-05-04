@@ -2,10 +2,10 @@ import { Agent, createFileWriter, createInstruction, minify, sequence } from "@h
 import { DallEModelAdapter, GPTModelAdapter } from "@hyv/openai";
 import slugify from "@sindresorhus/slugify";
 
-const title = "Greg the Hero";
-const genre = "Adventure";
+const title = "Utopia";
+const genre = "Science Fiction";
 const illustrationStyle = "flat";
-const context = "Greg writes the best AI libraries";
+const context = "In a world where things are different";
 
 const dir = `out/stories/${slugify(title)}`;
 const fileWriter = createFileWriter(dir);
@@ -35,7 +35,7 @@ function getReadingTime(text: string) {
  * @param text
  */
 function getWordCount(text: string) {
-	return text.split(" ").length;
+	return text.split(" ").filter(Boolean).length;
 }
 
 // Give the agent some tools
