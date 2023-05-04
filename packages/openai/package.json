@@ -1,6 +1,6 @@
 {
   "name": "@hyv/openai",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "license": "AGPL",
   "type": "module",
   "homepage": "https://github.com/failfa-st/hyv/",
@@ -41,10 +41,10 @@
     "clean": "npx rimraf dist"
   },
   "dependencies": {
-    "@hyv/core": "0.0.3",
-    "type-fest": "3.9.0",
+    "@hyv/core": "^0.1.0",
     "dotenv": "16.0.3",
-    "openai": "3.2.1"
+    "openai": "3.2.1",
+    "type-fest": "3.9.0"
   },
   "publishConfig": {
     "access": "public"
