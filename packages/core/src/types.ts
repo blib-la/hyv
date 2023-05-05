@@ -71,7 +71,7 @@ export interface AgentOptions<
 	 * @param {InMessage} message - The input message.
 	 * @returns {Promise<Message>} - A Promise that resolves to the transformed message.
 	 */
-	before?<InMessage extends Message>(message: Message): Promise<InMessage>;
+	before?(message: ModelMessage): Promise<ModelMessage>;
 
 	/**
 	 * A function that transforms the output message after it has been processed by the model.
@@ -79,7 +79,7 @@ export interface AgentOptions<
 	 * @param {OutMessage} message - The output message.
 	 * @returns {Promise<Message>} - A Promise that resolves to the transformed message.
 	 */
-	after?<OriginalMessage extends Message>(message: OriginalMessage): Promise<OutMessage>;
+	after?(message: ModelMessage): Promise<ModelMessage>;
 
 	/**
 	 * A function that runs after the Agent has processed the output message.
@@ -88,7 +88,7 @@ export interface AgentOptions<
 	 * @param {OutMessage} message - The output message that has been processed.
 	 * @returns {Promise<string>} - A Promise that resolves to the ID of the next message to be processed.
 	 */
-	finally?(messageId: string, message: OutMessage): Promise<string>;
+	finally?(messageId: string, message: ModelMessage): Promise<string>;
 
 	/**
 	 * An array of sideEffects that the Agent can use.
