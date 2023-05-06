@@ -10,9 +10,13 @@
   "private": true,
   "scripts": {
     "demo:auto-book": "ts-node-esm examples/auto-book.ts",
+    "demo:auto-tweet": "ts-node-esm examples/auto-tweet.ts",
     "demo:book": "ts-node-esm examples/book.ts",
     "demo:simple": "ts-node-esm examples/simple.ts",
+    "demo:stable-diffusion": "ts-node-esm examples/stable-diffusion.ts",
+    "demo:dall-e": "ts-node-esm examples/dall-e.ts",
     "prebuild": "npm run clean",
+    "watch": "npx lerna run watch --parallel",
     "build": "npx lerna run build",
     "clean": "npx lerna run clean",
     "ncu": "npx npm-check-updates -u --dep=prod,dev",

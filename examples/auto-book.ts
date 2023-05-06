@@ -1,9 +1,10 @@
 import path from "node:path";
 
-import type { FileContentWithPath, SideEffect } from "@hyv/core";
+import type { FileContentWithPath, SideEffect, ModelMessage } from "@hyv/core";
 import { Agent, createInstruction, minify, sequence, createFileWriter, writeFile } from "@hyv/core";
 import type { GPT4Options } from "@hyv/openai";
-import { DallEModelAdapter, GPTModelAdapter } from "@hyv/openai";
+import { GPTModelAdapter } from "@hyv/openai";
+import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
 
 /**
  * Creates a file writer for writing output files and add reading time.
@@ -41,20 +42,32 @@ const imageWriter = createFileWriter(dir, "base64");
 const bookAgent = new Agent(
 	new GPTModelAdapter<GPT4Options>({
 		model: "gpt-4",
+		maxTokens: 1024,
 		systemInstruction: createInstruction(
-			"Book Agent",
-			"You propose interesting UNIQUE random stories, reason decisions and reflect on reasons.",
+			"Competitive Book Agent",
+			minify`
+			You think deeply.
+			You reason your thoughts.
+			You reflect on your reasons.
+			You make a decision based on your reflection.
+			You provide instructions based on your decision.
+			`,
 			{
-				reasoning: "string",
-				reflection: "string",
-				title: "string",
-				context: "string",
-				genre: "string",
-				wordCount: "number",
-				coverImage: "boolean",
-				imageCount: "number",
-				chapterCount: "number",
-				illustrationStyle: "string",
+				thought: "detailed string",
+				reasoning: "detailed string",
+				reflection: "detailed string",
+				decision: "detailed string",
+				instructions: {
+					title: "string",
+					context: "detailed string",
+					genre: "string",
+					wordCount: "number",
+					coverImage: "boolean",
+					imageCount: "number",
+					chapterCount: "number",
+					maturityRating: "string",
+					illustrationStyle: "keywords, comma separated",
+				},
 			}
 		),
 	})
@@ -109,26 +122,36 @@ function getWordCount(text: string) {
 }
 
 const author = new Agent(
-	new GPTModelAdapter({
+	new GPTModelAdapter<GPT4Options>({
 		model: "gpt-4",
 		maxTokens: 4096,
 		systemInstruction: createInstruction(
 			"Author named Morgan Casey Patel",
 			minify`\
-			    You write stories, reason decisions and reflect on reasons.
+				You follow instructions closely (especially word count)!
+				You think deeply.
+				You reason your thoughts.
+				You reflect on your reasons.
+				You make a decision based on your reflection.
+				You write a story and image-instructions based on your decision.
+				**Acceptance Criteria**:
 				1. Write a UNIQUE bestseller story. words:length(~wordCount), chapters:length(=chapterCount), images:length(=imageCount + =coverImage)!
 				2. Write VALID Markdown with IMAGE_TAGS:length(=imageCount + =coverImage)!
 				3. Use EXCLUSIVELY \\n for new lines in Markdown!
 				4. INLINE all images (as VALID Markdown) **within the story**!
-				5. Add a prompt(+illustrationStyle ?coverImage) + alt-text for each image.
+				5. Add a prompt(++illustrationStyle!! ?coverImage) + alt-text for each image.
+				6. Add a negativePrompt for each image.
 				`,
 			{
-				reasoning: "string",
-				reflection: "string",
+				thought: "detailed string",
+				reasoning: "detailed string",
+				reflection: "detailed string",
+				decision: "detailed string",
 				images: [
 					{
-						path: "assets/[filename].jpg",
-						prompt: "detailed string",
+						path: "assets/story/[filename].jpg",
+						prompt: "vey detailed description + keywords, comma separated",
+						negativePrompt: "keywords, comma separated",
 						alt: "concise string",
 					},
 				],
@@ -138,6 +161,16 @@ const author = new Agent(
 	}),
 	{
 		sideEffects: [fileWriter],
+		async before(message: ModelMessage & { instructions: Record<string, unknown> }) {
+			return {
+				...message,
+				instructions: {
+					...message.instructions,
+					promptDefaults: "absurdres, 4k, 8k, masterpiece",
+					negativePromptDefaults: "worst quality, bad quality",
+				},
+			};
+		},
 		async after(message) {
 			return {
 				...message,
@@ -152,15 +185,26 @@ const author = new Agent(
 	}
 );
 
-const illustrator = new Agent(new DallEModelAdapter(), { sideEffects: [imageWriter] });
+const illustrator = new Agent(
+	new Automatic1111ModelAdapter({
+		seed: Math.floor(Math.random() * 1_000_000) + 1,
+		model: "Undertone_v1.safetensors",
+	}),
+	{
+		sideEffects: [imageWriter],
+	}
+);
 
 try {
 	await sequence(
 		{
-			wordCount: "400",
-			chapterCount: "2",
-			imageCount: "2",
-			coverImage: "true",
+			competitionRules: {
+				wordCount: "==1000",
+				chapterCount: "==1",
+				imageCount: "~3",
+				coverImage: "true",
+				maturityRating: "rating (e.g. pg, pg-13)",
+			},
 		},
 		[bookAgent, author, illustrator]
 	);
