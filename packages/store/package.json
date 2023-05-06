@@ -34,6 +34,7 @@
     }
   },
   "scripts": {
+    "watch": "rollup -cw",
     "build": "rollup -c",
     "clean": "npx rimraf dist"
   },
