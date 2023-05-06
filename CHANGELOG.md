@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/failfa-st/hyv/compare/v0.2.0...v0.3.0) (2023-05-06)
+
+### Features
+
+- add stable diffusion adapter
+  ([371ebed](https://github.com/failfa-st/hyv/commit/371ebed9bdc3130416047b46058fd6787c5b38a6))
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See
+[Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
 # [0.2.0](https://github.com/failfa-st/hyv/compare/v0.0.3...v0.2.0) (2023-05-04)
 
 ### Bug Fixes
