@@ -60,24 +60,20 @@ export type ReasonableTemperature = 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 
  * @template InMessage - The input message type.
  * @template OutMessage - The output message type.
  */
-export interface AgentOptions<
-	Store extends StoreAdapter = StoreAdapter,
-	Message extends ModelMessage = ModelMessage,
-	OutMessage extends ModelMessage = ModelMessage
-> {
+export interface AgentOptions<Store extends StoreAdapter = StoreAdapter> {
 	/**
 	 * A function that transforms the input message before it is passed to the model.
 	 *
-	 * @param {InMessage} message - The input message.
-	 * @returns {Promise<Message>} - A Promise that resolves to the transformed message.
+	 * @param {ModelMessage} message - The input message.
+	 * @returns {Promise<ModelMessage>} - A Promise that resolves to the transformed message.
 	 */
 	before?(message: ModelMessage): Promise<ModelMessage>;
 
 	/**
 	 * A function that transforms the output message after it has been processed by the model.
 	 *
-	 * @param {OutMessage} message - The output message.
-	 * @returns {Promise<Message>} - A Promise that resolves to the transformed message.
+	 * @param {ModelMessage} message - The output message.
+	 * @returns {Promise<ModelMessage>} - A Promise that resolves to the transformed message.
 	 */
 	after?(message: ModelMessage): Promise<ModelMessage>;
 
@@ -85,7 +81,7 @@ export interface AgentOptions<
 	 * A function that runs after the Agent has processed the output message.
 	 *
 	 * @param {string} messageId - The ID of the message that has been processed.
-	 * @param {OutMessage} message - The output message that has been processed.
+	 * @param {ModelMessage} message - The output message that has been processed.
 	 * @returns {Promise<string>} - A Promise that resolves to the ID of the next message to be processed.
 	 */
 	finally?(messageId: string, message: ModelMessage): Promise<string>;

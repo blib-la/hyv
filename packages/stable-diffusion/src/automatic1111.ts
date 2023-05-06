@@ -32,7 +32,7 @@ export class Automatic1111ModelAdapter<Message extends ModelMessage = ModelMessa
 	async assign(task: Message & ImageMessage): Promise<Message> {
 		try {
 			const files = await Promise.all(
-				task.images.map(async ({ alt, path: imagePath, ...image }) => {
+				task.images.map(async ({ alt: _, path: imagePath, ...image }) => {
 					const { model: sdModelCheckpoint, ...options } = this.#options;
 					await axios.post([this.#root, "sdapi/v1/options"].join("/"), {
 						...decamelizeKeys({ sdModelCheckpoint }),
