@@ -1,9 +1,10 @@
 import type { ModelAdapter, ModelMessage, ReasonableTemperature } from "@hyv/core";
-import { createInstruction, extractCode } from "@hyv/core";
+import { extractCode } from "@hyv/utils";
 import type { ChatCompletionRequestMessage, CreateChatCompletionRequest, OpenAIApi } from "openai";
 
 import { defaultOpenAI } from "./config.js";
 import type { GPT3Options, GPTOptions } from "./types.js";
+import { createInstruction } from "./utils.js";
 
 const defaultOptions: GPT3Options = {
 	temperature: 0.5,

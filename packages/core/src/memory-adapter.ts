@@ -43,3 +43,5 @@ export class MemoryAdapter implements StoreAdapter {
 		throw new Error(`Error retrieving message with ID ${messageId}`);
 	}
 }
+
+export const memoryStore = new MemoryAdapter();

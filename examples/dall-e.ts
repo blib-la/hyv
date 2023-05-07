@@ -1,5 +1,6 @@
-import { Agent, createFileWriter, sequence } from "@hyv/core";
+import { Agent, sequence } from "@hyv/core";
 import { DallEModelAdapter } from "@hyv/openai";
+import { createFileWriter } from "@hyv/utils";
 
 const imageWriter = createFileWriter(`out/dall-e/${Date.now()}`, "base64");
 

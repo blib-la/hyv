@@ -1,13 +1,8 @@
-import { MemoryAdapter } from "./memory-adapter.js";
-import type {
-	AgentOptions,
-	ModelAdapter,
-	ModelMessage,
-	StoreAdapter,
-	SideEffect,
-} from "./types.js";
+import type { SideEffect } from "@hyv/utils";
 
-export const memoryStore = new MemoryAdapter();
+import type { MemoryAdapter } from "./memory-adapter.js";
+import { memoryStore } from "./memory-adapter.js";
+import type { AgentOptions, ModelAdapter, ModelMessage, StoreAdapter } from "./types.js";
 
 /**
  * Represents an agent that manages a model, a store, and a set of sideEffects.

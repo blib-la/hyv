@@ -40,6 +40,7 @@
     "clean": "npx rimraf dist"
   },
   "dependencies": {
+    "@hyv/utils": "^0.3.0",
     "lru-cache": "9.1.1",
     "nanoid": "4.0.2"
   },

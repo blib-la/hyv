@@ -1,5 +1,5 @@
 {
-  "name": "@hyv/stable-diffusion",
+  "name": "@hyv/utils",
   "version": "0.3.0",
   "license": "AGPL",
   "type": "module",
@@ -22,18 +22,14 @@
     "openi",
     "gpt",
     "llama",
-    "alpacca",
-    "stable diffusion",
-    "automatic1111"
+    "alpacca"
   ],
   "main": "index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./index.js"
-    }
+  ".": {
+    "types": "./dist/index.d.ts",
+    "default": "./index.js"
   },
   "files": [
     "dist"
@@ -42,12 +38,6 @@
     "watch": "rollup -cw",
     "build": "rollup -c",
     "clean": "npx rimraf dist"
-  },
-  "dependencies": {
-    "@hyv/core": "^0.3.0",
-    "@hyv/utils": "^0.3.0",
-    "axios": "1.4.0",
-    "decamelize-keys": "2.0.1"
   },
   "publishConfig": {
     "access": "public"

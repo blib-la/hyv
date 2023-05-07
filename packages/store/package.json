@@ -43,6 +43,7 @@
   ],
   "dependencies": {
     "@hyv/core": "^0.3.0",
+    "@hyv/utils": "^0.3.0",
     "nanoid": "4.0.2"
   },
   "publishConfig": {

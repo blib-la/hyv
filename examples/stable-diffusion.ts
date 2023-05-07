@@ -1,5 +1,5 @@
-import { Agent, createFileWriter, sequence } from "@hyv/core";
 import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
+import { Agent, createFileWriter, sequence } from "@hyv/utils";
 
 const imageWriter = createFileWriter(`out/stable-diffusion/${Date.now()}`, "base64");
 

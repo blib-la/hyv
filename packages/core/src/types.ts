@@ -1,15 +1,4 @@
-/**
- * Represents a file with its associated content and path.
- *
- * @interface FileContentWithPath
- * @property {string} path - The path to the file.
- * @property {string} content - The content of the file.
- */
-export interface FileContentWithPath {
-	path: string;
-
-	content: string;
-}
+import type { FileContentWithPath, SideEffect } from "@hyv/utils";
 
 /**
  * Represents a model message with an optional array of files.
@@ -32,19 +21,6 @@ export interface ModelMessage extends Record<string, unknown> {
  */
 export interface ModelAdapter<Message extends ModelMessage> {
 	assign(task: Message): Promise<Message>;
-}
-
-/**
- * Represents a side effect with a property and a run method. The side effect is run on the property
- *
- * @interface SideEffect
- * @property {string} prop - A string property.
- * @property {(message: ModelMessage) => Promise<void>} run - A function that takes a ModelMessage and returns
- *   a Promise that resolves to void.
- */
-export interface SideEffect<T = unknown> {
-	prop: string;
-	run(value: T): Promise<void>;
 }
 
 /**

@@ -1,9 +1,10 @@
 import type { ModelMessage } from "@hyv/core";
-import { Agent, createInstruction, minify, sequence, createFileWriter } from "@hyv/core";
+import { Agent, sequence } from "@hyv/core";
 import type { GPT4Options } from "@hyv/openai";
-import { GPTModelAdapter } from "@hyv/openai";
+import { createInstruction, GPTModelAdapter } from "@hyv/openai";
 import type { ImageMessage } from "@hyv/stable-diffusion";
 import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
+import { minify, createFileWriter } from "@hyv/utils";
 
 const dir = `out/auto-tweet/${Date.now()}`;
 const fileWriter = createFileWriter(dir);

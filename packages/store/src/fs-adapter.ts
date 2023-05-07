@@ -3,7 +3,7 @@ import path from "node:path";
 import process from "node:process";
 
 import type { ModelMessage, StoreAdapter } from "@hyv/core";
-import { writeFile } from "@hyv/core";
+import { writeFile } from "@hyv/utils";
 import { nanoid } from "nanoid";
 
 /**

@@ -1,5 +1,6 @@
-import { Agent, createFileWriter, createInstruction, minify, sequence } from "@hyv/core";
-import { DallEModelAdapter, GPTModelAdapter } from "@hyv/openai";
+import { Agent, sequence } from "@hyv/core";
+import { createInstruction, DallEModelAdapter, GPTModelAdapter } from "@hyv/openai";
+import { createFileWriter, minify } from "@hyv/utils";
 import slugify from "@sindresorhus/slugify";
 
 const title = "Utopia";
