@@ -2,17 +2,18 @@ import type { ModelMessage } from "@hyv/core";
 import { Agent, createInstruction, minify, sequence, createFileWriter } from "@hyv/core";
 import type { GPT4Options } from "@hyv/openai";
 import { GPTModelAdapter } from "@hyv/openai";
+import type { ImageMessage } from "@hyv/stable-diffusion";
 import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
 
 const dir = `out/auto-tweet/${Date.now()}`;
 const fileWriter = createFileWriter(dir);
 const imageWriter = createFileWriter(dir, "base64");
 
-const bookAgent = new Agent(
+const termAgent = new Agent(
 	new GPTModelAdapter<GPT4Options>({
 		model: "gpt-4",
 		maxTokens: 1024,
-		temperature: 0.7,
+		temperature: 0.8,
 		systemInstruction: createInstruction(
 			"mastermind, random term creator, very funny, hilarious",
 			minify`
@@ -21,7 +22,7 @@ const bookAgent = new Agent(
 			Reflect on your reasons.
 			Provide several ideas based on your reasons.
 			Decide on ONE of your your ideas.
-			Provide two absolutely random, uncommon and unrelated terms and pair them in a **RIDICULOUS comparison**.
+			Provide two absolutely random, uncommon and unrelated terms and pair them.
 			NEVER use terms from the {{example}}!
 			`,
 			{
@@ -29,7 +30,7 @@ const bookAgent = new Agent(
 				reasoning: "very detailed elaborative string",
 				reflection: "very detailed elaborative string",
 				ideas: ["{{comparison}}"],
-				decision: "very detailed elaborative string",
+				decision: "very thoughtful reflective and detailed elaborative string",
 				instructions: {
 					term1: "one word",
 					term2: "one word",
@@ -41,7 +42,7 @@ const bookAgent = new Agent(
 	})
 );
 
-const author = new Agent(
+const tweeter = new Agent(
 	new GPTModelAdapter<GPT4Options>({
 		model: "gpt-4",
 		maxTokens: 1024,
@@ -57,10 +58,9 @@ const author = new Agent(
 				Provide meta-data for images, based on your tweet.
 				**Acceptance Criteria**:
 				1. Write a UNIQUE hilarious tweet WITH characters:length(~{{characterCount}}) AND hashtags:length(~{{hashtagCount}}), emojis:length(~{{emojiCount}}), images:length(={{imageCount}})!
-				2. Tweet compares 2 terms and add proof/reason!!
-				3. Add a prompt(+{{illustrationStyle}})!
-				4. Add a negativePrompt for each image!
-				5. Add an alt text for each image!
+				2. Tweet compares 2 terms and adds a valid reason!!
+				3. Add a prompt(+{{illustrationStyle}}),  negativePrompt for each image!
+				4. Add an alt text for each image!
 				`,
 			{
 				thought: "very detailed elaborative string",
@@ -73,8 +73,8 @@ const author = new Agent(
 				images: [
 					{
 						path: "[filename].jpg",
-						prompt: "vey detailed description(term1 + term2) + keywords + {{illustrationStyle}}, comma separated",
-						negativePrompt: "keywords, comma separated",
+						prompt: "description(~{{term1}} + ~{{term2}}) + keywords(comma separated) + {{illustrationStyle}}",
+						negativePrompt: "keywords(comma separated), bad quality, blurry",
 						alt: "concise string",
 					},
 				],
@@ -92,15 +92,15 @@ const author = new Agent(
 		sideEffects: [fileWriter],
 		async before(message: ModelMessage & { instructions: Record<string, unknown> }) {
 			return {
-				...message,
+				// ...message,
 				instructions: {
 					...message.instructions,
 					imageCount: 1,
 					characterCount: 250,
 					hashtagCount: "<=5",
 					emojiCount: "<=3",
-					style: "slapstick comedy, dad jokes, fun facts",
-					illustrationStyle: "flat illustration, simple shapes, simplified",
+					style: "slapstick comedy, fun facts",
+					illustrationStyle: "flat illustration",
 				},
 			};
 		},
@@ -109,20 +109,35 @@ const author = new Agent(
 
 const illustrator = new Agent(new Automatic1111ModelAdapter(), {
 	sideEffects: [imageWriter],
+
+	async before(message: ModelMessage & ImageMessage) {
+		return {
+			...message,
+			images: message.images.map(image => ({
+				...image,
+				prompt:
+					image.prompt +
+					", vector art, simplified, vector illustration, absurdres, masterpiece, 4k, 8k, best quality",
+				negativePrompt:
+					image.negativePrompt +
+					", blurry, lowres,  worst quality, bad quality, deformed",
+			})),
+		};
+	},
 });
 
 try {
 	await sequence(
 		{
-			ideaCount: "2-4",
+			ideaCount: "5-8",
 			example: {
-				term1: "pudding",
-				term2: "microphone",
-				comparator: "is louder than",
-				comparison: "pudding is louder than a microphone",
+				term1: "running",
+				term2: "tambourine",
+				comparator: "is better than",
+				comparison: "running is better than a tambourine",
 			},
 		},
-		[bookAgent, author, illustrator]
+		[termAgent, tweeter, illustrator]
 	);
 	console.log("Done");
 } catch (error) {
