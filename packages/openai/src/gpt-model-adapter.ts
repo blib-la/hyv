@@ -1,4 +1,4 @@
-import type { ModelAdapter, ModelMessage } from "@hyv/core";
+import type { ModelAdapter, ModelMessage, ReasonableTemperature } from "@hyv/core";
 import { createInstruction, extractCode } from "@hyv/core";
 import type { ChatCompletionRequestMessage, CreateChatCompletionRequest, OpenAIApi } from "openai";
 
@@ -117,15 +117,15 @@ export class GPTModelAdapter<Options extends GPTOptions = GPTOptions>
 		return this.#options.temperature;
 	}
 
-	set temperature(temperature: number) {
-		this.#options.maxTokens = temperature;
+	set temperature(temperature: ReasonableTemperature) {
+		this.#options.temperature = temperature;
 	}
 
 	get historySize() {
-		return this.#options.temperature;
+		return this.#options.historySize;
 	}
 
 	set historySize(historySize: number) {
-		this.#options.maxTokens = historySize;
+		this.#options.historySize = historySize;
 	}
 }
