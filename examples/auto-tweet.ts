@@ -41,7 +41,7 @@ const termAgent = new Agent(
 		),
 	}),
 	{
-		verbose: true,
+		verbosity: 1,
 	}
 );
 
@@ -92,7 +92,7 @@ const tweeter = new Agent(
 		),
 	}),
 	{
-		verbose: true,
+		verbosity: 1,
 		sideEffects: [fileWriter],
 		async before(message: ModelMessage & { instructions: Record<string, unknown> }) {
 			return {
@@ -112,7 +112,6 @@ const tweeter = new Agent(
 );
 
 const illustrator = new Agent(new Automatic1111ModelAdapter(), {
-	verbose: true,
 	sideEffects: [imageWriter],
 	async before(message: ModelMessage & ImageMessage) {
 		return {

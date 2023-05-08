@@ -2,7 +2,6 @@ import path from "node:path";
 
 import type { ModelMessage } from "@hyv/core";
 import { Agent, sequence } from "@hyv/core";
-import type { GPT4Options } from "@hyv/openai";
 import { createInstruction, GPTModelAdapter } from "@hyv/openai";
 import type { FilesMessage } from "@hyv/stable-diffusion";
 import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
@@ -43,7 +42,7 @@ const fileWriter = createFileWriterWithReadingTime(dir);
 const imageWriter = createFileWriter(dir, "base64");
 
 const bookAgent = new Agent(
-	new GPTModelAdapter<GPT4Options>({
+	new GPTModelAdapter<"gpt-4">({
 		model: "gpt-4",
 		maxTokens: 1024,
 		systemInstruction: createInstruction(
@@ -125,7 +124,7 @@ function getWordCount(text: string) {
 }
 
 const author = new Agent(
-	new GPTModelAdapter({
+	new GPTModelAdapter<"gpt-4">({
 		model: "gpt-4",
 		maxTokens: 4096,
 		systemInstruction: createInstruction(

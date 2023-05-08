@@ -60,9 +60,9 @@ export interface AgentOptions<Store extends StoreAdapter = StoreAdapter> {
 	store?: Store;
 
 	/**
-	 * Enables verbose logging
+	 * Enables verbose logging to a certain degree
 	 */
-	verbose?: boolean;
+	verbosity?: number;
 }
 
 /**

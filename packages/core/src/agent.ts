@@ -1,4 +1,5 @@
 import type { SideEffect } from "@hyv/utils";
+import chalk from "chalk";
 
 import type { MemoryAdapter } from "./memory-adapter.js";
 import { memoryStore } from "./memory-adapter.js";
@@ -16,7 +17,7 @@ import type { AgentOptions, ModelAdapter, ModelMessage, StoreAdapter } from "./t
  * @property #before - A function that runs before the model.
  * @property #after - A function that runs after the model.
  * @property #finally - A function that runs when the process is done.
- * @property verbose - Enables verbose logging.
+ * @property verbosity - Enables verbose logging to a certain degree.
  */
 export class Agent<
 	Model extends ModelAdapter<ModelMessage, ModelMessage> = ModelAdapter<
@@ -31,7 +32,7 @@ export class Agent<
 	#before: AgentOptions["before"] = async message => message;
 	#after: AgentOptions["after"] = async message => message;
 	#finally: AgentOptions["finally"] = async messageId => messageId;
-	private readonly verbose: boolean = false;
+	private readonly verbosity: number = 0;
 	/**
 	 * Creates an instance of the Agent class.
 	 *
@@ -42,7 +43,7 @@ export class Agent<
 		this.#model = model;
 
 		this.#store = options.store ?? memoryStore;
-		this.verbose = options.verbose ?? false;
+		this.verbosity = options.verbosity ?? 0;
 
 		if (options.sideEffects) {
 			this.#sideEffects = options.sideEffects;
@@ -70,33 +71,33 @@ export class Agent<
 	 * @returns - A Promise that resolves to the next messageId.
 	 */
 	async #assign(inputMessage: ModelMessage) {
-		if (this.verbose) {
+		if (this.verbosity > 1) {
 			console.log("Input Message:");
 			console.log(inputMessage);
 		}
 
-		const preparedMessage = await this.#before(inputMessage);
-		if (this.verbose) {
-			console.log("Prepared Message:");
-			console.log(preparedMessage);
+		const modifiedInput = await this.#before(inputMessage);
+		if (this.verbosity > 1) {
+			console.log("Modified Input Message:");
+			console.log(modifiedInput);
 		}
 
-		const message = await this.#model.assign(preparedMessage);
-		if (this.verbose) {
-			console.log("Message:");
-			console.log(message);
+		const outputMessage = await this.#model.assign(modifiedInput);
+		if (this.verbosity > 1) {
+			console.log("Output Message:");
+			console.log(outputMessage);
 		}
 
-		const modifiedMessage = await this.#after(message);
-		if (this.verbose) {
-			console.log("Modified Message:");
-			console.log(modifiedMessage);
+		const modifiedOutputMessage = await this.#after(outputMessage);
+		if (this.verbosity > 1) {
+			console.log("Modified Output Message:");
+			console.log(modifiedOutputMessage);
 		}
 
-		Object.entries(modifiedMessage).forEach(([prop, value]) => {
+		Object.entries(modifiedOutputMessage).forEach(([prop, value]) => {
 			const sideEffect = this.findSideEffect(prop);
 			if (sideEffect) {
-				if (this.verbose) {
+				if (this.verbosity > 0) {
 					console.log(`Using side effect on: ${prop}`);
 				}
 
@@ -104,14 +105,18 @@ export class Agent<
 			}
 		});
 
-		if (this.verbose) {
-			Object.entries(modifiedMessage).forEach(([key, value]) => {
-				console.log(`${key}: ${value}`);
+		if (this.verbosity > 0) {
+			Object.entries(modifiedOutputMessage).forEach(([key, value], index) => {
+				console.log(
+					`${index === 0 ? "\n" : ""}${chalk.bgYellow.black(
+						` ${key} `.toLocaleUpperCase()
+					)}\n\n${typeof value === "object" ? JSON.stringify(value, null, 4) : value}\n`
+				);
 			});
 		}
 
-		const messageId = await this.#store.set(modifiedMessage);
-		return this.#finally(messageId, modifiedMessage);
+		const messageId = await this.#store.set(modifiedOutputMessage);
+		return this.#finally(messageId, modifiedOutputMessage);
 	}
 
 	/**
