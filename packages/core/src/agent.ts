@@ -70,9 +70,29 @@ export class Agent<
 	 * @returns - A Promise that resolves to the next messageId.
 	 */
 	async #assign(inputMessage: ModelMessage) {
+		if (this.verbose) {
+			console.log("Input Message:");
+			console.log(inputMessage);
+		}
+
 		const preparedMessage = await this.#before(inputMessage);
+		if (this.verbose) {
+			console.log("Prepared Message:");
+			console.log(preparedMessage);
+		}
+
 		const message = await this.#model.assign(preparedMessage);
+		if (this.verbose) {
+			console.log("Message:");
+			console.log(message);
+		}
+
 		const modifiedMessage = await this.#after(message);
+		if (this.verbose) {
+			console.log("Modified Message:");
+			console.log(modifiedMessage);
+		}
+
 		Object.entries(modifiedMessage).forEach(([prop, value]) => {
 			const sideEffect = this.findSideEffect(prop);
 			if (sideEffect) {
@@ -85,7 +105,7 @@ export class Agent<
 		});
 
 		if (this.verbose) {
-			Object.entries(([key, value]) => {
+			Object.entries(modifiedMessage).forEach(([key, value]) => {
 				console.log(`${key}: ${value}`);
 			});
 		}
