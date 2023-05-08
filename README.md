@@ -2,6 +2,7 @@
 
 <p align="center"><img src="assets/logo.png" alt="logo" width="200"/></p>
 
+[![Discord](https://img.shields.io/discord/1091306623819059300?color=7289da&label=Discord&logo=discord&logoColor=fff&style=for-the-badge)](https://discord.com/invite/m3TBB9XEkb)
 
 Hyv is a modular software development library centered on AI collaboration that streamlines the development process by breaking complex tasks into manageable pieces. Its adaptable design works with various technologies, making it a versatile choice for developers. By fostering efficient task management through AI collaboration and offering extensive documentation, Hyv represents a paradigm shift in AI-assisted software development.
 
