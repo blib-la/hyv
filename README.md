@@ -40,7 +40,7 @@ try {
 }
 ```
 
-👇 While we develop this library, have fun reading this story written by one of our Hyv authors:
+👇 While we develop this library, have fun reading this story suggested, written and illustrated by three Hyv agents:
 
 <br clear="both"/>
 
