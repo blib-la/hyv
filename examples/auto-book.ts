@@ -12,9 +12,9 @@ import type { FileContentWithPath, SideEffect } from "@hyv/utils";
 /**
  * Creates a file writer for writing output files and add reading time.
  *
- * @param {string} dir - The directory where the output files should be written.
- * @param {BufferEncoding} [encoding="utf-8"] - the encoding that should vbe used when writing files
- * @returns {SideEffect} - The file writer instance.
+ * @param dir - The directory where the output files should be written.
+ * @param [encoding="utf-8"] - the encoding that should vbe used when writing files
+ * @returns - The file writer instance.
  */
 export function createFileWriterWithReadingTime(
 	dir: string,
@@ -81,8 +81,8 @@ const bookAgent = new Agent(
  * alternating between left and right alignment.
  * Additionally, it ensures the headings are separated from the images.
  *
- * @param {string} inputText - The input markdown text.
- * @returns {string} - The modified Markdown text with floating images and separated headings.
+ * @param inputText - The input markdown text.
+ * @returns - The modified Markdown text with floating images and separated headings.
  */
 function makeFloatingImages(inputText: string) {
 	let count = 0;
@@ -191,7 +191,6 @@ const author = new Agent(
 const illustrator = new Agent(
 	new Automatic1111ModelAdapter({
 		seed: Math.floor(Math.random() * 1_000_000) + 1,
-		model: "Undertone_v1.safetensors",
 	}),
 	{
 		sideEffects: [imageWriter],
