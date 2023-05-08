@@ -46,33 +46,34 @@ const bookAgent = new Agent(
 		model: "gpt-4",
 		maxTokens: 1024,
 		systemInstruction: createInstruction(
-			"Competitive Book Agent",
+			"Book Agent, Trend Expert",
 			minify`
-			You think deeply.
-			You reason your thoughts.
-			You reflect on your reasons.
-			You make a decision based on your reflection.
-			You provide instructions based on your decision.
+			Think deeply about the task,
+			precisely reason your thoughts,
+			critically reflect on your reasons,
+			make a well defined decision based on your reflection,
+			provide instructions based on your decision.
 			`,
 			{
-				thought: "detailed string",
-				reasoning: "detailed string",
-				reflection: "detailed string",
-				decision: "detailed string",
+				thought: "very detailed elaborative string",
+				reasoning: "very detailed elaborative string",
+				reflection: "very detailed elaborative string",
+				potentialGenres: "string[] *>=4",
+				decision: "very detailed elaborative string",
 				instructions: {
 					title: "string",
-					context: "detailed string",
+					context: "concise string (leave room for creativity)",
 					genre: "string",
-					wordCount: "number",
-					coverImage: "boolean",
-					imageCount: "number",
-					chapterCount: "number",
-					maturityRating: "string",
-					illustrationStyle: "keywords, comma separated",
+					wordCount: "{{wordCount}}:number",
+					imageCount: "{{imageCount}}:number",
+					chapterCount: "{{imageCount}}:number",
 				},
 			}
 		),
-	})
+	}),
+	{
+		verbosity: 1,
+	}
 );
 
 /**
@@ -90,8 +91,9 @@ function makeFloatingImages(inputText: string) {
 
 	// Replace markdown image syntax with HTML image tags, alternating between left and right alignment
 	let replacedText = inputText.replace(markdownImageRegex, (match, alt, src) => {
-		const align = ` align="${count % 2 === 0 ? "left" : "right"}"`;
-		const imgTag = `<br clear="both"/>\n<img${align} src="${
+		const align = count === 0 ? "" : ` align="${count % 2 === 0 ? "right" : "left"}"`;
+		const imgTag = `${count > 0 ? `<br clear="both"/>` : ""}<img${align} src="${
+			// Fix potential issue where the src is not valid
 			src.split(" ")[0]
 		}" alt="${alt}" width="256"/>`;
 		count++;
@@ -130,19 +132,17 @@ const author = new Agent(
 		systemInstruction: createInstruction(
 			"Author named Morgan Casey Patel",
 			minify`\
-				You follow instructions closely (especially word count)!
-				You think deeply.
-				You reason your thoughts.
-				You reflect on your reasons.
-				You make a decision based on your reflection.
-				You write a story and image-instructions based on your decision.
+				Follow instructions closely!
+				Think deeply about the task.
+				Reason your thoughts.
+				Reflect on your reasons.
+				Make a wise decision based on your reflection.
+				Write a story and image-instructions based on your decision.
 				**Acceptance Criteria**:
-				1. Write a UNIQUE bestseller story. words:length(~wordCount), chapters:length(=chapterCount), images:length(=imageCount + =coverImage)!
-				2. Write VALID Markdown with IMAGE_TAGS:length(=imageCount + =coverImage)!
-				3. Use EXCLUSIVELY \\n for new lines in Markdown!
-				4. INLINE all images (as VALID Markdown) **within the story**!
-				5. Add a prompt(++illustrationStyle!! ?coverImage) + alt-text for each image.
-				6. Add a negativePrompt for each image.
+				1. UNIQUE, CAPTIVATING long story!
+				2. VALID Markdown with **image tags**!
+				3. EXCLUSIVELY \\n for new lines in Markdown!
+				4. IMPORTANT([story.md]:length(~{{wordCount}}))!
 				`,
 			{
 				thought: "detailed string",
@@ -152,22 +152,32 @@ const author = new Agent(
 				images: [
 					{
 						path: "assets/story/[filename].jpg",
-						prompt: "vey detailed description + keywords, comma separated",
-						negativePrompt: "keywords, comma separated",
-						alt: "concise string",
+						prompt: "detailed(={{illustrationStyle}}), ?{{coverImage}}:'book cover'",
+						negativePrompt: ">=8 keywords(comma separated)",
+						alt: "length:concise",
 					},
 				],
-				files: [{ path: "story.md", content: "markdown" }],
+				files: [
+					{
+						path: "story.md",
+						content:
+							"format(Markdown:words(length(~{{wordCount}})).chapters(length({{chapterCount}})).images(length({{imageCount}} + ?{{coverImage}}), {inline: true})): # {{title}} \n written by {{authorName}} \n {{coverImage}}",
+					},
+				],
 			}
 		),
 	}),
 	{
+		verbosity: 1,
 		sideEffects: [fileWriter],
 		async before(message: ModelMessage & { instructions: Record<string, unknown> }) {
 			return {
 				...message,
+				task: "write a story for a writing contest",
 				instructions: {
 					...message.instructions,
+					coverImage: true,
+					illustrationStyle: "flat illustration",
 					promptDefaults: "absurdres, 4k, 8k, masterpiece",
 					negativePromptDefaults: "worst quality, bad quality",
 				},
@@ -199,12 +209,11 @@ const illustrator = new Agent(
 try {
 	await sequence(
 		{
+			task: "provide information about the story",
 			competitionRules: {
-				wordCount: "==1000",
-				chapterCount: "==1",
-				imageCount: "~3",
-				coverImage: "true",
-				maturityRating: "rating (e.g. pg, pg-13)",
+				wordCount: 500,
+				chapterCount: 1,
+				imageCount: 3,
 			},
 		},
 		[bookAgent, author, illustrator]
