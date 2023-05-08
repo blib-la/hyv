@@ -139,38 +139,74 @@ export class Agent<
 		return this.#assign(await this.#store.get(messageId));
 	}
 
+	/**
+	 * Gets the side effects.
+	 * @returns - The side effects array.
+	 */
 	get sideEffects() {
 		return this.#sideEffects;
 	}
 
+	/**
+	 * Sets the side effects.
+	 * @param sideEffects - The new side effects array.
+	 */
 	set sideEffects(sideEffects) {
 		this.#sideEffects = sideEffects;
 	}
 
+	/**
+	 * Gets the "before" function.
+	 * @returns - The before function.
+	 */
 	get before() {
 		return this.#before;
 	}
 
+	/**
+	 * Sets the "before" function.
+	 * @param callback - The new before function.
+	 */
 	set before(callback) {
 		this.#before = callback;
 	}
 
+	/**
+	 * Gets the "after" function.
+	 * @returns - The after function.
+	 */
 	get after() {
 		return this.#after;
 	}
 
+	/**
+	 * Sets the "after" function.
+	 * @param callback - The new after function.
+	 */
 	set after(callback) {
 		this.#after = callback;
 	}
 
+	/**
+	 * Gets the "finally" function.
+	 * @returns - The finally function.
+	 */
 	get finally() {
 		return this.#finally;
 	}
 
+	/**
+	 * Sets the "finally" function.
+	 * @param callback - The new finally function.
+	 */
 	set finally(callback) {
 		this.#finally = callback;
 	}
 
+	/**
+	 * Gets the model.
+	 * @returns - The model instance.
+	 */
 	get model() {
 		return this.#model;
 	}
