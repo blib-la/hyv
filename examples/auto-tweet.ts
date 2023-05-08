@@ -1,16 +1,16 @@
 import type { ModelMessage } from "@hyv/core";
-import { Agent, createInstruction, minify, sequence, createFileWriter } from "@hyv/core";
-import type { GPT4Options } from "@hyv/openai";
-import { GPTModelAdapter } from "@hyv/openai";
+import { Agent, sequence } from "@hyv/core";
+import { createInstruction, GPTModelAdapter } from "@hyv/openai";
 import type { ImageMessage } from "@hyv/stable-diffusion";
 import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
+import { minify, createFileWriter } from "@hyv/utils";
 
 const dir = `out/auto-tweet/${Date.now()}`;
 const fileWriter = createFileWriter(dir);
 const imageWriter = createFileWriter(dir, "base64");
 
 const termAgent = new Agent(
-	new GPTModelAdapter<GPT4Options>({
+	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 1024,
 		temperature: 0.8,
@@ -39,11 +39,14 @@ const termAgent = new Agent(
 				},
 			}
 		),
-	})
+	}),
+	{
+		verbosity: 1,
+	}
 );
 
 const tweeter = new Agent(
-	new GPTModelAdapter<GPT4Options>({
+	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 1024,
 		systemInstruction: createInstruction(
@@ -89,6 +92,7 @@ const tweeter = new Agent(
 		),
 	}),
 	{
+		verbosity: 1,
 		sideEffects: [fileWriter],
 		async before(message: ModelMessage & { instructions: Record<string, unknown> }) {
 			return {
@@ -109,8 +113,7 @@ const tweeter = new Agent(
 
 const illustrator = new Agent(new Automatic1111ModelAdapter(), {
 	sideEffects: [imageWriter],
-
-	async before(message: ModelMessage & ImageMessage) {
+	async before(message: ImageMessage): Promise<ImageMessage> {
 		return {
 			...message,
 			images: message.images.map(image => ({

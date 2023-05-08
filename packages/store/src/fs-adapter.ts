@@ -3,15 +3,13 @@ import path from "node:path";
 import process from "node:process";
 
 import type { ModelMessage, StoreAdapter } from "@hyv/core";
-import { writeFile } from "@hyv/core";
+import { writeFile } from "@hyv/utils";
 import { nanoid } from "nanoid";
 
 /**
  * Represents a file system store adapter for storing and retrieving messages.
  *
- * @class FSAdapter
- * @implements StoreAdapter
- * @property {string} #dir - The directory to store messages.
+ * @property #dir - The directory to store messages.
  */
 export class FSAdapter implements StoreAdapter {
 	readonly dir: string;
@@ -30,8 +28,8 @@ export class FSAdapter implements StoreAdapter {
 	 *
 	 * @async
 	 * @template Message - A type that extends ModelMessage.
-	 * @param {Message} message - The message to store.
-	 * @returns {Promise<string>} - A Promise that resolves to the messageId.
+	 * @param message - The message to store.
+	 * @returns - A Promise that resolves to the messageId.
 	 */
 	async set<Message extends ModelMessage>(message: Message): Promise<string> {
 		const messageId = nanoid();
@@ -47,9 +45,9 @@ export class FSAdapter implements StoreAdapter {
 	 * Retrieves a message by messageId from the file system.
 	 *
 	 * @async
-	 * @param {string} messageId - The messageId of the message to retrieve.
-	 * @returns {Promise<ModelMessage>} - A Promise that resolves to the message.
-	 * @throws {Error} - If there is an error retrieving the message.
+	 * @param messageId - The messageId of the message to retrieve.
+	 * @returns - A Promise that resolves to the message.
+	 * @throws - If there is an error retrieving the message.
 	 */
 	async get(messageId: string): Promise<ModelMessage> {
 		try {

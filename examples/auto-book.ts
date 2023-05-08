@@ -1,17 +1,19 @@
 import path from "node:path";
 
-import type { FileContentWithPath, SideEffect, ModelMessage } from "@hyv/core";
-import { Agent, createInstruction, minify, sequence, createFileWriter, writeFile } from "@hyv/core";
-import type { GPT4Options } from "@hyv/openai";
-import { GPTModelAdapter } from "@hyv/openai";
+import type { ModelMessage } from "@hyv/core";
+import { Agent, sequence } from "@hyv/core";
+import { createInstruction, GPTModelAdapter } from "@hyv/openai";
+import type { FilesMessage } from "@hyv/stable-diffusion";
 import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
+import { minify, createFileWriter, writeFile } from "@hyv/utils";
+import type { FileContentWithPath, SideEffect } from "@hyv/utils";
 
 /**
  * Creates a file writer for writing output files and add reading time.
  *
- * @param {string} dir - The directory where the output files should be written.
- * @param {BufferEncoding} [encoding="utf-8"] - the encoding that should vbe used when writing files
- * @returns {SideEffect} - The file writer instance.
+ * @param dir - The directory where the output files should be written.
+ * @param [encoding="utf-8"] - the encoding that should vbe used when writing files
+ * @returns - The file writer instance.
  */
 export function createFileWriterWithReadingTime(
 	dir: string,
@@ -40,7 +42,7 @@ const fileWriter = createFileWriterWithReadingTime(dir);
 const imageWriter = createFileWriter(dir, "base64");
 
 const bookAgent = new Agent(
-	new GPTModelAdapter<GPT4Options>({
+	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 1024,
 		systemInstruction: createInstruction(
@@ -78,8 +80,8 @@ const bookAgent = new Agent(
  * alternating between left and right alignment.
  * Additionally, it ensures the headings are separated from the images.
  *
- * @param {string} inputText - The input markdown text.
- * @returns {string} - The modified Markdown text with floating images and separated headings.
+ * @param inputText - The input markdown text.
+ * @returns - The modified Markdown text with floating images and separated headings.
  */
 function makeFloatingImages(inputText: string) {
 	let count = 0;
@@ -122,7 +124,7 @@ function getWordCount(text: string) {
 }
 
 const author = new Agent(
-	new GPTModelAdapter<GPT4Options>({
+	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 4096,
 		systemInstruction: createInstruction(
@@ -171,7 +173,7 @@ const author = new Agent(
 				},
 			};
 		},
-		async after(message) {
+		async after(message: FilesMessage) {
 			return {
 				...message,
 				files: message.files.map(file => ({
@@ -188,7 +190,6 @@ const author = new Agent(
 const illustrator = new Agent(
 	new Automatic1111ModelAdapter({
 		seed: Math.floor(Math.random() * 1_000_000) + 1,
-		model: "Undertone_v1.safetensors",
 	}),
 	{
 		sideEffects: [imageWriter],

@@ -1,3 +1,9 @@
+import type { ModelMessage } from "@hyv/core";
+import type { FileContentWithPath } from "@hyv/utils";
+
+/**
+ * Options for configuring the Automatic1111 process.
+ */
 export interface Automatic1111Options {
 	enableHr?: boolean;
 	denoisingStrength?: number;
@@ -42,6 +48,16 @@ export interface Automatic1111Options {
 	model?: string;
 }
 
-export interface ImageMessage {
+/**
+ * Represents a message with images.
+ */
+export interface ImageMessage extends ModelMessage {
 	images: { alt?: string; path: string; prompt: string; negativePrompt?: string }[];
+}
+
+/**
+ * Represents a message with files
+ */
+export interface FilesMessage extends ModelMessage {
+	files: FileContentWithPath[];
 }

@@ -1,5 +1,7 @@
-import { Agent, createFileWriter, createInstruction, minify, sequence } from "@hyv/core";
-import { DallEModelAdapter, GPTModelAdapter } from "@hyv/openai";
+import { Agent, sequence } from "@hyv/core";
+import type { FilesMessage } from "@hyv/openai";
+import { createInstruction, DallEModelAdapter, GPTModelAdapter } from "@hyv/openai";
+import { createFileWriter, minify } from "@hyv/utils";
 import slugify from "@sindresorhus/slugify";
 
 const title = "Utopia";
@@ -39,7 +41,7 @@ function getWordCount(text: string) {
 }
 
 // Give the agent some tools
-author.after = async message => ({
+author.after = async (message: FilesMessage) => ({
 	...message,
 	files: message.files.map(file => ({
 		...file,

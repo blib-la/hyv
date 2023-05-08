@@ -1,13 +1,10 @@
-import { MemoryAdapter } from "./memory-adapter.js";
-import type {
-	AgentOptions,
-	ModelAdapter,
-	ModelMessage,
-	StoreAdapter,
-	SideEffect,
-} from "./types.js";
+import type { SideEffect } from "@hyv/utils";
+import chalk from "chalk";
+import humanizeString from "humanize-string";
 
-export const memoryStore = new MemoryAdapter();
+import type { MemoryAdapter } from "./memory-adapter.js";
+import { memoryStore } from "./memory-adapter.js";
+import type { AgentOptions, ModelAdapter, ModelMessage, StoreAdapter } from "./types.js";
 
 /**
  * Represents an agent that manages a model, a store, and a set of sideEffects.
@@ -15,36 +12,39 @@ export const memoryStore = new MemoryAdapter();
  *
  * @template Model - A type that extends ModelAdapter<ModelMessage>.
  * @template Store - A type that extends StoreAdapter.
- * @class Agent
- * @property {Model} #model - The model instance.
- * @property {Store} #store - The store instance.
- * @property {AgentOptions["sideEffect"]} #sideEffects - An array of sideEffects.
- * @property {AgentOptions["before"]} #before - A function that runs before the model.
- * @property {AgentOptions["after"]} #after - A function that runs after the model.
- * @property {AgentOptions["finally"]} #finally - A function that runs when the process is done.
- * @property {Promise<ModelMessage>} #task - A task of type ModelMessage.
+ * @property #model - The model instance.
+ * @property #store - The store instance.
+ * @property #sideEffects - An array of sideEffects.
+ * @property #before - A function that runs before the model.
+ * @property #after - A function that runs after the model.
+ * @property #finally - A function that runs when the process is done.
+ * @property verbosity - Enables verbose logging to a certain degree.
  */
 export class Agent<
-	Model extends ModelAdapter<ModelMessage> = ModelAdapter<ModelMessage>,
+	Model extends ModelAdapter<ModelMessage, ModelMessage> = ModelAdapter<
+		ModelMessage,
+		ModelMessage
+	>,
 	Store extends StoreAdapter = StoreAdapter
 > {
 	#model: Model;
 	#store: Store | MemoryAdapter;
 	#sideEffects: SideEffect[] = [];
-	#before: AgentOptions["before"] = async <Message>(message): Promise<Message> => message;
-	#after: AgentOptions["after"] = async <Message>(message): Promise<Message> => message;
+	#before: AgentOptions["before"] = async message => message;
+	#after: AgentOptions["after"] = async message => message;
 	#finally: AgentOptions["finally"] = async messageId => messageId;
-
+	private readonly verbosity: number = 0;
 	/**
 	 * Creates an instance of the Agent class.
 	 *
-	 * @param {Model} model - The model instance.
-	 * @param {AgentOptions<ModelMessage, ModelMessage>} options - The configuration for the agent
+	 * @param model - The model instance.
+	 * @param options - The configuration for the agent
 	 */
 	constructor(model: Model, options: AgentOptions<Store> = {}) {
 		this.#model = model;
 
 		this.#store = options.store ?? memoryStore;
+		this.verbosity = options.verbosity ?? 0;
 
 		if (options.sideEffects) {
 			this.#sideEffects = options.sideEffects;
@@ -68,32 +68,63 @@ export class Agent<
 	 *
 	 * @private
 	 * @async
-	 * @param {ModelMessage} inputMessage - The message to be assigned.
-	 * @returns {Promise<string>} - A Promise that resolves to the next messageId.
+	 * @param inputMessage - The message to be assigned.
+	 * @returns - A Promise that resolves to the next messageId.
 	 */
 	async #assign(inputMessage: ModelMessage) {
-		const preparedMessage = await this.#before(inputMessage);
-		const message = await this.#model.assign(preparedMessage);
-		const modifiedMessage = await this.#after(message);
-		Object.entries(modifiedMessage).forEach(([prop, value]) => {
+		if (this.verbosity > 1) {
+			console.log("Input Message:");
+			console.log(inputMessage);
+		}
+
+		const modifiedInput = await this.#before(inputMessage);
+		if (this.verbosity > 1) {
+			console.log("Modified Input Message:");
+			console.log(modifiedInput);
+		}
+
+		const outputMessage = await this.#model.assign(modifiedInput);
+		if (this.verbosity > 1) {
+			console.log("Output Message:");
+			console.log(outputMessage);
+		}
+
+		const modifiedOutputMessage = await this.#after(outputMessage);
+		if (this.verbosity > 1) {
+			console.log("Modified Output Message:");
+			console.log(modifiedOutputMessage);
+		}
+
+		Object.entries(modifiedOutputMessage).forEach(([prop, value]) => {
 			const sideEffect = this.findSideEffect(prop);
 			if (sideEffect) {
-				console.log(`Using side effect on: ${prop}`);
+				if (this.verbosity > 1) {
+					console.log(`Using side effect on: ${prop}`);
+				}
+
 				sideEffect.run(value);
 			}
 		});
-		console.log("modifiedMessage");
-		console.log(modifiedMessage);
 
-		const messageId = await this.#store.set(modifiedMessage);
-		return this.#finally(messageId, modifiedMessage);
+		if (this.verbosity > 0) {
+			Object.entries(modifiedOutputMessage).forEach(([key, value], index) => {
+				console.log(
+					`${index === 0 ? "\n" : ""}${chalk.bgYellow.black(
+						` ${humanizeString(key)} `
+					)}\n\n${typeof value === "object" ? JSON.stringify(value, null, 4) : value}\n`
+				);
+			});
+		}
+
+		const messageId = await this.#store.set(modifiedOutputMessage);
+		return this.#finally(messageId, modifiedOutputMessage);
 	}
 
 	/**
 	 * Finds a side effect with the specified property.
 	 *
-	 * @param {string} prop - The property to search for.
-	 * @returns {SideEffect | undefined} - The found side effect or undefined if not found.
+	 * @param prop - The property to search for.
+	 * @returns - The found side effect or undefined if not found.
 	 */
 	findSideEffect(prop: string): SideEffect | undefined {
 		return this.#sideEffects.find(sideEffect => sideEffect.prop === prop);
@@ -102,45 +133,81 @@ export class Agent<
 	/**
 	 * Performs the current task using the provided messageId.
 	 *
-	 * @param {string} messageId - The messageId to the task.
-	 * @returns {string} - The id to the next message
+	 * @param messageId - The messageId to the task.
+	 * @returns - The id to the next message
 	 */
 	async do(messageId: string) {
 		return this.#assign(await this.#store.get(messageId));
 	}
 
+	/**
+	 * Gets the side effects.
+	 * @returns - The side effects array.
+	 */
 	get sideEffects() {
 		return this.#sideEffects;
 	}
 
-	set sideEffects(sideEffects: SideEffect[]) {
+	/**
+	 * Sets the side effects.
+	 * @param sideEffects - The new side effects array.
+	 */
+	set sideEffects(sideEffects) {
 		this.#sideEffects = sideEffects;
 	}
 
+	/**
+	 * Gets the "before" function.
+	 * @returns - The before function.
+	 */
 	get before() {
 		return this.#before;
 	}
 
-	set before(callback: AgentOptions["before"]) {
+	/**
+	 * Sets the "before" function.
+	 * @param callback - The new before function.
+	 */
+	set before(callback) {
 		this.#before = callback;
 	}
 
+	/**
+	 * Gets the "after" function.
+	 * @returns - The after function.
+	 */
 	get after() {
 		return this.#after;
 	}
 
-	set after(callback: AgentOptions["after"]) {
+	/**
+	 * Sets the "after" function.
+	 * @param callback - The new after function.
+	 */
+	set after(callback) {
 		this.#after = callback;
 	}
 
+	/**
+	 * Gets the "finally" function.
+	 * @returns - The finally function.
+	 */
 	get finally() {
 		return this.#finally;
 	}
 
-	set finally(callback: AgentOptions["finally"]) {
+	/**
+	 * Sets the "finally" function.
+	 * @param callback - The new finally function.
+	 */
+	set finally(callback) {
 		this.#finally = callback;
 	}
 
+	/**
+	 * Gets the model.
+	 * @returns - The model instance.
+	 */
 	get model() {
 		return this.#model;
 	}

@@ -1,88 +1,51 @@
-/**
- * Represents a file with its associated content and path.
- *
- * @interface FileContentWithPath
- * @property {string} path - The path to the file.
- * @property {string} content - The content of the file.
- */
-export interface FileContentWithPath {
-	path: string;
+import type { SideEffect } from "@hyv/utils";
 
-	content: string;
-}
-
-/**
- * Represents a model message with an optional array of files.
- * Each file has a path and content.
- *
- * @interface ModelMessage
- * @property {Array<{ path: string; content: string }>} [files] - An optional array of files.
- */
-export interface ModelMessage extends Record<string, unknown> {
-	files?: FileContentWithPath[];
-}
+export type ModelMessage = Record<string, unknown>;
 
 /**
  * Represents a model adapter that can assign tasks and move to the next task.
  *
- * @interface ModelAdapter
- * @template Message - A type that extends ModelMessage.
- * @property {(task: Message) => Promise<Message>} assign - A function that takes a task of type Message and returns
- *   a Promise that resolves to a Message.
+ * @template Input - A type that extends ModelMessage for input tasks.
+ * @template Output - A type that extends ModelMessage for output results.
  */
-export interface ModelAdapter<Message extends ModelMessage> {
-	assign(task: Message): Promise<Message>;
+export interface ModelAdapter<Input extends ModelMessage, Output extends ModelMessage> {
+	/**
+	 * Assigns a task to the model and moves to the next task.
+	 *
+	 * @param task - A task represented as an Input object.
+	 * @returns - A Promise that resolves with the resulting Output object after the task is completed.
+	 */
+	assign(task: Input): Promise<Output>;
 }
 
 /**
- * Represents a side effect with a property and a run method. The side effect is run on the property
+ * The configuration options for an Agent, including optional hooks for transforming input and output messages, side effects, and a store adapter for storing and retrieving messages.
  *
- * @interface SideEffect
- * @property {string} prop - A string property.
- * @property {(message: ModelMessage) => Promise<void>} run - A function that takes a ModelMessage and returns
- *   a Promise that resolves to void.
- */
-export interface SideEffect<T = unknown> {
-	prop: string;
-	run(value: T): Promise<void>;
-}
-
-/**
- * Represents a reasonable temperature value.
- *
- * @typedef {0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9} ReasonableTemperature
- */
-export type ReasonableTemperature = 0 | 0.1 | 0.2 | 0.3 | 0.4 | 0.5 | 0.6 | 0.7 | 0.8 | 0.9;
-
-/**
- * The configuration options for an Agent.
- *
- * @template InMessage - The input message type.
- * @template OutMessage - The output message type.
+ * @template Store - A type that extends the StoreAdapter interface. Defaults to StoreAdapter.
  */
 export interface AgentOptions<Store extends StoreAdapter = StoreAdapter> {
 	/**
-	 * A function that transforms the input message before it is passed to the model.
+	 * Transforms the input message before it is passed to the model.
 	 *
-	 * @param {ModelMessage} message - The input message.
-	 * @returns {Promise<ModelMessage>} - A Promise that resolves to the transformed message.
+	 * @param message - The input ModelMessage.
+	 * @returns - A Promise that resolves with the transformed ModelMessage.
 	 */
 	before?(message: ModelMessage): Promise<ModelMessage>;
 
 	/**
-	 * A function that transforms the output message after it has been processed by the model.
+	 * Transforms the output message after it has been processed by the model.
 	 *
-	 * @param {ModelMessage} message - The output message.
-	 * @returns {Promise<ModelMessage>} - A Promise that resolves to the transformed message.
+	 * @param message - The output ModelMessage.
+	 * @returns - A Promise that resolves with the transformed ModelMessage.
 	 */
 	after?(message: ModelMessage): Promise<ModelMessage>;
 
 	/**
-	 * A function that runs after the Agent has processed the output message.
+	 * Runs after the Agent has processed the output message.
 	 *
-	 * @param {string} messageId - The ID of the message that has been processed.
-	 * @param {ModelMessage} message - The output message that has been processed.
-	 * @returns {Promise<string>} - A Promise that resolves to the ID of the next message to be processed.
+	 * @param messageId - The identifier of the processed message.
+	 * @param message - The processed ModelMessage.
+	 * @returns - A Promise that resolves with the messageId.
 	 */
 	finally?(messageId: string, message: ModelMessage): Promise<string>;
 
@@ -91,18 +54,24 @@ export interface AgentOptions<Store extends StoreAdapter = StoreAdapter> {
 	 */
 	sideEffects?: SideEffect[];
 
+	/**
+	 * The store that should be used to save and retrieve messages
+	 */
 	store?: Store;
+
+	/**
+	 * Enables verbose logging to a certain degree
+	 */
+	verbosity?: number;
 }
 
 /**
  * Represents a store adapter for storing and retrieving messages.
  *
- * @interface StoreAdapter
- * @property {Function} set - Stores a message and returns a Promise that resolves to the messageId.
- * @property {Function} get - Retrieves a message by messageId and returns a Promise that resolves to the message.
+ * @method set - Stores a ModelMessage and returns a Promise that resolves with the messageId.
+ * @method get - Retrieves a ModelMessage by its messageId, returning a Promise that resolves with the ModelMessage.
  */
 export interface StoreAdapter {
 	set(message: ModelMessage): Promise<string>;
-
 	get(messageId: string): Promise<ModelMessage>;
 }
