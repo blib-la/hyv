@@ -97,7 +97,7 @@ export class Agent<
 		Object.entries(modifiedOutputMessage).forEach(([prop, value]) => {
 			const sideEffect = this.findSideEffect(prop);
 			if (sideEffect) {
-				if (this.verbosity > 0) {
+				if (this.verbosity > 1) {
 					console.log(`Using side effect on: ${prop}`);
 				}
 
