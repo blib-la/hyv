@@ -1,6 +1,5 @@
 import type { ModelMessage } from "@hyv/core";
 import { Agent, sequence } from "@hyv/core";
-import type { GPT4Options } from "@hyv/openai";
 import { createInstruction, GPTModelAdapter } from "@hyv/openai";
 import type { ImageMessage } from "@hyv/stable-diffusion";
 import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
@@ -11,7 +10,7 @@ const fileWriter = createFileWriter(dir);
 const imageWriter = createFileWriter(dir, "base64");
 
 const termAgent = new Agent(
-	new GPTModelAdapter<GPT4Options>({
+	new GPTModelAdapter<"gpt-4">({
 		model: "gpt-4",
 		maxTokens: 1024,
 		temperature: 0.8,
@@ -40,11 +39,14 @@ const termAgent = new Agent(
 				},
 			}
 		),
-	})
+	}),
+	{
+		verbose: true,
+	}
 );
 
 const tweeter = new Agent(
-	new GPTModelAdapter({
+	new GPTModelAdapter<"gpt-4">({
 		model: "gpt-4",
 		maxTokens: 1024,
 		systemInstruction: createInstruction(
@@ -90,6 +92,7 @@ const tweeter = new Agent(
 		),
 	}),
 	{
+		verbose: true,
 		sideEffects: [fileWriter],
 		async before(message: ModelMessage & { instructions: Record<string, unknown> }) {
 			return {
@@ -109,8 +112,8 @@ const tweeter = new Agent(
 );
 
 const illustrator = new Agent(new Automatic1111ModelAdapter(), {
+	verbose: true,
 	sideEffects: [imageWriter],
-
 	async before(message: ModelMessage & ImageMessage) {
 		return {
 			...message,
