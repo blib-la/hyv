@@ -113,7 +113,7 @@ const tweeter = new Agent(
 
 const illustrator = new Agent(new Automatic1111ModelAdapter(), {
 	sideEffects: [imageWriter],
-	async before(message: ModelMessage & ImageMessage) {
+	async before(message: ImageMessage): Promise<ImageMessage> {
 		return {
 			...message,
 			images: message.images.map(image => ({
