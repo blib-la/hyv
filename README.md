@@ -18,6 +18,10 @@ Hyv is a modular software development library centered on AI collaboration that 
 > 
 > Please look at the [examples](examples)
 
+## Lingo
+
+Hyv works great with [Lingo](https://github.com/failfa-st/lingo/) a pseudo language for large language models (LLMs)
+
 ```shell
 npm install "@hyv/core" "@hyv/openai"
 ```
