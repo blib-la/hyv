@@ -30,13 +30,12 @@ const defaultOptions: GPT3Options = {
  *
  */
 export class GPTModelAdapter<
-	Model extends GPTModel = "gpt-3.5-turbo",
+	Model extends GPTModel,
 	Input extends ModelMessage = ModelMessage,
-	Output extends ModelMessage = ModelMessage,
-	Options extends GPTOptions<Model> = GPTOptions<Model>
+	Output extends ModelMessage = ModelMessage
 > implements ModelAdapter<ModelMessage, ModelMessage>
 {
-	#options: Options;
+	#options: GPTOptions<Model>;
 	#openAI: OpenAIApi;
 	readonly history: ChatCompletionRequestMessage[];
 
@@ -46,8 +45,11 @@ export class GPTModelAdapter<
 	 * @param  options - The GPT model options.
 	 * @param  openAI - A configured openAI API instance.
 	 */
-	constructor(options: Options = defaultOptions as Options, openAI: OpenAIApi = defaultOpenAI) {
-		this.#options = { ...defaultOptions, ...options };
+	constructor(
+		options: GPTOptions<Model> = defaultOptions as GPTOptions<Model>,
+		openAI: OpenAIApi = defaultOpenAI
+	) {
+		this.#options = { ...defaultOptions, ...options } as GPTOptions<Model>;
 		this.#openAI = openAI;
 		this.history = [];
 	}

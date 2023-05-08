@@ -42,7 +42,7 @@ const fileWriter = createFileWriterWithReadingTime(dir);
 const imageWriter = createFileWriter(dir, "base64");
 
 const bookAgent = new Agent(
-	new GPTModelAdapter<"gpt-4">({
+	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 1024,
 		systemInstruction: createInstruction(
@@ -124,7 +124,7 @@ function getWordCount(text: string) {
 }
 
 const author = new Agent(
-	new GPTModelAdapter<"gpt-4">({
+	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 4096,
 		systemInstruction: createInstruction(

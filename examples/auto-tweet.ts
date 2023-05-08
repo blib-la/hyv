@@ -10,7 +10,7 @@ const fileWriter = createFileWriter(dir);
 const imageWriter = createFileWriter(dir, "base64");
 
 const termAgent = new Agent(
-	new GPTModelAdapter<"gpt-4">({
+	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 1024,
 		temperature: 0.8,
@@ -46,7 +46,7 @@ const termAgent = new Agent(
 );
 
 const tweeter = new Agent(
-	new GPTModelAdapter<"gpt-4">({
+	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 1024,
 		systemInstruction: createInstruction(
