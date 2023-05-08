@@ -13,6 +13,7 @@
     "demo:auto-tweet": "ts-node-esm examples/auto-tweet.ts",
     "demo:book": "ts-node-esm examples/book.ts",
     "demo:simple": "ts-node-esm examples/simple.ts",
+    "demo:chaining": "ts-node-esm examples/chaining.ts",
     "demo:stable-diffusion": "ts-node-esm examples/stable-diffusion.ts",
     "demo:dall-e": "ts-node-esm examples/dall-e.ts",
     "prebuild": "npm run clean",
