@@ -1,9 +1,9 @@
 /**
  * Minifies a template literal by removing leading and trailing whitespace.
  *
- * @param {TemplateStringsArray} strings - The string parts of the template literal.
- * @param {...string[]} values - The expression values of the template literal.
- * @returns {string} - The minified template literal.
+ * @param strings - The string parts of the template literal.
+ * @param values - The expression values of the template literal.
+ * @returns - The minified template literal.
  */
 export function minify(strings: TemplateStringsArray, ...values: string[]) {
 	let output = "";

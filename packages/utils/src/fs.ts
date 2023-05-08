@@ -5,8 +5,8 @@ import path from "node:path";
  * Checks if a file or directory exists at the specified path.
  *
  * @async
- * @param {string} pathLike - The path to check for existence.
- * @returns {Promise<boolean>} - Resolves to true if the file or directory exists, otherwise false.
+ * @param pathLike - The path to check for existence.
+ * @returns - Resolves to true if the file or directory exists, otherwise false.
  */
 export async function exists(pathLike: string) {
 	try {

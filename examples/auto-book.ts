@@ -4,6 +4,7 @@ import type { ModelMessage } from "@hyv/core";
 import { Agent, sequence } from "@hyv/core";
 import type { GPT4Options } from "@hyv/openai";
 import { createInstruction, GPTModelAdapter } from "@hyv/openai";
+import type { FilesMessage } from "@hyv/stable-diffusion";
 import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
 import { minify, createFileWriter, writeFile } from "@hyv/utils";
 import type { FileContentWithPath, SideEffect } from "@hyv/utils";
@@ -124,7 +125,7 @@ function getWordCount(text: string) {
 }
 
 const author = new Agent(
-	new GPTModelAdapter<GPT4Options>({
+	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 4096,
 		systemInstruction: createInstruction(
@@ -173,7 +174,7 @@ const author = new Agent(
 				},
 			};
 		},
-		async after(message) {
+		async after(message: FilesMessage) {
 			return {
 				...message,
 				files: message.files.map(file => ({

@@ -10,36 +10,39 @@ import type { AgentOptions, ModelAdapter, ModelMessage, StoreAdapter } from "./t
  *
  * @template Model - A type that extends ModelAdapter<ModelMessage>.
  * @template Store - A type that extends StoreAdapter.
- * @class Agent
- * @property {Model} #model - The model instance.
- * @property {Store} #store - The store instance.
- * @property {AgentOptions["sideEffect"]} #sideEffects - An array of sideEffects.
- * @property {AgentOptions["before"]} #before - A function that runs before the model.
- * @property {AgentOptions["after"]} #after - A function that runs after the model.
- * @property {AgentOptions["finally"]} #finally - A function that runs when the process is done.
- * @property {Promise<ModelMessage>} #task - A task of type ModelMessage.
+ * @property #model - The model instance.
+ * @property #store - The store instance.
+ * @property #sideEffects - An array of sideEffects.
+ * @property #before - A function that runs before the model.
+ * @property #after - A function that runs after the model.
+ * @property #finally - A function that runs when the process is done.
+ * @property verbose - Enables verbose logging.
  */
 export class Agent<
-	Model extends ModelAdapter<ModelMessage> = ModelAdapter<ModelMessage>,
+	Model extends ModelAdapter<ModelMessage, ModelMessage> = ModelAdapter<
+		ModelMessage,
+		ModelMessage
+	>,
 	Store extends StoreAdapter = StoreAdapter
 > {
 	#model: Model;
 	#store: Store | MemoryAdapter;
 	#sideEffects: SideEffect[] = [];
-	#before: AgentOptions["before"] = async <Message>(message): Promise<Message> => message;
-	#after: AgentOptions["after"] = async <Message>(message): Promise<Message> => message;
+	#before: AgentOptions["before"] = async message => message;
+	#after: AgentOptions["after"] = async message => message;
 	#finally: AgentOptions["finally"] = async messageId => messageId;
-
+	private readonly verbose: boolean = false;
 	/**
 	 * Creates an instance of the Agent class.
 	 *
-	 * @param {Model} model - The model instance.
-	 * @param {AgentOptions<ModelMessage, ModelMessage>} options - The configuration for the agent
+	 * @param model - The model instance.
+	 * @param options - The configuration for the agent
 	 */
 	constructor(model: Model, options: AgentOptions<Store> = {}) {
 		this.#model = model;
 
 		this.#store = options.store ?? memoryStore;
+		this.verbose = options.verbose ?? false;
 
 		if (options.sideEffects) {
 			this.#sideEffects = options.sideEffects;
@@ -63,8 +66,8 @@ export class Agent<
 	 *
 	 * @private
 	 * @async
-	 * @param {ModelMessage} inputMessage - The message to be assigned.
-	 * @returns {Promise<string>} - A Promise that resolves to the next messageId.
+	 * @param inputMessage - The message to be assigned.
+	 * @returns - A Promise that resolves to the next messageId.
 	 */
 	async #assign(inputMessage: ModelMessage) {
 		const preparedMessage = await this.#before(inputMessage);
@@ -73,12 +76,19 @@ export class Agent<
 		Object.entries(modifiedMessage).forEach(([prop, value]) => {
 			const sideEffect = this.findSideEffect(prop);
 			if (sideEffect) {
-				console.log(`Using side effect on: ${prop}`);
+				if (this.verbose) {
+					console.log(`Using side effect on: ${prop}`);
+				}
+
 				sideEffect.run(value);
 			}
 		});
-		console.log("modifiedMessage");
-		console.log(modifiedMessage);
+
+		if (this.verbose) {
+			Object.entries(([key, value]) => {
+				console.log(`${key}: ${value}`);
+			});
+		}
 
 		const messageId = await this.#store.set(modifiedMessage);
 		return this.#finally(messageId, modifiedMessage);
@@ -87,8 +97,8 @@ export class Agent<
 	/**
 	 * Finds a side effect with the specified property.
 	 *
-	 * @param {string} prop - The property to search for.
-	 * @returns {SideEffect | undefined} - The found side effect or undefined if not found.
+	 * @param prop - The property to search for.
+	 * @returns - The found side effect or undefined if not found.
 	 */
 	findSideEffect(prop: string): SideEffect | undefined {
 		return this.#sideEffects.find(sideEffect => sideEffect.prop === prop);
@@ -97,8 +107,8 @@ export class Agent<
 	/**
 	 * Performs the current task using the provided messageId.
 	 *
-	 * @param {string} messageId - The messageId to the task.
-	 * @returns {string} - The id to the next message
+	 * @param messageId - The messageId to the task.
+	 * @returns - The id to the next message
 	 */
 	async do(messageId: string) {
 		return this.#assign(await this.#store.get(messageId));
@@ -108,7 +118,7 @@ export class Agent<
 		return this.#sideEffects;
 	}
 
-	set sideEffects(sideEffects: SideEffect[]) {
+	set sideEffects(sideEffects) {
 		this.#sideEffects = sideEffects;
 	}
 
@@ -116,7 +126,7 @@ export class Agent<
 		return this.#before;
 	}
 
-	set before(callback: AgentOptions["before"]) {
+	set before(callback) {
 		this.#before = callback;
 	}
 
@@ -124,7 +134,7 @@ export class Agent<
 		return this.#after;
 	}
 
-	set after(callback: AgentOptions["after"]) {
+	set after(callback) {
 		this.#after = callback;
 	}
 
@@ -132,7 +142,7 @@ export class Agent<
 		return this.#finally;
 	}
 
-	set finally(callback: AgentOptions["finally"]) {
+	set finally(callback) {
 		this.#finally = callback;
 	}
 

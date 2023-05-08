@@ -1,5 +1,9 @@
 import { minify } from "@hyv/utils";
 
+/**
+ * Checks a string for punctuation and adds a period if no other punctuation is present.
+ * @param text
+ */
 export function maybePeriod(text: string) {
 	if (
 		text.endsWith(".") ||
@@ -17,10 +21,10 @@ export function maybePeriod(text: string) {
 /**
  * Creates an instruction string for the AI agent.
  *
- * @param {string} role - The role of the AI agent.
- * @param {string} tasks - The tasks that the AI agent should perform.
- * @param {Record<string, unknown>} format - The expected output format of the AI agent.
- * @returns {string} - The formatted instruction string.
+ * @param role - The role of the AI agent.
+ * @param tasks - The tasks that the AI agent should perform.
+ * @param format - The expected output format of the AI agent.
+ * @returns - The formatted instruction string.
  */
 export function createInstruction<T extends Record<string, unknown>>(
 	role: string,

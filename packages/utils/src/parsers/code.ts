@@ -1,8 +1,8 @@
 /**
  * Extracts the code block from a given string, if any.
  *
- * @param {string} string - The input string to extract the code block from.
- * @returns {string} - The extracted code block or the original string if no code block is found.
+ * @param string - The input string to extract the code block from.
+ * @returns - The extracted code block or the original string if no code block is found.
  */
 export function extractCode(string: string) {
 	// Regular expression pattern to match code blocks enclosed in triple backticks

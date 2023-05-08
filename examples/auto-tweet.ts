@@ -44,7 +44,7 @@ const termAgent = new Agent(
 );
 
 const tweeter = new Agent(
-	new GPTModelAdapter<GPT4Options>({
+	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 1024,
 		systemInstruction: createInstruction(
