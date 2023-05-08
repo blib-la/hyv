@@ -92,7 +92,7 @@ function makeFloatingImages(inputText: string) {
 	// Replace markdown image syntax with HTML image tags, alternating between left and right alignment
 	let replacedText = inputText.replace(markdownImageRegex, (match, alt, src) => {
 		const align = count === 0 ? "" : ` align="${count % 2 === 0 ? "right" : "left"}"`;
-		const imgTag = `${count > 0 ? `<br clear="both"/>` : ""}<img${align} src="${
+		const imgTag = `${count > 0 ? `<br clear="both"/>` : "\n"}<img${align} src="${
 			// Fix potential issue where the src is not valid
 			src.split(" ")[0]
 		}" alt="${alt}" width="256"/>`;
