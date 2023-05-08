@@ -1,5 +1,6 @@
 import type { SideEffect } from "@hyv/utils";
 import chalk from "chalk";
+import humanizeString from "humanize-string";
 
 import type { MemoryAdapter } from "./memory-adapter.js";
 import { memoryStore } from "./memory-adapter.js";
@@ -109,7 +110,7 @@ export class Agent<
 			Object.entries(modifiedOutputMessage).forEach(([key, value], index) => {
 				console.log(
 					`${index === 0 ? "\n" : ""}${chalk.bgYellow.black(
-						` ${key} `.toLocaleUpperCase()
+						` ${humanizeString(key)} `
 					)}\n\n${typeof value === "object" ? JSON.stringify(value, null, 4) : value}\n`
 				);
 			});
