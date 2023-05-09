@@ -3,7 +3,7 @@ import path from "node:path";
 import type { ModelMessage } from "@hyv/core";
 import { Agent, sequence } from "@hyv/core";
 import { createInstruction, GPTModelAdapter } from "@hyv/openai";
-import type { FilesMessage } from "@hyv/stable-diffusion";
+import type { FilesMessage, ImageMessage } from "@hyv/stable-diffusion";
 import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
 import { minify, createFileWriter, writeFile } from "@hyv/utils";
 import type { FileContentWithPath, SideEffect } from "@hyv/utils";
@@ -45,6 +45,7 @@ const bookAgent = new Agent(
 	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 1024,
+		temperature: 0.9,
 		systemInstruction: createInstruction(
 			"Book Agent, Trend Expert",
 			minify`
@@ -58,15 +59,16 @@ const bookAgent = new Agent(
 				thought: "very detailed elaborative string",
 				reasoning: "very detailed elaborative string",
 				reflection: "very detailed elaborative string",
-				potentialGenres: "string[] *>=4",
+				potentialGenres: "string[] *>=7 (DIVERSE)",
 				decision: "very detailed elaborative string",
 				instructions: {
-					title: "string",
-					context: "concise string (leave room for creativity)",
+					title: "string (UNIQUE, UNCOMMON)",
+					context: "concise string (UNIQUE, UNCOMMON, leave room for creativity)",
 					genre: "string",
 					wordCount: "{{wordCount}}:number",
 					imageCount: "{{imageCount}}:number",
 					chapterCount: "{{imageCount}}:number",
+					writingStyle: "in the style of …",
 				},
 			}
 		),
@@ -91,8 +93,8 @@ function makeFloatingImages(inputText: string) {
 
 	// Replace markdown image syntax with HTML image tags, alternating between left and right alignment
 	let replacedText = inputText.replace(markdownImageRegex, (match, alt, src) => {
-		const align = count === 0 ? "" : ` align="${count % 2 === 0 ? "right" : "left"}"`;
-		const imgTag = `${count > 0 ? `<br clear="both"/>` : "\n"}<img${align} src="${
+		const align = ` align="${count % 2 === 0 ? "left" : "right"}"`;
+		const imgTag = `\n<br clear="both"/><img${align} src="${
 			// Fix potential issue where the src is not valid
 			src.split(" ")[0]
 		}" alt="${alt}" width="256"/>`;
@@ -129,6 +131,7 @@ const author = new Agent(
 	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 4096,
+		temperature: 0.7,
 		systemInstruction: createInstruction(
 			"Author named Morgan Casey Patel",
 			minify`\
@@ -139,7 +142,7 @@ const author = new Agent(
 				Make a wise decision based on your reflection.
 				Write a story and image-instructions based on your decision.
 				**Acceptance Criteria**:
-				1. UNIQUE, CAPTIVATING long story!
+				1. UNIQUE, UNUSUAL, CREATIVE, LONG story!
 				2. VALID Markdown with **image tags**!
 				3. EXCLUSIVELY \\n for new lines in Markdown!
 				4. IMPORTANT([story.md]:length(~{{wordCount}}))!
@@ -152,8 +155,8 @@ const author = new Agent(
 				images: [
 					{
 						path: "assets/story/[filename].jpg",
-						prompt: "detailed(={{illustrationStyle}}), ?{{coverImage}}:'book cover'",
-						negativePrompt: ">=8 keywords(comma separated)",
+						prompt: "extremely detailed and descriptive, UNIQUE, OPTIMIZE(prompt for image generator AI)",
+						negativePrompt: "keywords(comma separated, {negated: false)",
 						alt: "length:concise",
 					},
 				],
@@ -161,7 +164,7 @@ const author = new Agent(
 					{
 						path: "story.md",
 						content:
-							"format(Markdown:words(length(~{{wordCount}})).chapters(length({{chapterCount}})).images(length({{imageCount}} + ?{{coverImage}}), {inline: true})): # {{title}} \n written by {{authorName}} \n {{coverImage}}",
+							"format(Markdown:words(length(~{{wordCount}})).chapters(length({{chapterCount}})).images(length({{imageCount}}), {inline: true})): # {{title}} \n written by {{authorName}}",
 					},
 				],
 			}
@@ -172,14 +175,11 @@ const author = new Agent(
 		sideEffects: [fileWriter],
 		async before(message: ModelMessage & { instructions: Record<string, unknown> }) {
 			return {
-				...message,
-				task: "write a story for a writing contest",
+				information: message.decission,
+				task: "write a very long story for a writing contest",
 				instructions: {
 					...message.instructions,
-					coverImage: true,
-					illustrationStyle: "flat illustration",
-					promptDefaults: "absurdres, 4k, 8k, masterpiece",
-					negativePromptDefaults: "worst quality, bad quality",
+					maturityRating: "G|PG|PG13",
 				},
 			};
 		},
@@ -200,9 +200,22 @@ const author = new Agent(
 const illustrator = new Agent(
 	new Automatic1111ModelAdapter({
 		seed: Math.floor(Math.random() * 1_000_000) + 1,
+		model: "illustration.safetensors",
+		height: 512,
+		width: 512,
 	}),
 	{
 		sideEffects: [imageWriter],
+		async before(message: ImageMessage): Promise<ImageMessage> {
+			return {
+				...message,
+				images: message.images.map(image => ({
+					...image,
+					prompt: `${image.prompt}, sketch, draft, scribble, absurdres, 8k, partially colored`,
+					negativePrompt: `${image.negativePrompt}, worst quality, bad quality, detailed, intricate, blurry, masterpiece, watermark, signature, logo`,
+				})),
+			};
+		},
 	}
 );
 
@@ -214,6 +227,7 @@ try {
 				wordCount: 500,
 				chapterCount: 1,
 				imageCount: 3,
+				maturityRating: "G|PG|PG13",
 			},
 		},
 		[bookAgent, author, illustrator]
