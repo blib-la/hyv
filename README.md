@@ -141,8 +141,6 @@ Dive deeper into Hyv's potential and discover more with these resources:
 
 ## GPTModelAdapter API
 
-Here's the Markdown table for the GPT options:
-
 | Name              | Type                      | Description                                                                                                        |
 | ----------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | model             | GPTModel                  | The model name. Compatible GPT models: "gpt-3.5-turbo" or "gpt-4".                                                 |
