@@ -141,7 +141,6 @@ Dive deeper into Hyv's potential and discover more with these resources:
 
 ## GPTModelAdapter API
 
-Here's the Markdown table for the GPT options:
 
 | Name              | Type                      | Description                                                                                                        |
 | ----------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------ |
