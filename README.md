@@ -8,9 +8,7 @@
 
 Hyv is a versatile AI collaboration library designed to streamline the software development process.
 It simplifies complex tasks by breaking them down into manageable pieces and can be easily
-integrated with various technologies, models, and adapters. This guide provides a concise overview
-of Hyv and demonstrates its functionality with custom, shorter examples that showcase various
-options.
+integrated with various technologies, models, and adapters.
 
 ## Exciting Features
 
@@ -58,7 +56,7 @@ try {
 
 ## Example 2: Advanced Usage with Two Agents and Custom Options
 
-In this example, we create two agents with custom options and a shorter, more focused instruction:
+In this example, we create two agents with custom options:
 
 ```typescript
 import { createInstruction, GPTModelAdapter } from "@hyv/openai";

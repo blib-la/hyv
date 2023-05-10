@@ -15,6 +15,8 @@
     "demo:simple": "ts-node-esm examples/simple.ts",
     "demo:chaining": "ts-node-esm examples/chaining.ts",
     "demo:stable-diffusion": "ts-node-esm examples/stable-diffusion.ts",
+    "demo:parallel": "ts-node-esm examples/parallel.ts",
+    "demo:jury": "ts-node-esm examples/jury.ts",
     "demo:dall-e": "ts-node-esm examples/dall-e.ts",
     "prebuild": "npm run clean",
     "watch": "npx lerna run watch --parallel",
