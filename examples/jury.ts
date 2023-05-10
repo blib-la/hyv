@@ -4,15 +4,15 @@ import { createInstruction, GPTModelAdapter } from "@hyv/openai";
 import type { FileContentWithPath } from "@hyv/utils";
 import { minify } from "@hyv/utils";
 const systemInstruction = createInstruction(
-	"Author",
+	"Author, Competitor",
 	minify`
 	Do tasks.
 	think, reason, decide.
 	`,
 	{
-		thoughts: "your thoughts",
-		reason: "your reasoning",
-		decision: "your decision",
+		thoughts: "deepest thoughts",
+		reason: "critical reasoning",
+		decision: "detailed decision",
 		story: {
 			name: "name of story",
 			content: "the story …",
@@ -27,9 +27,9 @@ const systemInstruction2 = createInstruction(
 	think, reason, decide.
 	`,
 	{
-		thoughts: "your thoughts",
-		reason: "your reasoning",
-		decision: "your decision",
+		thoughts: "deepest thoughts",
+		reason: "critical reasoning",
+		decision: "detailed decision",
 		winner: "name of story",
 	}
 );
@@ -58,7 +58,7 @@ async function doAndGetResult(task: ModelMessage, systemInstruction: string) {
 }
 
 try {
-	const mainTask = { task: "Write a fun story for a competition" };
+	const mainTask = { task: "Write a UNIQUE story for a competition" };
 
 	const stories = (await Promise.all(
 		Array.from(

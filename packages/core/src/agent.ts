@@ -141,6 +141,17 @@ export class Agent<
 	}
 
 	/**
+	 * Performs the current task using the provided message.
+	 *
+	 * @param message - The message to the task.
+	 * @returns - The next message and its id
+	 */
+	async assign(message: ModelMessage): Promise<{ id: string; message: ModelMessage }> {
+		const messageId = await this.#assign(message);
+		return { id: messageId, message: await this.#store.get(messageId) };
+	}
+
+	/**
 	 * Gets the side effects.
 	 * @returns - The side effects array.
 	 */
