@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/failfa-st/hyv/compare/v0.4.0...v0.5.0) (2023-05-10)
+
+### Features
+
+- **core:** add agent assign ([#5](https://github.com/failfa-st/hyv/issues/5))
+  ([74e807b](https://github.com/failfa-st/hyv/commit/74e807b22c4df87be0daa50a2aedc7f1cf003a43))
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See
+[Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
 # [0.4.0](https://github.com/failfa-st/hyv/compare/v0.3.1...v0.4.0) (2023-05-08)
 
 ### Features
