@@ -4,33 +4,39 @@
 
 ## Introduction
 
-Hyv is an innovative AI collaboration library designed to streamline your software development journey. It simplifies complex tasks by breaking them down into manageable pieces, offering seamless integration with a variety of technologies, models, and adapters.
+Hyv is an innovative AI collaboration library designed to streamline your software development
+journey. It simplifies complex tasks by breaking them down into manageable pieces, offering seamless
+integration with a variety of technologies, models, and adapters.
 
 ## Key Benefits
 
 Hyv brings a range of exciting features to accelerate your development:
 
--   🎯 **Effective Task Management**: Elevate your project coordination with state-of-the-art task management capabilities.
--   🔌 **Adaptable, Modular Design**: Incorporate Hyv effortlessly into your technology stack, thanks to its flexible, modular architecture.
--   🌍 **Broad Compatibility**: Leverage diverse platforms and frameworks with Hyv's wide-ranging compatibility.
+- 🎯 **Effective Task Management**: Elevate your project coordination with state-of-the-art task
+  management capabilities.
+- 🔌 **Adaptable, Modular Design**: Incorporate Hyv effortlessly into your technology stack, thanks
+  to its flexible, modular architecture.
+- 🌍 **Broad Compatibility**: Leverage diverse platforms and frameworks with Hyv's wide-ranging
+  compatibility.
 
-## Documentation
+## Unleash Hyv's Potential
 
-Browse our [examples](examples) and [documentation](examples) to get started with Hyv.
+Delve deeper into Hyv and uncover more with these valuable resources:
 
-## Expand Your Horizons
-
-Unlock the full potential of Hyv and learn more with these resources:
-
--   💡 **Examples**: Discover real-world use cases of Hyv in the [examples](examples) section.
--   📚 **Lingo**: Enhance your experience with [Lingo](https://github.com/failfa-st/lingo/), a powerful pseudo-language for large language models (LLMs).
+- 💡 **Examples**: Uncover practical applications of Hyv in the
+  [examples](https://chat.openai.com/?model=gpt-4examples) section.
+- 💡 **Docs**: Find informative guides and documentation in our
+  [documentation](https://chat.openai.com/?model=gpt-4docs) section.
+- 📚 **Lingo**: Supercharge your experience with [Lingo](https://github.com/failfa-st/lingo/), an
+  efficient pseudo-language for large language models (LLMs).
 
 ## Connect with Our Community
 
 Join the vibrant Hyv community and contribute to its growth:
 
--   🎉 **Discord**: Network with fellow developers and enthusiasts on our [Discord](https://discord.com/invite/m3TBB9XEkb) server.
+- 🎉 **Discord**: Network with fellow developers and enthusiasts on our
+  [Discord](https://discord.com/invite/m3TBB9XEkb) server.
 
-___
+---
 
 Embrace the future of AI-driven development with Hyv!
