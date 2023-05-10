@@ -30,18 +30,18 @@ const systemInstruction2 = createInstruction(
 		thoughts: "your thoughts",
 		reason: "your reasoning",
 		decision: "your decision",
-		winnerStory: "name of story",
+		winner: "name of story",
 	}
 );
 
-const agent3 = new Agent(
+const finalJury = new Agent(
 	new GPTModelAdapter({ model: "gpt-4", maxTokens: 1024, systemInstruction: systemInstruction2 }),
 	{
 		verbosity: 2,
 	}
 );
 
-async function doAndGetResult(task: ModelMessage) {
+async function doAndGetResult(task: ModelMessage, systemInstruction: string) {
 	const agent = new Agent(
 		new GPTModelAdapter({
 			model: "gpt-4",
@@ -54,28 +54,43 @@ async function doAndGetResult(task: ModelMessage) {
 	);
 	const taskId = await memoryStore.set(task);
 	const resultId = await agent.do(taskId);
-	return (await memoryStore.get(resultId)).story;
+	return memoryStore.get(resultId);
 }
 
 try {
 	const mainTask = { task: "Write a fun story for a competition" };
 
 	const stories = (await Promise.all(
-		Array.from({ length: 2 }, async () => doAndGetResult(mainTask))
+		Array.from(
+			{ length: 2 },
+			async () => (await doAndGetResult(mainTask, systemInstruction)).story
+		)
 	)) as FileContentWithPath[];
 
-	const mergeTask = {
+	const juryTask = {
 		task: "Read the stories and pick a winner",
 		stories,
 	};
+	console.log("juryTask", juryTask);
 
-	console.log("mergedResults", mergeTask);
+	const votes = (await Promise.all(
+		Array.from(
+			{ length: 3 },
+			async () => (await doAndGetResult(juryTask, systemInstruction2)).winner
+		)
+	)) as FileContentWithPath[];
 
-	const task3Id = await memoryStore.set(mergeTask);
-	const result3Id = await agent3.do(task3Id);
-	const result3 = await memoryStore.get(result3Id);
+	const resultTask = {
+		task: "Count the votes and determine the winner",
+		votes,
+	};
+	console.log("resultTask", resultTask);
 
-	console.log("result3", result3);
+	const winnerId = await memoryStore.set(resultTask);
+	const resultWinnerId = await finalJury.do(winnerId);
+	const resultWinner = await memoryStore.get(resultWinnerId);
+
+	console.log("resultWinner", resultWinner);
 } catch (error) {
 	console.error("Error:", error);
 }
