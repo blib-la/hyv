@@ -24,12 +24,16 @@
     "llama",
     "alpacca"
   ],
-  "main": "index.js",
+  "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  ".": {
-    "types": "./dist/index.d.ts",
-    "default": "./index.js"
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
   },
   "files": [
     "dist"
@@ -38,6 +42,10 @@
     "watch": "rollup -cw",
     "build": "rollup -c",
     "clean": "npx rimraf dist"
+  },
+  "dependencies": {
+    "camelcase": "7.0.1",
+    "humanize-string": "3.0.0"
   },
   "publishConfig": {
     "access": "public"

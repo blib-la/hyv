@@ -1,6 +1,5 @@
 import type { ModelAdapter, ModelMessage } from "@hyv/core";
-import { extractCode } from "@hyv/utils";
-import JSON5 from "json5";
+import { parseMarkdown } from "@hyv/utils";
 import type { ChatCompletionRequestMessage, CreateChatCompletionRequest, OpenAIApi } from "openai";
 
 import { defaultOpenAI } from "./config.js";
@@ -11,14 +10,14 @@ import type {
 	ModelHistorySize,
 	ReasonableTemperature,
 } from "./types.js";
-import { createInstruction } from "./utils.js";
+import { createInstructionTemplate } from "./utils.js";
 
 const defaultOptions: GPT3Options = {
 	temperature: 0.5,
 	model: "gpt-3.5-turbo",
 	historySize: 1,
 	maxTokens: 512,
-	systemInstruction: createInstruction("AI", "think, reason, reflect, answer", {
+	systemInstruction: createInstructionTemplate("AI", "think, reason, reflect, answer", {
 		thought: "string",
 		reason: "string",
 		reflection: "string",
@@ -30,7 +29,7 @@ const defaultOptions: GPT3Options = {
  * Represents a GPT model adapter that can assign tasks and move to the next task.
  *
  */
-export class GPTModelAdapter<
+export class GPTModelAdapter2<
 	Model extends GPTModel,
 	Input extends ModelMessage = ModelMessage,
 	Output extends ModelMessage = ModelMessage
@@ -51,6 +50,8 @@ export class GPTModelAdapter<
 		openAI: OpenAIApi = defaultOpenAI
 	) {
 		this.#options = { ...defaultOptions, ...options } as GPTOptions<Model>;
+		console.log(this.#options);
+
 		this.#openAI = openAI;
 		this.history = [];
 	}
@@ -93,16 +94,11 @@ export class GPTModelAdapter<
 
 			const { content } = completion.data.choices[0].message;
 
-			const { code: jsonString } = extractCode(content);
+			this.addMessageToHistory({ role: "assistant", content });
 
-			this.addMessageToHistory({ role: "assistant", content: jsonString });
-			try {
-				return JSON.parse(jsonString);
-			} catch {
-				return JSON5.parse(jsonString);
-			}
+			return parseMarkdown<Output>(content);
 		} catch (error) {
-			throw new Error(`Error assigning task in GPTModelAdapter: ${error.message}`);
+			throw new Error(`Error assigning task in GPTModelAdapter2: ${error.message}`);
 		}
 	}
 

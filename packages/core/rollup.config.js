@@ -18,6 +18,18 @@ export default [
 	{
 		input: "src/index.ts",
 		output: {
+			file: "dist/index.cjs",
+			format: "cjs",
+		},
+		plugins: [
+			swc({
+				tsconfig: "tsconfig.production.json",
+			}),
+		],
+	},
+	{
+		input: "src/index.ts",
+		output: {
 			file: "dist/index.d.ts",
 			format: "es",
 		},

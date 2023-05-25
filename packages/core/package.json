@@ -24,12 +24,16 @@
     "llama",
     "alpacca"
   ],
-  "main": "index.js",
+  "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  ".": {
-    "types": "./dist/index.d.ts",
-    "default": "./index.js"
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
   },
   "files": [
     "dist"
