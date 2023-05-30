@@ -23,10 +23,8 @@ Hyv brings a range of exciting features to accelerate your development:
 
 Delve deeper into Hyv and uncover more with these valuable resources:
 
-- 💡 **Examples**: Uncover practical applications of Hyv in the
-  [examples](examples) section.
-- 💡 **Docs**: Find informative guides and documentation in our
-  [documentation](docs) section.
+- 💡 **Examples**: Uncover practical applications of Hyv in the [examples](examples) section.
+- 💡 **Docs**: Find informative guides and documentation in our [documentation](docs) section.
 - 📚 **Lingo**: Supercharge your experience with [Lingo](https://github.com/failfa-st/lingo/), an
   efficient pseudo-language for large language models (LLMs).
 

@@ -26,13 +26,12 @@
     "stable diffusion",
     "automatic1111"
   ],
-  "main": "index.js",
-  "module": "dist/index.js",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./index.js"
+      "default": "./dist/index.js"
     }
   },
   "files": [

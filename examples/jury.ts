@@ -1,16 +1,16 @@
-import type { ModelMessage } from "@hyv/core";
-import { Agent, memoryStore } from "@hyv/core";
+import type { AgentOptions, ModelMessage } from "@hyv/core";
+import { Agent } from "@hyv/core";
 import { createInstruction, GPTModelAdapter } from "@hyv/openai";
 import type { FileContentWithPath } from "@hyv/utils";
 import { minify } from "@hyv/utils";
-const systemInstruction = createInstruction(
+const authorInstruction = createInstruction(
 	"Author, Competitor",
 	minify`
-	Do tasks.
-	think, reason, decide.
+	Do tasks. Respect rules and rating criteria.
+	Think deeply, reason your thoughts, decide based on your reasoning.
 	`,
 	{
-		thoughts: "deepest thoughts",
+		thoughts: "deep thoughts",
 		reason: "critical reasoning",
 		decision: "detailed decision",
 		story: {
@@ -20,77 +20,110 @@ const systemInstruction = createInstruction(
 	}
 );
 
-const systemInstruction2 = createInstruction(
+const juryInstruction = createInstruction(
 	"Competition Jury",
 	minify`
-	Do tasks.
-	think, reason, decide.
+	Do tasks. Respect rules and rating criteria.
+	Think deeply, reason your thoughts, decide based on your reasoning.
 	`,
 	{
-		thoughts: "deepest thoughts",
+		thoughts: "deep thoughts",
 		reason: "critical reasoning",
 		decision: "detailed decision",
 		winner: "name of story",
 	}
 );
 
+/**
+ * Gets the word count for a text
+ * @param text
+ */
+function getWordCount(text: string) {
+	return text.split(" ").filter(Boolean).length;
+}
+
 const finalJury = new Agent(
-	new GPTModelAdapter({ model: "gpt-4", maxTokens: 1024, systemInstruction: systemInstruction2 }),
+	new GPTModelAdapter({ model: "gpt-4", maxTokens: 1024, systemInstruction: juryInstruction }),
 	{
-		verbosity: 2,
+		verbosity: 1,
 	}
 );
 
-async function doAndGetResult(task: ModelMessage, systemInstruction: string) {
-	const agent = new Agent(
+async function createAndAssign<T>(
+	task: ModelMessage,
+	systemInstruction: string,
+	options: AgentOptions = {}
+) {
+	return (await new Agent(
 		new GPTModelAdapter({
 			model: "gpt-4",
 			maxTokens: 1024,
+			temperature: 0.9,
 			systemInstruction,
 		}),
 		{
-			verbosity: 2,
+			verbosity: 1,
+			...options,
 		}
-	);
-	const taskId = await memoryStore.set(task);
-	const resultId = await agent.do(taskId);
-	return memoryStore.get(resultId);
+	).assign(task)) as { id: string; message: ModelMessage & T };
 }
 
-try {
-	const mainTask = { task: "Write a UNIQUE story for a competition" };
+const rules = ["minimum 300 words long", "must be unique and original"];
+const ratingCriteria = ["unique story", "detail", "engaging"];
 
+try {
 	const stories = (await Promise.all(
 		Array.from(
-			{ length: 2 },
-			async () => (await doAndGetResult(mainTask, systemInstruction)).story
+			{ length: 3 },
+			async () =>
+				(
+					await createAndAssign(
+						{ task: "Write a UNIQUE story for a competition", rules, ratingCriteria },
+						authorInstruction,
+						{
+							async after(
+								message: ModelMessage & { story: { name: string; content: string } }
+							): Promise<
+								ModelMessage & {
+									story: { name: string; content: string; wordCount: number };
+								}
+							> {
+								return {
+									...message,
+									story: {
+										...message.story,
+										wordCount: getWordCount(message.story.content),
+									},
+								};
+							},
+						}
+					)
+				).message.story
 		)
 	)) as FileContentWithPath[];
-
-	const juryTask = {
-		task: "Read the stories and pick a winner",
-		stories,
-	};
-	console.log("juryTask", juryTask);
 
 	const votes = (await Promise.all(
 		Array.from(
 			{ length: 3 },
-			async () => (await doAndGetResult(juryTask, systemInstruction2)).winner
+			async () =>
+				(
+					await createAndAssign(
+						{
+							task: "Read the stories and pick a winner",
+							rules,
+							ratingCriteria,
+							stories,
+						},
+						juryInstruction
+					)
+				).message.winner
 		)
 	)) as FileContentWithPath[];
 
-	const resultTask = {
+	await finalJury.assign({
 		task: "Count the votes and determine the winner",
 		votes,
-	};
-	console.log("resultTask", resultTask);
-
-	const winnerId = await memoryStore.set(resultTask);
-	const resultWinnerId = await finalJury.do(winnerId);
-	const resultWinner = await memoryStore.get(resultWinnerId);
-
-	console.log("resultWinner", resultWinner);
+	});
 } catch (error) {
 	console.error("Error:", error);
 }

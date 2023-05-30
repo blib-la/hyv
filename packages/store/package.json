@@ -24,23 +24,22 @@
     "llama",
     "alpacca"
   ],
-  "main": "index.js",
-  "module": "dist/index.js",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./index.js"
+      "default": "./dist/index.js"
     }
   },
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "watch": "rollup -cw",
     "build": "rollup -c",
     "clean": "npx rimraf dist"
   },
-  "files": [
-    "dist"
-  ],
   "dependencies": {
     "@hyv/core": "^0.5.0",
     "@hyv/utils": "^0.5.0",

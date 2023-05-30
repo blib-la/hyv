@@ -40,7 +40,7 @@ export class Agent<
 	 * @param model - The model instance.
 	 * @param options - The configuration for the agent
 	 */
-	constructor(model: Model, options: AgentOptions<Store> = {}) {
+	constructor(model: Model, options: Partial<AgentOptions<Store>> = {}) {
 		this.#model = model;
 
 		this.#store = options.store ?? memoryStore;
@@ -146,9 +146,11 @@ export class Agent<
 	 * @param message - The message to the task.
 	 * @returns - The next message and its id
 	 */
-	async assign(message: ModelMessage): Promise<{ id: string; message: ModelMessage }> {
+	async assign<T extends ModelMessage>(
+		message: ModelMessage
+	): Promise<{ id: string; message: T }> {
 		const messageId = await this.#assign(message);
-		return { id: messageId, message: await this.#store.get(messageId) };
+		return { id: messageId, message: (await this.#store.get(messageId)) as T };
 	}
 
 	/**

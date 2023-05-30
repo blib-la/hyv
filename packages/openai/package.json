@@ -24,13 +24,12 @@
     "llama",
     "alpacca"
   ],
-  "main": "index.js",
-  "module": "dist/index.js",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./index.js"
+      "default": "./dist/index.js"
     }
   },
   "files": [
@@ -43,7 +42,10 @@
   },
   "dependencies": {
     "@hyv/core": "^0.5.0",
+    "camelcase": "7.0.1",
     "dotenv": "16.0.3",
+    "humanize-string": "3.0.0",
+    "json5": "2.2.3",
     "openai": "3.2.1",
     "type-fest": "3.9.0"
   },

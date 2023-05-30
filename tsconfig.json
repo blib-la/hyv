@@ -22,9 +22,11 @@
     "paths": {
       "@hyv/core": ["./packages/core/src"],
       "@hyv/openai": ["./packages/openai/src"],
-      "@hyv/store": ["./packages/store/src"]
+      "@hyv/store": ["./packages/store/src"],
+      "@hyv/utils": ["./packages/utils/src"],
+      "@hyv/stable-diffusion": ["./packages/stable-diffusion/src"]
     },
-    "baseUrl": "./"
+    "baseUrl": "."
   },
   "include": ["./types/*.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["./node_modules"]

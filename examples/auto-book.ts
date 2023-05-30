@@ -120,7 +120,7 @@ function getReadingTime(text: string) {
 }
 
 /**
- * Estimates reading time for a text
+ * Gets the word count for a text
  * @param text
  */
 function getWordCount(text: string) {
