@@ -70,8 +70,14 @@ export interface AgentOptions<Store extends StoreAdapter = StoreAdapter> {
  *
  * @method set - Stores a ModelMessage and returns a Promise that resolves with the messageId.
  * @method get - Retrieves a ModelMessage by its messageId, returning a Promise that resolves with the ModelMessage.
+ * @method search (optional) - Retrieves ModelMessages by class name and fields, returning a Promise that resolves with the ModelMessages.
  */
 export interface StoreAdapter {
 	set(message: ModelMessage): Promise<string>;
+	set(message: ModelMessage, className: string): Promise<string>;
+
 	get(messageId: string): Promise<ModelMessage>;
+	get(messageId: string, className: string): Promise<ModelMessage>;
+
+	search?(className: string, fields: string): Promise<ModelMessage>;
 }
