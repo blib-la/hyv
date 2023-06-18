@@ -35,7 +35,7 @@ const message: WeaviateMessage = {
 const messageId = await store.set(message);
 ```
 
-## Get data by ID from the vector database
+## Get data by ID
 
 How to retrieve data from the vector database using a specific ID. It calls the `get` method of the `WeaviateAdapter` instance, passing in the previously obtained `messageID` and the `className` "User".
 
@@ -43,10 +43,18 @@ How to retrieve data from the vector database using a specific ID. It calls the 
 const messageById = await store.get(messageId, "User");
 ```
 
-## Get data by class from the vector database
+## Get data by class and where condition
 
-Retrieve data from the vector database based on the `className` and field. It uses the `search` method of the `WeaviateAdapter` instance, passing in the `className` "User" and the field "name". 
+This demonstrates how to query data from the vector database using a specific `className` and a `where` condition. The `where` condition allows you to specify precise criteria that the retrieved data needs to meet.
+
+The `className` "User", the field "name", and a `where` condition object are passed as arguments. This `where` condition specifies that we are interested in `User` objects where the `name` is "YourFriendlyUser".
 
 ```typescript
-const messageByClass = await store.search("User", "name")
+const where = {
+	operator: "Equal",
+	path: ["name"],
+	valueText: "YourFriendlyUser",
+}
+
+const allMessages = await store.search("User", "name", where);
 ```
