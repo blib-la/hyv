@@ -1,6 +1,6 @@
 # Vector database
 
-In order to have long-term memoery, it is useful to have data inside of a vector database. hyv currently supports [Weaviate](https://weaviate.io) for this purpose. 
+In order to have long-term memory, it is useful to have data inside of a vector database. hyv currently supports [Weaviate](https://weaviate.io) for this purpose. 
 
 
 ## Before You Begin
@@ -36,7 +36,7 @@ const message: WeaviateMessage = {
 	className: "User",
 	properties: {
 		name: "YourFriendlyUser",
-        age: 37
+		age: 37
 	},
 };
 
