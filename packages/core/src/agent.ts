@@ -69,9 +69,10 @@ export class Agent<
 	 * @private
 	 * @async
 	 * @param inputMessage - The message to be assigned.
+	 * @param args
 	 * @returns - A Promise that resolves to the next messageId.
 	 */
-	async #assign(inputMessage: ModelMessage) {
+	async #assign(inputMessage: ModelMessage, ...args: unknown[]) {
 		if (this.verbosity > 1) {
 			console.log("Input Message:");
 			console.log(inputMessage);
@@ -116,7 +117,7 @@ export class Agent<
 			});
 		}
 
-		const messageId = await this.#store.set(modifiedOutputMessage);
+		const messageId = await this.#store.set(modifiedOutputMessage, ...args);
 		return this.#finally(messageId, modifiedOutputMessage);
 	}
 
@@ -134,23 +135,26 @@ export class Agent<
 	 * Performs the current task using the provided messageId.
 	 *
 	 * @param messageId - The messageId to the task.
+	 * @param args
 	 * @returns - The id to the next message
 	 */
-	async do(messageId: string) {
-		return this.#assign(await this.#store.get(messageId));
+	async do(messageId: string, ...args: unknown[]) {
+		return this.#assign(await this.#store.get(messageId, ...args));
 	}
 
 	/**
 	 * Performs the current task using the provided message.
 	 *
 	 * @param message - The message to the task.
+	 * @param args
 	 * @returns - The next message and its id
 	 */
 	async assign<T extends ModelMessage>(
-		message: ModelMessage
+		message: ModelMessage,
+		...args: unknown[]
 	): Promise<{ id: string; message: T }> {
-		const messageId = await this.#assign(message);
-		return { id: messageId, message: (await this.#store.get(messageId)) as T };
+		const messageId = await this.#assign(message, ...args);
+		return { id: messageId, message: (await this.#store.get(messageId, ...args)) as T };
 	}
 
 	/**

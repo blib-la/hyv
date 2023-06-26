@@ -1,20 +1,13 @@
+import type { StoreAdapter } from "@hyv/core";
 import type { ModelMessage } from "@hyv/core";
 import type { ConnectionParams, WeaviateClient, WhereFilter } from "weaviate-ts-client";
 import weaviate from "weaviate-ts-client";
 
 /**
- * Represents a Weaviate message.
- */
-export type WeaviateMessage = ModelMessage & {
-	className: string;
-	properties: Record<string, unknown>;
-};
-
-/**
  * Represents a Weaviate adapter for storing and retrieving messages.
  */
-export class WeaviateAdapter {
-	private client: WeaviateClient;
+export class WeaviateAdapter implements StoreAdapter {
+	#client: WeaviateClient;
 
 	/**
 	 * Constructs a new instance of WeaviateAdapter.
@@ -23,21 +16,22 @@ export class WeaviateAdapter {
 	 */
 	constructor(options: ConnectionParams) {
 		// https://github.com/weaviate/typescript-client/issues/43
-		this.client = (weaviate as unknown as typeof weaviate.default).client(options);
+		this.#client = (weaviate as unknown as typeof weaviate.default).client(options);
 	}
 
 	/**
-	 * Stores a WeaviateMessage and returns a Promise that resolves with the messageId.
+	 * Stores a ModelMessage and returns a Promise that resolves with the messageId.
 	 *
-	 * @param {WeaviateMessage} message - The message to be stored.
+	 * @param {ModelMessage} message - The message to be stored.
+	 * @param {string} className - The class name of the message to set
 	 * @returns {Promise<string>} The ID of the stored message.
 	 */
-	async set(message: WeaviateMessage): Promise<string> {
+	async set(message: ModelMessage, className: string): Promise<string> {
 		try {
-			const result = await this.client.data
+			const result = await this.#client.data
 				.creator()
-				.withClassName(message.className)
-				.withProperties(message.properties)
+				.withClassName(className)
+				.withProperties(message)
 				.do();
 
 			return result.id;
@@ -47,21 +41,17 @@ export class WeaviateAdapter {
 	}
 
 	/**
-	 * Retrieves a WeaviateMessage by its messageId, returning a Promise that resolves with the WeaviateMessage.
+	 * Retrieves a ModelMessage by its messageId, returning a Promise that resolves with the ModelMessage.
 	 *
 	 * @param {string} messageId - The ID of the message to retrieve.
 	 * @param {string} className - The class name of the message to retrieve.
-	 * @returns {Promise<any>} The retrieved message.
+	 * @returns {Promise<ModelMessage>} The retrieved message.
 	 */
 	async get(messageId: string, className: string): Promise<any> {
 		try {
-			const result = await this.client.data
-				.getterById()
-				.withClassName(className)
-				.withId(messageId)
-				.do();
-
-			return result;
+			return (
+				await this.#client.data.getterById().withClassName(className).withId(messageId).do()
+			).properties;
 		} catch (error) {
 			console.error(error);
 		}
@@ -72,17 +62,15 @@ export class WeaviateAdapter {
 	 *
 	 * @param {string} className - The name of the class of objects to search.
 	 * @param {string} fields - A space-separated string of the names of the fields to retrieve.
-	 * @returns {Promise<any>} The search results.
+	 * @returns {Promise<ModelMessage>} The search results.
 	 */
-	async searchObjects(className: string, fields: string): Promise<any> {
+	async searchObjects(className: string, fields: string): Promise<{ data: any }> {
 		try {
-			const result = await this.client.graphql
+			return await this.#client.graphql
 				.get()
 				.withClassName(className)
 				.withFields(fields)
 				.do();
-
-			return result;
 		} catch (error) {
 			console.error(error);
 		}
@@ -110,19 +98,21 @@ export class WeaviateAdapter {
 	 *     .then(result => console.log(result))
 	 *     .catch(error => console.error(error));
 	 */
-	async search(className: string, fields: string, where: WhereFilter): Promise<any> {
+	async search(className: string, fields: string, where: WhereFilter): Promise<{ data: any }> {
 		try {
-			const result = await this.client.graphql
+			return await this.#client.graphql
 				.get()
 				.withClassName(className)
 				.withFields(fields)
 				.withWhere(where)
 				.do();
-
-			return result;
 		} catch (error) {
 			console.error(error);
 			return error;
 		}
+	}
+
+	get client() {
+		return this.#client;
 	}
 }

@@ -73,11 +73,9 @@ export interface AgentOptions<Store extends StoreAdapter = StoreAdapter> {
  * @method search (optional) - Retrieves ModelMessages by class name and fields, returning a Promise that resolves with the ModelMessages.
  */
 export interface StoreAdapter {
-	set(message: ModelMessage): Promise<string>;
-	set(message: ModelMessage, className: string): Promise<string>;
+	set(message: ModelMessage, ...args: any[]): Promise<string>;
 
-	get(messageId: string): Promise<ModelMessage>;
-	get(messageId: string, className: string): Promise<ModelMessage>;
+	get(messageId: string, ...args: any[]): Promise<ModelMessage>;
 
-	search?(className: string, fields: string): Promise<ModelMessage>;
+	search?(...args: any[]): Promise<any>;
 }
