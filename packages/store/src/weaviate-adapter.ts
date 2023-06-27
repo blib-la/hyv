@@ -47,7 +47,7 @@ export class WeaviateAdapter implements StoreAdapter {
 	 * @param {string} className - The class name of the message to retrieve.
 	 * @returns {Promise<ModelMessage>} The retrieved message.
 	 */
-	async get(messageId: string, className: string): Promise<any> {
+	async get(messageId: string, className: string): Promise<ModelMessage> {
 		try {
 			return (
 				await this.#client.data.getterById().withClassName(className).withId(messageId).do()
