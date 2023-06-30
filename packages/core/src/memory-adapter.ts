@@ -7,7 +7,7 @@ import type { ModelMessage, StoreAdapter } from "./types.js";
  * Represents a memory store adapter for storing and retrieving messages.
  */
 export class MemoryAdapter implements StoreAdapter {
-	#store: LRUCache<string, ModelMessage> = new LRUCache({ max: 50 });
+	private _store: LRUCache<string, ModelMessage> = new LRUCache({ max: 50 });
 	/**
 	 * Stores a message in the memory and returns the messageId.
 	 *
@@ -18,7 +18,7 @@ export class MemoryAdapter implements StoreAdapter {
 	 */
 	async set<Message extends ModelMessage>(message: Message): Promise<string> {
 		const messageId = nanoid();
-		this.#store.set(messageId, message);
+		this._store.set(messageId, message);
 
 		return messageId;
 	}
@@ -32,7 +32,7 @@ export class MemoryAdapter implements StoreAdapter {
 	 * @throws - If there is an error retrieving the message.
 	 */
 	async get(messageId: string): Promise<ModelMessage> {
-		const message = this.#store.get(messageId);
+		const message = this._store.get(messageId);
 		if (message) {
 			return message;
 		}

@@ -1,24 +1,20 @@
 import type { ModelAdapter, ModelMessage } from "@hyv/core";
-import { extractCode } from "@hyv/utils";
+import { extractCode, parseMarkdown } from "@hyv/utils";
+import type { AxiosError } from "axios";
 import JSON5 from "json5";
 import type { ChatCompletionRequestMessage, CreateChatCompletionRequest, OpenAIApi } from "openai";
 
 import { defaultOpenAI } from "./config.js";
-import type {
-	GPT3Options,
-	GPTModel,
-	GPTOptions,
-	ModelHistorySize,
-	ReasonableTemperature,
-} from "./types.js";
-import { createInstruction } from "./utils.js";
+import type { GPTOptions } from "./types.js";
+import { createInstructionTemplate } from "./utils.js";
 
-const defaultOptions: GPT3Options = {
+const defaultOptions: GPTOptions = {
 	temperature: 0.5,
 	model: "gpt-3.5-turbo",
 	historySize: 1,
 	maxTokens: 512,
-	systemInstruction: createInstruction("AI", "think, reason, reflect, answer", {
+	format: "markdown",
+	systemInstruction: createInstructionTemplate("AI", "think, reason, reflect, answer", {
 		thought: "string",
 		reason: "string",
 		reflection: "string",
@@ -30,28 +26,22 @@ const defaultOptions: GPT3Options = {
  * Represents a GPT model adapter that can assign tasks and move to the next task.
  *
  */
-export class GPTModelAdapter<
-	Model extends GPTModel,
-	Input extends ModelMessage = ModelMessage,
-	Output extends ModelMessage = ModelMessage
-> implements ModelAdapter<ModelMessage, ModelMessage>
+export class GPTModelAdapter<Input extends ModelMessage, Output extends ModelMessage>
+	implements ModelAdapter<Input, Output>
 {
-	#options: GPTOptions<Model>;
-	#openAI: OpenAIApi;
+	private _options: GPTOptions;
+	private _openAI: OpenAIApi;
 	readonly history: ChatCompletionRequestMessage[];
 
 	/**
 	 * Creates an instance of the GPTModelAdapter class.
 	 *
 	 * @param  options - The GPT model options.
-	 * @param  openAI - A configured openAI API instance.
+	 * @param openAI
 	 */
-	constructor(
-		options: GPTOptions<Model> = defaultOptions as GPTOptions<Model>,
-		openAI: OpenAIApi = defaultOpenAI
-	) {
-		this.#options = { ...defaultOptions, ...options } as GPTOptions<Model>;
-		this.#openAI = openAI;
+	constructor(options: Partial<GPTOptions> = defaultOptions, openAI: OpenAIApi = defaultOpenAI) {
+		this._options = { ...defaultOptions, ...options } as GPTOptions;
+		this._openAI = openAI;
 		this.history = [];
 	}
 
@@ -63,7 +53,7 @@ export class GPTModelAdapter<
 	 */
 	private addMessageToHistory(message: ChatCompletionRequestMessage) {
 		this.history.push(message);
-		while (this.history.length >= this.#options.historySize * 2) {
+		while (this.history.length >= this._options.historySize * 2) {
 			this.history.shift();
 		}
 	}
@@ -80,18 +70,22 @@ export class GPTModelAdapter<
 		try {
 			this.addMessageToHistory({ role: "user", content: JSON.stringify(task) });
 			const request: CreateChatCompletionRequest = {
-				model: this.#options.model,
+				model: this._options.model,
 				// eslint-disable-next-line camelcase
-				max_tokens: this.#options.maxTokens,
-				temperature: this.#options.temperature,
+				max_tokens: this._options.maxTokens,
+				temperature: this._options.temperature,
 				messages: [
-					{ role: "system", content: this.#options.systemInstruction },
+					{ role: "system", content: this._options.systemInstruction },
 					...this.history,
 				],
 			};
-			const completion = await this.#openAI.createChatCompletion(request);
+			const completion = await this._openAI.createChatCompletion(request);
 
 			const { content } = completion.data.choices[0].message;
+			if (this._options.format === "markdown") {
+				this.addMessageToHistory({ role: "assistant", content });
+				return parseMarkdown<Output>(content);
+			}
 
 			const { code: jsonString } = extractCode(content);
 
@@ -101,8 +95,11 @@ export class GPTModelAdapter<
 			} catch {
 				return JSON5.parse(jsonString);
 			}
-		} catch (error) {
-			throw new Error(`Error assigning task in GPTModelAdapter: ${error.message}`);
+		} catch (error: unknown) {
+			console.error(
+				(error as AxiosError)?.response?.data.message ?? (error as Error).message
+			);
+			throw error;
 		}
 	}
 
@@ -112,7 +109,7 @@ export class GPTModelAdapter<
 	 * @returns - The current systemInstruction value.
 	 */
 	get systemInstruction() {
-		return this.#options.systemInstruction;
+		return this._options.systemInstruction;
 	}
 
 	/**
@@ -120,8 +117,8 @@ export class GPTModelAdapter<
 	 *
 	 * @param systemInstruction - The new systemInstruction value.
 	 */
-	set systemInstruction(systemInstruction: string) {
-		this.#options.systemInstruction = systemInstruction;
+	set systemInstruction(systemInstruction) {
+		this._options.systemInstruction = systemInstruction;
 	}
 
 	/**
@@ -130,7 +127,7 @@ export class GPTModelAdapter<
 	 * @returns - The current maxTokens value.
 	 */
 	get maxTokens() {
-		return this.#options.maxTokens;
+		return this._options.maxTokens;
 	}
 
 	/**
@@ -138,8 +135,8 @@ export class GPTModelAdapter<
 	 *
 	 * @param maxTokens - The new maxTokens value.
 	 */
-	set maxTokens(maxTokens: number) {
-		this.#options.maxTokens = maxTokens;
+	set maxTokens(maxTokens) {
+		this._options.maxTokens = maxTokens;
 	}
 
 	/**
@@ -148,7 +145,7 @@ export class GPTModelAdapter<
 	 * @returns - The current temperature value.
 	 */
 	get temperature() {
-		return this.#options.temperature;
+		return this._options.temperature;
 	}
 
 	/**
@@ -156,8 +153,8 @@ export class GPTModelAdapter<
 	 *
 	 * @param temperature - The new temperature value.
 	 */
-	set temperature(temperature: ReasonableTemperature) {
-		this.#options.temperature = temperature;
+	set temperature(temperature) {
+		this._options.temperature = temperature;
 	}
 
 	/**
@@ -165,8 +162,8 @@ export class GPTModelAdapter<
 	 *
 	 * @returns - The current historySize value.
 	 */
-	get historySize(): ModelHistorySize[Model] {
-		return this.#options.historySize;
+	get historySize() {
+		return this._options.historySize;
 	}
 
 	/**
@@ -174,7 +171,7 @@ export class GPTModelAdapter<
 	 *
 	 * @param historySize - The new historySize value.
 	 */
-	set historySize(historySize: ModelHistorySize[Model]) {
-		this.#options.historySize = historySize;
+	set historySize(historySize) {
+		this._options.historySize = historySize;
 	}
 }

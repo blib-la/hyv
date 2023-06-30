@@ -1,3 +1,5 @@
+import path from "node:path";
+
 import type { ModelMessage } from "@hyv/core";
 import { Agent, sequence } from "@hyv/core";
 import { createInstruction, GPTModelAdapter } from "@hyv/openai";
@@ -5,7 +7,7 @@ import type { ImageMessage } from "@hyv/stable-diffusion";
 import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
 import { minify, createFileWriter } from "@hyv/utils";
 
-const dir = `out/auto-tweet/${Date.now()}`;
+const dir = path.join(process.cwd(), `examples/output/auto-tweet/${Date.now()}`);
 const fileWriter = createFileWriter(dir);
 const imageWriter = createFileWriter(dir, "base64");
 
@@ -14,6 +16,7 @@ const termAgent = new Agent(
 		model: "gpt-4",
 		maxTokens: 1024,
 		temperature: 0.8,
+		format: "json",
 		systemInstruction: createInstruction(
 			"mastermind, random term creator, very funny, hilarious",
 			minify`
@@ -49,6 +52,7 @@ const tweeter = new Agent(
 	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 1024,
+		format: "json",
 		systemInstruction: createInstruction(
 			"Comedic Writer, Twitter trend expert",
 			minify`\

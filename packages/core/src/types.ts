@@ -1,6 +1,6 @@
 import type { SideEffect } from "@hyv/utils";
 
-export type ModelMessage = Record<string, unknown>;
+export type ModelMessage = Record<string, any>;
 
 /**
  * Represents a model adapter that can assign tasks and move to the next task.
@@ -30,7 +30,7 @@ export interface AgentOptions<Store extends StoreAdapter = StoreAdapter> {
 	 * @param message - The input ModelMessage.
 	 * @returns - A Promise that resolves with the transformed ModelMessage.
 	 */
-	before(message: ModelMessage): Promise<ModelMessage>;
+	before?(message: ModelMessage): Promise<ModelMessage>;
 
 	/**
 	 * Transforms the output message after it has been processed by the model.
@@ -38,7 +38,7 @@ export interface AgentOptions<Store extends StoreAdapter = StoreAdapter> {
 	 * @param message - The output ModelMessage.
 	 * @returns - A Promise that resolves with the transformed ModelMessage.
 	 */
-	after(message: ModelMessage): Promise<ModelMessage>;
+	after?(message: ModelMessage): Promise<ModelMessage>;
 
 	/**
 	 * Runs after the Agent has processed the output message.
@@ -47,22 +47,22 @@ export interface AgentOptions<Store extends StoreAdapter = StoreAdapter> {
 	 * @param message - The processed ModelMessage.
 	 * @returns - A Promise that resolves with the messageId.
 	 */
-	finally(messageId: string, message: ModelMessage): Promise<string>;
+	finally?(messageId: string, message: ModelMessage): Promise<string>;
 
 	/**
 	 * An array of sideEffects that the Agent can use.
 	 */
-	sideEffects: SideEffect[];
+	sideEffects?: SideEffect[];
 
 	/**
 	 * The store that should be used to save and retrieve messages
 	 */
-	store: Store;
+	store?: Store;
 
 	/**
 	 * Enables verbose logging to a certain degree
 	 */
-	verbosity: number;
+	verbosity?: number;
 }
 
 /**

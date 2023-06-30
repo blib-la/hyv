@@ -32,14 +32,22 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "default": "./dist/types.js"
+    },
+    "./automatic1111": {
+      "types": "./dist/automatic1111.d.ts",
+      "default": "./dist/automatic1111.js"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "watch": "rollup -cw",
-    "build": "rollup -c",
+    "watch": "tsc --watch",
+    "build": "tsc",
     "clean": "npx rimraf dist"
   },
   "dependencies": {

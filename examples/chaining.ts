@@ -1,5 +1,5 @@
 import { Agent, sequence } from "@hyv/core";
-import { createInstruction, GPTModelAdapter } from "@hyv/openai";
+import { createInstructionTemplate, GPTModelAdapter } from "@hyv/openai";
 import { minify } from "@hyv/utils";
 
 const agents = Array.from<undefined, Agent>(
@@ -8,7 +8,7 @@ const agents = Array.from<undefined, Agent>(
 		new Agent(
 			new GPTModelAdapter({
 				model: "gpt-4",
-				systemInstruction: createInstruction(
+				systemInstruction: createInstructionTemplate(
 					"AI",
 					minify`
 					You have deep thoughts,

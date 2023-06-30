@@ -37,7 +37,7 @@ export function createFileWriterWithReadingTime(
 	};
 }
 
-const dir = `out/auto-stories/${Date.now()}`;
+const dir = path.join(process.cwd(), `examples/output/auto-book/${Date.now()}`);
 const fileWriter = createFileWriterWithReadingTime(dir);
 const imageWriter = createFileWriter(dir, "base64");
 
@@ -132,6 +132,7 @@ const author = new Agent(
 		model: "gpt-4",
 		maxTokens: 4096,
 		temperature: 0.7,
+		format: "json",
 		systemInstruction: createInstruction(
 			"Author named Morgan Casey Patel",
 			minify`\

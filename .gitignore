@@ -51,6 +51,7 @@ node_modules/
 
 # outfolder for examples
 out
+examples/output
 
 # distribution files
 dist

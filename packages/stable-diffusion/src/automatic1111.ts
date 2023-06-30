@@ -17,26 +17,26 @@ const defaultOptions: Automatic1111Options = {
  * model through the use of the `ModelAdapter` interface.
  * {@see https://github.com/AUTOMATIC1111/stable-diffusion-webui}
  *
- * @property #options - The configuration options for the AUTOMATIC1111 model.
- * @property rootUrl - The root URL for the AUTOMATIC1111 API endpoints.
- * @property endpointBase - The base path for the AUTOMATIC1111 API endpoints.
+ * @property _options - The configuration options for the AUTOMATIC1111 model.
+ * @property _rootUrl - The root URL for the AUTOMATIC1111 API endpoints.
+ * @property _endpointBase - The base path for the AUTOMATIC1111 API endpoints.
  */
 export class Automatic1111ModelAdapter<Input extends ImageMessage = ImageMessage>
 	implements ModelAdapter<Input, FilesMessage>
 {
-	#options: Automatic1111Options;
-	private readonly rootUrl: string = "http://127.0.0.1:7861";
-	private readonly endpointBase = "sdapi/v1";
+	private _options: Automatic1111Options;
+	private readonly _rootUrl: string = "http://127.0.0.1:7861";
+	private readonly _endpointBase = "sdapi/v1";
 	/**
 	 * Creates an instance of the Automatic1111ModelAdapter class.
 	 *
 	 * @param options - The Automatic1111 model options.
-	 * @param rootUrl - root url to the endpoints
+	 * @param _rootUrl - root url to the endpoints
 	 */
-	constructor(options: Automatic1111Options = defaultOptions, rootUrl?: string) {
-		this.#options = { ...defaultOptions, ...options };
-		if (rootUrl) {
-			this.rootUrl = rootUrl;
+	constructor(options: Automatic1111Options = defaultOptions, _rootUrl?: string) {
+		this._options = { ...defaultOptions, ...options };
+		if (_rootUrl) {
+			this._rootUrl = _rootUrl;
 		}
 	}
 
@@ -48,12 +48,12 @@ export class Automatic1111ModelAdapter<Input extends ImageMessage = ImageMessage
 		try {
 			const files = await Promise.all(
 				task.images.map(async ({ alt: _, path: imagePath, ...image }) => {
-					const { model: sdModelCheckpoint, ...options } = this.#options;
-					await axios.post(urlJoin(this.rootUrl, this.endpointBase, "options"), {
+					const { model: sdModelCheckpoint, ...options } = this._options;
+					await axios.post(urlJoin(this._rootUrl, this._endpointBase, "options"), {
 						...decamelizeKeys({ sdModelCheckpoint }),
 					});
 					const response = await axios.post<{ images: string[] }>(
-						urlJoin(this.rootUrl, this.endpointBase, "txt2img"),
+						urlJoin(this._rootUrl, this._endpointBase, "txt2img"),
 						{
 							...decamelizeKeys(options),
 							...decamelizeKeys(image),
