@@ -7,19 +7,23 @@
     "esModuleInterop": true,
     "importHelpers": true,
     "isolatedModules": true,
-    "lib": ["ES2022"],
+    "lib": [
+      "ES2022",
+      "dom"
+    ],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "resolveJsonModule": true,
     "jsx": "preserve",
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
+    "noEmit": false,
     "allowJs": true,
     "sourceMap": true,
     "strict": false,
     "target": "ES2022",
-    "typeRoots": ["./node_modules/@types", "./types"]
+    "typeRoots": ["node_modules/@types", "./types"],
+    "baseUrl": "."
   },
-  "include": ["**/*.d.ts", "**/*.ts", "**/*.ts"],
-  "exclude": ["./node_modules"]
+  "include": ["*.d.ts", "*.ts", "*.tsx"],
+  "exclude": ["/**/node_modules", "/node_modules", "examples"]
 }

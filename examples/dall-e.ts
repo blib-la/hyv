@@ -1,8 +1,13 @@
+import path from "node:path";
+
 import { Agent, sequence } from "@hyv/core";
 import { DallEModelAdapter } from "@hyv/openai";
 import { createFileWriter } from "@hyv/utils";
 
-const imageWriter = createFileWriter(`out/dall-e/${Date.now()}`, "base64");
+const imageWriter = createFileWriter(
+	path.join(process.cwd(), `examples/output/dall-e/${Date.now()}`),
+	"base64"
+);
 
 const agent = new Agent(new DallEModelAdapter(), {
 	sideEffects: [imageWriter],

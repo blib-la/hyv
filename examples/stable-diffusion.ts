@@ -1,8 +1,13 @@
+import path from "node:path";
+
 import { Agent, sequence } from "@hyv/core";
 import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
 import { createFileWriter } from "@hyv/utils";
 
-const imageWriter = createFileWriter(`out/stable-diffusion/${Date.now()}`, "base64");
+const imageWriter = createFileWriter(
+	path.join(process.cwd(), `examples/output/stable-diffusion/${Date.now()}`),
+	"base64"
+);
 
 const agent = new Agent(new Automatic1111ModelAdapter({ steps: 20, cfgScale: 7 }), {
 	sideEffects: [imageWriter],

@@ -30,14 +30,18 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./fs-adapter": {
+      "types": "./dist/fs-adapter.d.ts",
+      "default": "./dist/fs-adapter.js"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "watch": "rollup -cw",
-    "build": "rollup -c",
+    "watch": "tsc --watch",
+    "build": "tsc",
     "clean": "npx rimraf dist"
   },
   "dependencies": {

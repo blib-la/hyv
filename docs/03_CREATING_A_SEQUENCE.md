@@ -19,9 +19,9 @@ import { GPTModelAdapter } from "@hyv/openai";
 const agent = new Agent(new GPTModelAdapter(), { verbosity: 1 });
 
 try {
-  await sequence({ question: "What is life?" }, [agent]);
+    await sequence({ question: "What is life?" }, [agent]);
 } catch (error) {
-  console.error("Error:", error);
+    console.error("Error:", error);
 }
 ```
 
@@ -56,40 +56,41 @@ import { Agent, sequence } from "@hyv/core";
 import { createInstruction, GPTModelAdapter } from "@hyv/openai";
 
 const agents = Array.from<undefined, Agent>(
-  { length: 3 },
-  () =>
-    new Agent(
-      new GPTModelAdapter({
-        model: "gpt-4",
-        systemInstruction: createInstruction(
-          "AI",
-          "think about the task, reason your thoughts, create a new task based on your decision!",
-          {
-            mainGoal: "{{mainGoal}}",
-            thoughts: "detailed string",
-            reason: "detailed string",
-            task: "full and detailed task without references",
-          }
-        ),
-      }),
-      {
-        async before({ task, mainGoal }) {
-          return {
-            task,
-            mainGoal,
-          };
-        },
-        verbosity: 1,
-      }
-    )
+    { length: 3 },
+    () =>
+        new Agent(
+            new GPTModelAdapter({
+                model: "gpt-4",
+                systemInstruction: createInstruction(
+                    "AI",
+                    "think about the task, reason your thoughts, create a new task based on your decision!",
+                    {
+                        mainGoal: "{{mainGoal}}",
+                        thoughts: "detailed string",
+                        reason: "detailed string",
+                        task: "full and detailed task without references",
+                    }
+                ),
+            }),
+            {
+                async before({ task, mainGoal }) {
+                    // Only use the mainGoal and task
+                    return {
+                        task,
+                        mainGoal,
+                    };
+                },
+                verbosity: 1,
+            }
+        )
 );
 
 try {
-  await sequence(
-    { task: "Make the world a better place!", mainGoal: "Make the world a better place!" },
-    agents
-  );
+    await sequence(
+        { task: "Make the world a better place!", mainGoal: "Make the world a better place!" },
+        agents
+    );
 } catch (error) {
-  console.error("Error:", error);
+    console.error("Error:", error);
 }
 ```

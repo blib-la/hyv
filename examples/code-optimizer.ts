@@ -1,13 +1,13 @@
 import { inspect } from "node:util";
 
 import { Agent } from "@hyv/core";
-import { createInstructionTemplate, GPTModelAdapter2 } from "@hyv/openai";
+import { createInstructionTemplate, GPTModelAdapter } from "@hyv/openai";
 import { extractCode, minify } from "@hyv/utils";
 
 inspect.defaultOptions.depth = null;
 
 const developer = new Agent(
-	new GPTModelAdapter2({
+	new GPTModelAdapter({
 		maxTokens: 2048,
 		model: "gpt-4",
 		systemInstruction: createInstructionTemplate(
@@ -26,7 +26,7 @@ const developer = new Agent(
 );
 
 const optimizer = new Agent(
-	new GPTModelAdapter2({
+	new GPTModelAdapter({
 		maxTokens: 2048,
 		model: "gpt-4",
 		systemInstruction: createInstructionTemplate(

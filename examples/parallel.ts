@@ -3,6 +3,7 @@ import { Agent, memoryStore } from "@hyv/core";
 import { createInstruction, GPTModelAdapter } from "@hyv/openai";
 import type { FileContentWithPath } from "@hyv/utils";
 import { minify } from "@hyv/utils";
+
 const systemInstruction = createInstruction(
 	"TypeScript Developer",
 	minify`
@@ -53,7 +54,12 @@ const systemInstruction2 = createInstruction(
 );
 
 const agent3 = new Agent(
-	new GPTModelAdapter({ model: "gpt-4", maxTokens: 4096, systemInstruction: systemInstruction2 }),
+	new GPTModelAdapter({
+		model: "gpt-4",
+		maxTokens: 4096,
+		format: "json",
+		systemInstruction: systemInstruction2,
+	}),
 	{
 		verbosity: 2,
 	}
@@ -64,6 +70,8 @@ async function doAndGetResult(task: ModelMessage) {
 		new GPTModelAdapter({
 			model: "gpt-4",
 			maxTokens: 2048,
+			format: "json",
+
 			systemInstruction,
 		}),
 		{

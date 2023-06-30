@@ -30,14 +30,50 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./url": {
+      "types": "./dist/url.d.ts",
+      "default": "./dist/url.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "default": "./dist/types.js"
+    },
+    "./string": {
+      "types": "./dist/string.d.ts",
+      "default": "./dist/string.js"
+    },
+    "./side-effects": {
+      "types": "./dist/side-effects.d.ts",
+      "default": "./dist/side-effects.js"
+    },
+    "./fs": {
+      "types": "./dist/fs.d.ts",
+      "default": "./dist/fs.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "default": "./dist/utils.js"
+    },
+    "./parsers": {
+      "types": "./dist/parsers/index.d.ts",
+      "default": "./dist/parsers/index.js"
+    },
+    "./parsers/code": {
+      "types": "./dist/parsers/code.d.ts",
+      "default": "./dist/parsers/code.js"
+    },
+    "./parsers/markdown": {
+      "types": "./dist/parsers/markdown.d.ts",
+      "default": "./dist/parsers/markdown.js"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "watch": "rollup -cw",
-    "build": "rollup -c",
+    "watch": "tsc --watch",
+    "build": "tsc",
     "clean": "npx rimraf dist"
   },
   "dependencies": {
