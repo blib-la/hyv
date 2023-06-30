@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/failfa-st/hyv/compare/v0.6.0...v0.7.0) (2023-06-30)
+
+### Features
+
+- improved api ([#9](https://github.com/failfa-st/hyv/issues/9))
+  ([83fb0ab](https://github.com/failfa-st/hyv/commit/83fb0abfc09c4ea9c48a52d756799711c02b4706))
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See
+[Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
 # [0.6.0](https://github.com/failfa-st/hyv/compare/v0.5.0...v0.6.0) (2023-05-30)
 
 ### Features
