@@ -1,5 +1,7 @@
 import process from "node:process";
 
+import { Agent } from "@hyv/core";
+import { GPTModelAdapter } from "@hyv/openai";
 import { WeaviateAdapter } from "@hyv/store";
 import { config } from "dotenv";
 import type { WeaviateClass } from "weaviate-ts-client";
@@ -13,9 +15,23 @@ const store = new WeaviateAdapter({
 	apiKey: new ApiKey(process.env.WEAVIATE_API_KEY),
 	headers: { "X-OpenAI-Api-Key": process.env.OPENAI_API_KEY },
 });
+const className = "Answer";
+const className2 = "Message";
 
 const messageClass: WeaviateClass = {
-	class: "Message",
+	class: className,
+	vectorizer: "text2vec-openai",
+	moduleConfig: {
+		"text2vec-openai": {
+			model: "ada",
+			modelVersion: "002",
+			type: "text",
+		},
+	},
+};
+
+const messageClass2: WeaviateClass = {
+	class: className2,
 	vectorizer: "text2vec-openai",
 	moduleConfig: {
 		"text2vec-openai": {
@@ -29,113 +45,63 @@ const messageClass: WeaviateClass = {
 // We use "force: true" here to not have the same kind of example data
 // over and over in our store. This will delete the data every time
 await store.createClass(messageClass, true);
+await store.createClass(messageClass2, true);
 
-//
-// class FooAdapter implements ModelAdapter<ModelMessage, ModelMessage> {
-// 	#options: Record<string, any>;
-
-// 	constructor(options: Record<string, any> = {}) {
-// 		this.#options = options;
-// 	}
-
-// 	async assign(): Promise<ModelMessage> {
-// 		return { thoughts: "I want to show the user some love", answer: "Thank you so much" };
-// 	}
-// }
-// const agent = new Agent(new FooAdapter(), { store });
+const agent = new Agent(new GPTModelAdapter({ model: "gpt-4" }), { store });
 
 const message = {
 	messages: [
 		{
 			username: "Fred",
-			userId: 123456,
+			userId: "123456",
 			message: "Hi, I like your setup",
 		},
 		{
 			username: "Maria",
-			userId: 212132,
+			userId: "212132",
 			message: "I saw a cool movie yesterday",
 		},
 		{
+			username: "Andre",
+			userId: "654121",
+			message: "Movies are stupid",
+		},
+		{
+			username: "Alex",
+			userId: "165434",
+			message: "Don't be mean Andre",
+		},
+		{
 			username: "Fred",
-			userId: 123456,
+			userId: "123456",
 			message: "Cool Maria, which one?",
+		},
+		{
+			username: "Maria",
+			userId: "212132",
+			message: "Rangers of the Matrix. I loved it, you gotta watch it",
 		},
 	],
 };
 
-// Insert messages
 try {
-	await Promise.all(message.messages.map(message_ => store.set(message_, "Message")));
+	agent.finally = async messageId => {
+		await Promise.all(message.messages.map(message_ => store.set(message_, className2)));
+		return messageId;
+	};
+
+	const answer = await agent.assign(message, className);
+	console.log(answer);
+
+	// Get messages
+	const result = await store.searchNearText(
+		className2,
+		"message username userId _additional { distance }",
+		["Maria"]
+	);
+
+	console.log("\n\n------\n\n");
+	console.log(JSON.stringify(result.data.Get.Message, null, 2));
 } catch (error) {
 	console.log(error);
 }
-
-// Get messages with nearText
-console.log(
-	JSON.stringify(
-		await store.searchNearText("Message", "message username", ["I love a good movie"])
-	)
-);
-
-// Get messages with nearText and making sure that the result is far away
-// from the search vector by specifiying a distance of 0.5
-console.log(
-	JSON.stringify(
-		await store.searchNearText("Message", "message username", ["I love a good movie"], {
-			distance: 0.5,
-		})
-	)
-);
-
-//
-// try {
-// 	//
-// 	// agent.before = async modelMessage => modelMessage;
-// 	// agent.finally = async messageId => {
-// 	//	await Promise.all(message.messages.map(message_ => store.set(message_, "Message")));
-// 	//	return messageId;
-// 	// };
-// 	const className = "Answer";
-// 	// CAN ONLY BE DONE ONCE
-// 	// Store.client.schema
-// 	// 	.classCreator()
-// 	// 	.withClass({
-// 	// 		class: className,
-// 	// 		properties: [
-// 	// 			{
-// 	// 				dataType: ["text"],
-// 	// 				name: "thoughts",
-// 	// 			},
-// 	// 		],
-// 	// 		vectorizer: "text2vec-openai", // This could be any vectorizer
-// 	// 	})
-// 	// 	.do()
-// 	// 	.then(response => {
-// 	// 		console.log(response);
-// 	// 	})
-// 	// 	.catch(error => {
-// 	// 		console.error(error);
-// 	// 	});
-// 	const answer = await agent.assign(message, className);
-// 	console.log(answer);
-
-// 	// // Get a specific message
-// 	const storedMessage = await store.get(answer.id, className);
-// 	console.log(storedMessage);
-
-// 	// Get messages
-// 	const result = await store.client.graphql
-// 		.get()
-// 		.withClassName(className)
-// 		.withHybrid({
-// 			query: "showing gratitude",
-// 			alpha: 0.5, // Optional, defaults to 0.75
-// 		})
-// 		.withFields("thoughts answer _additional { distance }")
-// 		.do();
-// 	console.log("\n\n------\n\n");
-// 	console.log(JSON.stringify(result, null, 2));
-// } catch (error) {
-// 	console.log(error);
-// }
