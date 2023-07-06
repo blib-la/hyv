@@ -1,5 +1,5 @@
-import { Agent } from "@hyv/core";
-import { GPTModelAdapter } from "@hyv/openai";
+import { Agent } from "@hyv/core/agent";
+import { GPTModelAdapter } from "@hyv/openai/gpt-model-adapter";
 
 const agent = new Agent(new GPTModelAdapter());
 

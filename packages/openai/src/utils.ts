@@ -40,7 +40,6 @@ export function createInstruction<T extends Record<string, unknown>>(
 		Strict Rules:
 		NEVER explain or add notes!
 		ALL content will be inserted in JSON!
-		ALWAYS use \\n as new lines!
 		ALWAYS follow the template!
 		EXCLUSIVELY communicate **VALID JSON**!
 		**answer EXCLUSIVELY as "VALID JSON" in this template Format**:
@@ -68,5 +67,37 @@ export function createInstructionTemplate<T extends Record<string, unknown>>(
 		**answer EXCLUSIVELY using the format of this TEMPLATE**:
 	`}
 ${createTemplateFromJSON(format)}
+`;
+}
+
+const formatters = {
+	json(obj) {
+		return JSON.stringify(obj);
+	},
+	markdown: createTemplateFromJSON,
+};
+
+const formats = {
+	markdown: "Markdown",
+	json: "JSON",
+};
+
+export function createInstructionPersona<
+	P extends Record<string, unknown>,
+	R extends unknown[],
+	T extends Record<string, unknown>
+>(persona: P, rules: R, template: T, { format = "markdown" } = { format: "markdown" }) {
+	return `Act PRECISELY as this persona:
+${JSON.stringify(persona)}
+(this is VERY IMPORTANT)
+
+PRECISELY follow these rules:
+${JSON.stringify(rules)}
+(this is ULTRA IMPORTANT)
+
+EXCLUSIVELY answer using **valid** ${formats[format]}!
+**EXCLUSIVELY answer using the format of this TEMPLATE**:
+${formatters[format](template)}
+(this is MOST IMPORTANT)
 `;
 }

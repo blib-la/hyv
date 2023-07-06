@@ -4,8 +4,8 @@ With a system instruction in place, you can guide the language model to generate
 structured responses. You can learn more about system instructions in this
 [article by OpenAI](https://platform.openai.com/docs/guides/chat/instructing-chat-models).
 
-Hyv is designed to work seamlessly with JSON, and it includes a powerful helper that delivers
-reliable output.
+Hyv is designed to work seamlessly with Markdown and JSON, and it includes powerful helpers that
+deliver reliable output.
 
 ## Creating a System Instruction
 
@@ -17,25 +17,26 @@ import { Agent } from "@hyv/core";
 import { createInstruction, GPTModelAdapter } from "@hyv/openai";
 
 const mathModel = new GPTModelAdapter({
-  systemInstruction: createInstruction(
-    "Mathematician",
-    "think about the problem, reason your thoughts, solve the problems step by step",
-    {
-      thought: "detailed string",
-      reason: "detailed string",
-      steps: ["step"],
-      solution: "concise answer",
-    }
-  ),
+    format: "json", // Set the format to "json"
+    systemInstruction: createInstruction(
+        "Mathematician",
+        "think about the problem, reason your thoughts, solve the problems step by step",
+        {
+            thought: "detailed string",
+            reason: "detailed string",
+            steps: ["calculation step"],
+            solution: "concise answer",
+        }
+    ),
 });
 
 const mathAgent = new Agent(mathModel);
 
 try {
-  const answer = await mathAgent.assign({ problem: "(10 * 4 + 2) / (10 * 2 + 11 * 2) = ?" });
-  console.log(answer.message);
+    const answer = await mathAgent.assign({ problem: "(10 * 4 + 2) / (10 * 2 + 11 * 2) = x" });
+    console.log(answer.message);
 } catch (error) {
-  console.error("Error:", error);
+    console.error("Error:", error);
 }
 ```
 
@@ -53,11 +54,11 @@ Run the script and review the console output:
     '20 + 22 = 42',
     '42 / 42 = 1'
   ],
-  solution: '1'
+  solution: 'x = 1'
 }
 
 ```
 
 Next:
 
-- [Creating a sequence](03_CREATING_A_SEQUENCE.md)
+-   [Creating a sequence](03_CREATING_A_SEQUENCE.md)

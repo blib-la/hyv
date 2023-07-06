@@ -1,6 +1,6 @@
 {
   "name": "@hyv/store",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "license": "AGPL",
   "type": "module",
   "homepage": "https://github.com/failfa-st/hyv/",
@@ -30,19 +30,23 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./fs-adapter": {
+      "types": "./dist/fs-adapter.d.ts",
+      "default": "./dist/fs-adapter.js"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "watch": "rollup -cw",
-    "build": "rollup -c",
+    "watch": "tsc --watch",
+    "build": "tsc",
     "clean": "npx rimraf dist"
   },
   "dependencies": {
-    "@hyv/core": "^0.6.0",
-    "@hyv/utils": "^0.6.0",
+    "@hyv/core": "^0.7.0",
+    "@hyv/utils": "^0.7.0",
     "nanoid": "4.0.2"
   },
   "optionalDependencies": {

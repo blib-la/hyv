@@ -7,7 +7,10 @@ export function parseMarkdown<T>(markdown: string, pattern = /^#+ /m) {
 		const [key, ...lines] = currentValue.split("\n");
 		return {
 			...previousValue,
-			[camelcase(key)]: lines.join("\n"),
+			[camelcase(key)]: lines
+				.map(line => line.trim())
+				.filter(Boolean)
+				.join("\n"),
 		};
 	}, {}) as T;
 }

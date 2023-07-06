@@ -1,3 +1,5 @@
+import path from "node:path";
+
 import { Agent, sequence } from "@hyv/core";
 import type { FilesMessage } from "@hyv/openai";
 import { createInstruction, DallEModelAdapter, GPTModelAdapter } from "@hyv/openai";
@@ -9,13 +11,14 @@ const genre = "Science Fiction";
 const illustrationStyle = "flat";
 const context = "In a world where things are different";
 
-const dir = `out/stories/${slugify(title)}`;
+const dir = path.join(process.cwd(), `examples/output/book/${slugify(title)}`);
 const fileWriter = createFileWriter(dir);
 const imageWriter = createFileWriter(dir, "base64");
 
 const author = new Agent(
 	new GPTModelAdapter({
 		model: "gpt-4",
+		format: "json",
 	}),
 	{
 		sideEffects: [fileWriter],

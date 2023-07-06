@@ -1,6 +1,6 @@
 {
   "name": "@hyv/openai",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "license": "AGPL",
   "type": "module",
   "homepage": "https://github.com/failfa-st/hyv/",
@@ -30,24 +30,40 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "default": "./dist/utils.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "default": "./dist/types.js"
+    },
+    "./gpt-model-adapter": {
+      "types": "./dist/gpt-model-adapter.d.ts",
+      "default": "./dist/gpt-model-adapter.js"
+    },
+    "./dall-e-amodel-adapter": {
+      "types": "./dist/dall-e-amodel-adapter.d.ts",
+      "default": "./dist/dall-e-amodel-adapter.js"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "watch": "rollup -cw",
-    "build": "rollup -c",
+    "watch": "tsc --watch",
+    "build": "tsc",
     "clean": "npx rimraf dist"
   },
   "dependencies": {
-    "@hyv/core": "^0.6.0",
+    "@hyv/core": "^0.7.0",
     "camelcase": "7.0.1",
-    "dotenv": "16.0.3",
+    "dotenv": "16.3.1",
     "humanize-string": "3.0.0",
     "json5": "2.2.3",
-    "openai": "3.2.1",
-    "type-fest": "3.9.0"
+    "openai": "3.3.0",
+    "type-fest": "3.12.0"
   },
   "publishConfig": {
     "access": "public"

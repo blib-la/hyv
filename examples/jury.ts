@@ -3,6 +3,7 @@ import { Agent } from "@hyv/core";
 import { createInstruction, GPTModelAdapter } from "@hyv/openai";
 import type { FileContentWithPath } from "@hyv/utils";
 import { minify } from "@hyv/utils";
+
 const authorInstruction = createInstruction(
 	"Author, Competitor",
 	minify`
@@ -43,7 +44,12 @@ function getWordCount(text: string) {
 }
 
 const finalJury = new Agent(
-	new GPTModelAdapter({ model: "gpt-4", maxTokens: 1024, systemInstruction: juryInstruction }),
+	new GPTModelAdapter({
+		model: "gpt-4",
+		maxTokens: 1024,
+		format: "json",
+		systemInstruction: juryInstruction,
+	}),
 	{
 		verbosity: 1,
 	}
@@ -59,6 +65,7 @@ async function createAndAssign<T>(
 			model: "gpt-4",
 			maxTokens: 1024,
 			temperature: 0.9,
+			format: "json",
 			systemInstruction,
 		}),
 		{
