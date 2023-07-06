@@ -1,6 +1,11 @@
 import type { StoreAdapter } from "@hyv/core";
 import type { ModelMessage } from "@hyv/core";
-import type { ConnectionParams, WeaviateClient, WhereFilter } from "weaviate-ts-client";
+import type {
+	ConnectionParams,
+	WeaviateClient,
+	WhereFilter,
+	WeaviateClass,
+} from "weaviate-ts-client";
 import weaviate from "weaviate-ts-client";
 
 /**
@@ -17,6 +22,52 @@ export class WeaviateAdapter implements StoreAdapter {
 	constructor(options: ConnectionParams) {
 		// https://github.com/weaviate/typescript-client/issues/43
 		this.#client = (weaviate as unknown as typeof weaviate.default).client(options);
+	}
+
+	/**
+	 * Creates a new class in the Weaviate schema.
+	 *
+	 * @async
+	 * @param {WeaviateClass} schemaClass - The configuration for the class to be created.
+	 * @param {boolean} [force=false] - If set to `true`, will attempt to delete the class if it already exists before creating it.
+	 *
+	 * @throws {Error} Throws an error if there was an issue creating the class and it's not a 422 error.
+	 *
+	 * @example
+	 * const myClass: WeaviateClass = {
+	 * 	class: "MyClass",
+	 * 	vectorizer: "text2vec-openai",
+	 * 	moduleConfig: {
+	 * 		"text2vec-openai": {
+	 * 			model: "ada",
+	 * 			modelVersion: "002",
+	 * 			type: "text",
+	 * 		},
+	 * 	},
+	 * };
+	 *
+	 * await weaviate.createClass(myClass);
+	 */
+	async createClass(schemaClass: WeaviateClass, force = false) {
+		if (force) {
+			try {
+				// Delete the class
+				await this.#client.schema.classDeleter().withClassName(schemaClass.class).do();
+			} catch (error) {
+				console.log(error);
+			}
+		}
+
+		try {
+			await this.#client.schema.classCreator().withClass(schemaClass).do();
+		} catch (error) {
+			if (error instanceof Error && error.message.includes("(422)")) {
+				// Ignore the error if it's a 422 error, as this just means that the schema already exists
+			} else {
+				// Throw the error for other non-422 errors
+				throw error;
+			}
+		}
 	}
 
 	/**
@@ -105,6 +156,61 @@ export class WeaviateAdapter implements StoreAdapter {
 				.withClassName(className)
 				.withFields(fields)
 				.withWhere(where)
+				.do();
+		} catch (error) {
+			console.error(error);
+			return error;
+		}
+	}
+
+	/**
+	 * Searches for text near the specified concepts within a Weaviate class.
+	 *
+	 * @async
+	 *
+	 * @param {string} className - The name of the class to search in.
+	 * @param {string} fields - The fields to return in the search results.
+	 * @param {string[]} near - The concepts to search near.
+	 * @param {Object} [options] - Optional parameters for the search.
+	 * @param {number} [options.distance=0.2] - The distance from the specified concepts to search.
+	 * @param {number} [options.limit=5] - The maximum number of results to return.
+	 *
+	 * @returns {Promise<{data: any}>} A promise that resolves with the search results.
+	 *
+	 * @throws {Error} Logs the error to the console and returns it if there is an issue with the search.
+	 *
+	 * @example
+	 * const className = "Message";
+	 * const fields = "content, author";
+	 * const nearText = ["greetings", "hello"];
+	 * const options = { distance: 0.1, limit: 10 };
+	 *
+	 * const results = await weaviate.searchNearText(className, fields, nearText, options);
+	 * console.log(results.data);
+	 */
+	async searchNearText(
+		className: string,
+		fields: string,
+		near: string[],
+		options?: {
+			distance?: number;
+			limit?: number;
+		}
+	): Promise<{ data: any }> {
+		const defaultOptions = {
+			distance: 0.2,
+			limit: 5,
+		};
+
+		const { distance, limit } = { ...defaultOptions, ...options };
+
+		try {
+			return await this.#client.graphql
+				.get()
+				.withClassName(className)
+				.withFields(fields)
+				.withNearText({ concepts: near, distance })
+				.withLimit(limit)
 				.do();
 		} catch (error) {
 			console.error(error);
