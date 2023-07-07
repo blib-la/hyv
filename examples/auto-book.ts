@@ -135,7 +135,7 @@ const author = new Agent(
 		format: "json",
 		systemInstruction: createInstruction(
 			"Author named Morgan Casey Patel",
-			minify`\
+			minify`
 				Follow instructions closely!
 				Think deeply about the task.
 				Reason your thoughts.
