@@ -165,6 +165,7 @@ if (refresh) {
 	const docs = await globby([
 		path.join(process.cwd(), "docs/**/*.md"),
 		path.join(process.cwd(), "docs/*.md"),
+		path.join(process.cwd(), "README.md"),
 	]);
 	await Promise.all(
 		docs.map(async filePath => {
