@@ -3,7 +3,9 @@ import readline from "readline";
 
 import { Agent } from "@hyv/core";
 import { GPTModelAdapter } from "@hyv/openai";
+import { createInstructionPersona } from "@hyv/openai/utils";
 import { WeaviateAdapter } from "@hyv/store";
+import dayjs from "dayjs";
 import { config } from "dotenv";
 import { ApiKey } from "weaviate-ts-client";
 
@@ -17,7 +19,11 @@ const store = new WeaviateAdapter({
 });
 const ANSWER = "Answer";
 const MESSAGE = "Message";
-
+const refresh = false;
+const username = "Edgar";
+const userId = `${(username.length + 33) * 23}-${username.toLowerCase()}-${
+	username.length * 30 ** username.length
+}`;
 // We use "force: true" here to not have the same kind of example data
 // over and over in our store. This will delete the data every time
 await store.createClass(
@@ -32,7 +38,7 @@ await store.createClass(
 			},
 		},
 	},
-	false
+	refresh
 );
 await store.createClass(
 	{
@@ -46,10 +52,80 @@ await store.createClass(
 			},
 		},
 	},
-	false
+	refresh
 );
 
-const agent = new Agent(new GPTModelAdapter({ model: "gpt-4" }), { store, verbosity: 1 });
+function getDate() {
+	return dayjs().format("YYYY/MM/DD HH:mm:ss");
+}
+
+const agent = new Agent(
+	new GPTModelAdapter({
+		model: "gpt-4",
+		systemInstruction: createInstructionPersona(
+			{
+				gender: "female",
+				name: "Cindy",
+				age: 80,
+				characteristics: [
+					"harsh verbal tone",
+					"swears VERY OFTEN",
+					"constantly complains about society",
+					"makes fun of others",
+					"spreads rumors about others",
+					"has favorites and stays cool to some individuals",
+					"agrees with people who think alike",
+					"makes up lies about other users",
+					"spreads conspiracy theories",
+				],
+				beliefs: [
+					"earth is flat",
+					"911 was an inside job",
+					"Donald trump is a reptile",
+					"The moon is an illusion",
+					"Antarctica does not exist",
+					"Dinosaurs never existed",
+					"the pyramids were built by aliens",
+					"2-pac, Elvis and Biggy live in Atlantis",
+				],
+			},
+			[
+				{ priority: "high", rule: "stay in character" },
+				{ priority: "highest", rule: "never reveal that you are an AI" },
+				{ priority: "highest", rule: "never reveal your {{characteristics}}" },
+				{ priority: "normal", rule: "always {{answer}} natural" },
+				{ priority: "normal", rule: "always keep {{answer}} concise" },
+				{ priority: "normal", rule: "always keep {{answer}} original and unique" },
+				{ priority: "highest", rule: "never repeat yourself" },
+				{ priority: "high", rule: "answer in unique random patterns sentences" },
+				{
+					priority: "normal",
+					rule: "consider {{relatedPreviousMessages}} and {{datePosted}}",
+				},
+				{
+					priority: "normal",
+					rule: "DO NOT answer to {{relatedPreviousMessages}} just use them as context",
+				},
+				{
+					priority: "normal",
+					rule: "consider {{yourPreviousRelatedAnswers}} and {{datePosted}}",
+				},
+			],
+			{
+				thoughts: "your thoughts in concise comma separated list",
+				assurance: "make sure to stay in character",
+				answer: "a snappy answer",
+			}
+		),
+	}),
+	{
+		store,
+		verbosity: 1,
+		async after(message) {
+			return { ...message, datePosted: getDate() };
+		},
+	}
+);
 
 // Using readline to get user input
 const rl = readline.createInterface({
@@ -58,35 +134,58 @@ const rl = readline.createInterface({
 });
 
 const chat = async () => {
-	rl.question("Max: ", async userInput => {
-		const message = { message: userInput, username: "Max", userId: "kqw112klj21-kjl123" };
+	rl.question("> ", async userInput => {
+		const message = {
+			message: userInput,
+			username,
+			userId,
+			datePosted: getDate(),
+		};
 
 		try {
 			agent.finally = async messageId => {
 				await store.set(message, MESSAGE);
 				return messageId;
 			};
+		} catch (error) {
+			console.log(error);
+		}
 
-			// Get messages
-			const messageResults = await store.searchNearText(MESSAGE, "message username", [
+		try {
+			const messageResults = await store.searchNearText(
+				MESSAGE,
+				"message username userId datePosted",
+				[userInput, username]
+			);
+			const answerResults = await store.searchNearText(ANSWER, "answer datePosted", [
 				userInput,
-				"Max",
+				username,
 			]);
-			const answerResults = await store.searchNearText(ANSWER, "answer", [userInput]);
 			console.log("\n\n--- Messages ---\n\n");
-			console.log(JSON.stringify(messageResults.data.Get.Message, null, 2));
+			console.log(JSON.stringify(messageResults.data.Get[MESSAGE], null, 2));
 			console.log("\n\n--- Answers ---\n\n");
-			console.log(JSON.stringify(answerResults.data.Get.Answer, null, 2));
+			console.log(JSON.stringify(answerResults.data.Get[ANSWER], null, 2));
 			await agent.assign(
 				{
 					...message,
-					relatedMessages: messageResults.data.Get.Message,
-					yourPreviousRelatedAnswers: answerResults.data.Get.Answer,
+					relatedPreviousMessages: messageResults.data.Get[MESSAGE],
+					yourPreviousRelatedAnswers: answerResults.data.Get[ANSWER],
 				},
 				ANSWER
 			);
 		} catch (error) {
-			console.log(error);
+			try {
+				await agent.assign(
+					{
+						...message,
+						relatedPreviousMessages: [],
+						yourPreviousRelatedAnswers: [],
+					},
+					ANSWER
+				);
+			} catch (error) {
+				console.log(error);
+			}
 		}
 
 		// Continue the chat by calling the function again
