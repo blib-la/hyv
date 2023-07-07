@@ -49,6 +49,14 @@
     "@hyv/utils": "^0.7.0",
     "nanoid": "4.0.2"
   },
+  "optionalDependencies": {
+    "graphql": "^16.6.0",
+    "weaviate-ts-client": "^1.3.3"
+  },
+  "devDependencies": {
+    "graphql": "^16.6.0",
+    "weaviate-ts-client": "^1.3.3"
+  },
   "publishConfig": {
     "access": "public"
   }

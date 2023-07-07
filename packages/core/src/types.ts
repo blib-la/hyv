@@ -72,6 +72,7 @@ export interface AgentOptions<Store extends StoreAdapter = StoreAdapter> {
  * @method get - Retrieves a ModelMessage by its messageId, returning a Promise that resolves with the ModelMessage.
  */
 export interface StoreAdapter {
-	set(message: ModelMessage): Promise<string>;
-	get(messageId: string): Promise<ModelMessage>;
+	set(message: ModelMessage, ...args: any[]): Promise<string>;
+
+	get(messageId: string, ...args: any[]): Promise<ModelMessage>;
 }

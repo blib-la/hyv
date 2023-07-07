@@ -1,9 +1,12 @@
-import type { ModelMessage } from "@hyv/core";
-import { Agent, memoryStore } from "@hyv/core";
-import { createInstruction, GPTModelAdapter } from "@hyv/openai";
-import type { FileContentWithPath } from "@hyv/utils";
-import { minify } from "@hyv/utils";
+// Import the necessary types and functions from the appropriate modules
+import type { ModelMessage } from "@hyv/core"; // This type represents a message for the model
+import { Agent } from "@hyv/core"; // This is the main class for creating an AI agent
+import { createInstruction, GPTModelAdapter } from "@hyv/openai"; // These are helper functions for creating instructions and an adapter for the GPT model
+import type { FileContentWithPath } from "@hyv/utils"; // This type represents file content along with its associated path
+import { minify } from "@hyv/utils"; // This function helps to minify large blocks of text
 
+// Create an instruction for a TypeScript Developer
+// This instruction describes the tasks the developer agent has to perform
 const systemInstruction = createInstruction(
 	"TypeScript Developer",
 	minify`
@@ -15,10 +18,11 @@ const systemInstruction = createInstruction(
 	Create TypeScript files with the solution.
 	`,
 	{
-		thoughts: "your thoughts",
-		decision: "your decision",
-		functionNames: ["string"],
+		thoughts: "your thoughts", // The thoughts of the developer agent
+		decision: "your decision", // The decision of the developer agent
+		functionNames: ["string"], // The names of the functions the developer agent generates
 		files: [
+			// The files the developer agent generates
 			{
 				path: "src/[path/to/filename].ts",
 				content: "// Valid TypeScript code",
@@ -27,6 +31,8 @@ const systemInstruction = createInstruction(
 	}
 );
 
+// Create an instruction for an Expert TypeScript Developer, who is a Code Merging expert
+// This instruction describes the tasks the expert developer agent has to perform
 const systemInstruction2 = createInstruction(
 	"Expert TypeScript Developer, Code Merging expert",
 	minify`
@@ -40,11 +46,12 @@ const systemInstruction2 = createInstruction(
 	Create TypeScript files with the solution.
 	`,
 	{
-		thoughts: "your thoughts",
-		analysis: "your analysis",
-		potentialDuplicates: ["string"],
-		decision: "your decision",
+		thoughts: "your thoughts", // The thoughts of the expert developer agent
+		analysis: "your analysis", // The analysis of the expert developer agent
+		potentialDuplicates: ["string"], // The potential duplicate code pieces the expert developer agent identifies
+		decision: "your decision", // The decision of the expert developer agent
 		files: [
+			// The files the expert developer agent generates
 			{
 				path: "src/[path/to/filename].ts",
 				content: "// Valid TypeScript code",
@@ -53,43 +60,48 @@ const systemInstruction2 = createInstruction(
 	}
 );
 
+// Create the agent with the expert developer instruction
 const agent3 = new Agent(
 	new GPTModelAdapter({
-		model: "gpt-4",
-		maxTokens: 4096,
-		format: "json",
-		systemInstruction: systemInstruction2,
+		model: "gpt-4", // Use GPT-4 model
+		maxTokens: 4096, // Limit the response to 4096 tokens
+		format: "json", // Set the response format to json
+		systemInstruction: systemInstruction2, // Set the instruction for the agent
 	}),
 	{
-		verbosity: 2,
+		verbosity: 1, // Set the verbosity level to 1
 	}
 );
 
+// Define a function to instruct the agent and retrieve the results
 async function doAndGetResult(task: ModelMessage) {
 	const agent = new Agent(
 		new GPTModelAdapter({
-			model: "gpt-4",
-			maxTokens: 2048,
-			format: "json",
-
-			systemInstruction,
+			model: "gpt-4", // Use GPT-4 model
+			maxTokens: 2048, // Limit the response to 2048 tokens
+			format: "json", // Set the response format to json
+			systemInstruction, // Set the instruction for the agent
 		}),
 		{
-			verbosity: 2,
+			verbosity: 1, // Set the verbosity level to 1
 		}
 	);
-	const taskId = await memoryStore.set(task);
-	const resultId = await agent.do(taskId);
-	return (await memoryStore.get(resultId)).files;
+
+	// Instruct the agent and return the file results
+	return (await agent.assign(task)).message.files;
 }
 
+// Begin the main execution
 try {
+	// Define the main task
 	const mainTask = { task: "Write a simple React todo-list app, be creative" };
 
+	// Execute the main task in parallel twice and flatten the results into a single array of files
 	const files = (
 		await Promise.all(Array.from({ length: 2 }, async () => doAndGetResult(mainTask)))
 	).flat() as FileContentWithPath[];
 
+	// Define the merge task
 	const mergeTask = {
 		task: "merge the code from the pull requests",
 		files: files.map(file => ({
@@ -98,13 +110,16 @@ try {
 		})),
 	};
 
+	// Log the merge results to the console
 	console.log("mergedResults", mergeTask);
 
-	const task3Id = await memoryStore.set(mergeTask);
-	const result3Id = await agent3.do(task3Id);
-	const result3 = await memoryStore.get(result3Id);
+	// Assign the merge task to the expert agent and get the result
+	const result = await agent3.assign(mergeTask);
 
-	console.log("result3", result3);
+	// Log the final result to the console
+	console.log("result", result.message);
 } catch (error) {
+	// Catch any error that occurs during the execution
+	// Log the error to the console
 	console.error("Error:", error);
 }
