@@ -4,7 +4,7 @@ Hyv allows the use of multiple agents to improve the quality of generated code. 
 generate the initial code, and another can optimize it. The following steps demonstrate how to
 achieve this using Hyv, based on a code-improving scenario:
 
-## Step 1: Import the Necessary Modules
+## Import the Necessary Modules
 
 First, you need to import the necessary modules.
 
@@ -15,7 +15,7 @@ import { createInstructionTemplate, GPTModelAdapter } from "@hyv/openai";
 import { extractCode, minify } from "@hyv/utils";
 ```
 
-## Step 2: Create the Developer and Optimizer Agents
+## Create the Developer and Optimizer Agents
 
 Create two agents, `developer` and `optimizer`, each with its own `GPTModelAdapter` that contains a
 specific system instruction.
@@ -77,7 +77,7 @@ The `developer` agent's task is to achieve the specified goal using a given boil
 the `optimizer` agent's job is to review the code produced by the `developer` agent, identify
 potential errors, and optimize the code as needed.
 
-## Step 3: Assign Tasks to Agents and Optimize the Output
+## Assign Tasks to Agents and Optimize the Output
 
 Finally, you can assign a task to the `developer` agent and then pass its output to the `optimizer`
 agent.

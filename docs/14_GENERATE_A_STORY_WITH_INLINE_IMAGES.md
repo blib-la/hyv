@@ -3,11 +3,11 @@
 ## Installing Dependencies
 
 To begin, ensure that you have the necessary dependencies installed. You will need `@hyv/core`,
-`@hyv/openai`, `@hyv/stable-diffusion`, `@hyv/utils`, and `node:path`. To install these
-dependencies, run the following command:
+`@hyv/openai`, `@hyv/stable-diffusion` and `@hyv/utils`. To install these dependencies, run the
+following command:
 
 ```shell
-npm install @hyv/core @hyv/openai @hyv/stable-diffusion @hyv/utils node:path
+npm install @hyv/core @hyv/openai @hyv/stable-diffusion @hyv/utils
 ```
 
 ## Writing and Illustrating a Story
@@ -236,7 +236,6 @@ const illustrator = new Agent(
         },
     }
 );
-
 ```
 
 ### Executing the Sequence
