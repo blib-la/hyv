@@ -78,17 +78,13 @@ export class WeaviateAdapter implements StoreAdapter {
 	 * @returns {Promise<string>} The ID of the stored message.
 	 */
 	async set(message: ModelMessage, className: string): Promise<string> {
-		try {
-			const result = await this.#client.data
-				.creator()
-				.withClassName(className)
-				.withProperties(message)
-				.do();
+		const result = await this.#client.data
+			.creator()
+			.withClassName(className)
+			.withProperties(message)
+			.do();
 
-			return result.id;
-		} catch (error) {
-			console.error(error);
-		}
+		return result.id;
 	}
 
 	/**
@@ -99,13 +95,9 @@ export class WeaviateAdapter implements StoreAdapter {
 	 * @returns {Promise<ModelMessage>} The retrieved message.
 	 */
 	async get(messageId: string, className: string): Promise<ModelMessage> {
-		try {
-			return (
-				await this.#client.data.getterById().withClassName(className).withId(messageId).do()
-			).properties;
-		} catch (error) {
-			console.error(error);
-		}
+		return (
+			await this.#client.data.getterById().withClassName(className).withId(messageId).do()
+		).properties;
 	}
 
 	/**
@@ -116,15 +108,7 @@ export class WeaviateAdapter implements StoreAdapter {
 	 * @returns {Promise<ModelMessage>} The search results.
 	 */
 	async searchObjects(className: string, fields: string): Promise<{ data: any }> {
-		try {
-			return await this.#client.graphql
-				.get()
-				.withClassName(className)
-				.withFields(fields)
-				.do();
-		} catch (error) {
-			console.error(error);
-		}
+		return this.#client.graphql.get().withClassName(className).withFields(fields).do();
 	}
 
 	/**
@@ -150,17 +134,12 @@ export class WeaviateAdapter implements StoreAdapter {
 	 *     .catch(error => console.error(error));
 	 */
 	async search(className: string, fields: string, where: WhereFilter): Promise<{ data: any }> {
-		try {
-			return await this.#client.graphql
-				.get()
-				.withClassName(className)
-				.withFields(fields)
-				.withWhere(where)
-				.do();
-		} catch (error) {
-			console.error(error);
-			return error;
-		}
+		return this.#client.graphql
+			.get()
+			.withClassName(className)
+			.withFields(fields)
+			.withWhere(where)
+			.do();
 	}
 
 	/**
@@ -204,18 +183,13 @@ export class WeaviateAdapter implements StoreAdapter {
 
 		const { distance, limit } = { ...defaultOptions, ...options };
 
-		try {
-			return await this.#client.graphql
-				.get()
-				.withClassName(className)
-				.withFields(fields)
-				.withNearText({ concepts: near, distance })
-				.withLimit(limit)
-				.do();
-		} catch (error) {
-			console.error(error);
-			return error;
-		}
+		return this.#client.graphql
+			.get()
+			.withClassName(className)
+			.withFields(fields)
+			.withNearText({ concepts: near, distance })
+			.withLimit(limit)
+			.do();
 	}
 
 	get client() {

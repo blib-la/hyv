@@ -44,6 +44,12 @@
       "rules": {
         "no-unused-vars": "off"
       }
+    },
+    {
+      "files": "examples/*.ts",
+      "rules": {
+        "import/order": "off"
+      }
     }
   ]
 }

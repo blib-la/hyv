@@ -11,6 +11,12 @@ import { ApiKey } from "weaviate-ts-client";
 
 config();
 
+/**
+ * This example demonstrates an endless chat with memory via a vector store (database).
+ * It is a CLI chat that remembers what has been said. It also stores the date and time of the entire chat history.
+ * This example is a nice starting point if you want to build a chat like interface using Hyv
+ */
+
 const store = new WeaviateAdapter({
 	scheme: "https",
 	host: process.env.WEAVIATE_HOST,
@@ -20,7 +26,7 @@ const store = new WeaviateAdapter({
 const ANSWER = "Answer";
 const MESSAGE = "Message";
 const refresh = false;
-const username = "Edgar";
+const username = "Peter";
 const userId = `${(username.length + 33) * 23}-${username.toLowerCase()}-${
 	username.length * 30 ** username.length
 }`;
@@ -62,6 +68,7 @@ function getDate() {
 const agent = new Agent(
 	new GPTModelAdapter({
 		model: "gpt-4",
+		historySize: 2,
 		systemInstruction: createInstructionPersona(
 			{
 				gender: "female",
@@ -73,9 +80,9 @@ const agent = new Agent(
 					"constantly complains about society",
 					"makes fun of others",
 					"spreads rumors about others",
+					"makes up lies about other users",
 					"has favorites and stays cool to some individuals",
 					"agrees with people who think alike",
-					"makes up lies about other users",
 					"spreads conspiracy theories",
 				],
 				beliefs: [
@@ -98,17 +105,19 @@ const agent = new Agent(
 				{ priority: "normal", rule: "always keep {{answer}} original and unique" },
 				{ priority: "highest", rule: "never repeat yourself" },
 				{ priority: "high", rule: "answer in unique random patterns sentences" },
+				{ priority: "high", rule: "EXCLUSIVELY answer to the message {{username}}" },
+				{ priority: "high", rule: "EXCLUSIVELY answer to one person" },
 				{
 					priority: "normal",
-					rule: "consider {{relatedPreviousMessages}} and {{datePosted}}",
+					rule: "consider {{userMessages}} and {{datePosted}} but do not respond to them",
+				},
+				{
+					priority: "highest",
+					rule: "DO NOT answer to {{userMessages}} just use them as context",
 				},
 				{
 					priority: "normal",
-					rule: "DO NOT answer to {{relatedPreviousMessages}} just use them as context",
-				},
-				{
-					priority: "normal",
-					rule: "consider {{yourPreviousRelatedAnswers}} and {{datePosted}}",
+					rule: "consider {{yourAnswers}} and {{datePosted}}",
 				},
 			],
 			{
@@ -155,12 +164,15 @@ const chat = async () => {
 			const messageResults = await store.searchNearText(
 				MESSAGE,
 				"message username userId datePosted",
-				[userInput, username]
+				[userInput, username],
+				{ distance: 0.17 }
 			);
-			const answerResults = await store.searchNearText(ANSWER, "answer datePosted", [
-				userInput,
-				username,
-			]);
+			const answerResults = await store.searchNearText(
+				ANSWER,
+				"answer datePosted",
+				[userInput, username],
+				{ distance: 0.17 }
+			);
 			console.log("\n\n--- Messages ---\n\n");
 			console.log(JSON.stringify(messageResults.data.Get[MESSAGE], null, 2));
 			console.log("\n\n--- Answers ---\n\n");
@@ -168,8 +180,10 @@ const chat = async () => {
 			await agent.assign(
 				{
 					...message,
-					relatedPreviousMessages: messageResults.data.Get[MESSAGE],
-					yourPreviousRelatedAnswers: answerResults.data.Get[ANSWER],
+					history: {
+						userMessages: messageResults.data.Get[MESSAGE],
+						yourAnswers: answerResults.data.Get[ANSWER],
+					},
 				},
 				ANSWER
 			);
@@ -178,8 +192,10 @@ const chat = async () => {
 				await agent.assign(
 					{
 						...message,
-						relatedPreviousMessages: [],
-						yourPreviousRelatedAnswers: [],
+						history: {
+							userMessages: [],
+							yourAnswers: [],
+						},
 					},
 					ANSWER
 				);
