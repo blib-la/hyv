@@ -200,8 +200,8 @@ const chat = async () => {
 				"content filePath",
 				[userInput],
 				{
-					distance: 0.2,
-					limit: 2,
+					distance: 0.23,
+					limit: 1,
 				}
 			);
 			const exampleResults = await store.searchNearText(
@@ -209,24 +209,24 @@ const chat = async () => {
 				"content filePath",
 				[userInput],
 				{
-					distance: 0.2,
-					limit: 2,
+					distance: 0.18,
+					limit: 1,
 				}
 			);
 			const docsResults = await store.searchNearText(DOCS, "content filePath", [userInput], {
-				distance: 0.2,
-				limit: 2,
+				distance: 0.24,
+				limit: 3,
 			});
 
 			console.log("\n--- Resources used ---\n");
 			console.log(
-				codeResults.data.Get[SOURCE_CODE].map(({ filePath }) => `- ${filePath}`).join("\n")
-			);
-			console.log(
-				exampleResults.data.Get[EXAMPLE].map(({ filePath }) => `- ${filePath}`).join("\n")
-			);
-			console.log(
-				docsResults.data.Get[DOCS].map(({ filePath }) => `- ${filePath}`).join("\n")
+				[
+					...codeResults.data.Get[SOURCE_CODE].map(({ filePath }) => `- ${filePath}`),
+					...exampleResults.data.Get[EXAMPLE].map(({ filePath }) => `- ${filePath}`),
+					...docsResults.data.Get[DOCS].map(({ filePath }) => `- ${filePath}`),
+				]
+					.filter(Boolean)
+					.join("\n")
 			);
 
 			await agent.assign(
