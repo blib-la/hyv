@@ -153,6 +153,8 @@ if (refresh) {
 
 	const sourceCode = await globby(
 		[
+			path.join(process.cwd(), "package.json"),
+			path.join(process.cwd(), "**/package.json"),
 			path.join(process.cwd(), "packages/**/*.ts"),
 			`!${path.join(process.cwd(), "packages/*/dist")}`,
 		],
@@ -207,12 +209,12 @@ const chat = async () => {
 				"content filePath",
 				[userInput],
 				{
-					distance: 0.23,
+					distance: 0.2,
 					limit: 2,
 				}
 			);
 			const docsResults = await store.searchNearText(DOCS, "content filePath", [userInput], {
-				distance: 0.25,
+				distance: 0.2,
 				limit: 2,
 			});
 
