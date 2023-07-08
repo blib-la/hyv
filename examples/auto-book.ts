@@ -46,6 +46,7 @@ const bookAgent = new Agent(
 		model: "gpt-4",
 		maxTokens: 1024,
 		temperature: 0.9,
+		format: "json",
 		systemInstruction: createInstruction(
 			"Book Agent, Trend Expert",
 			minify`

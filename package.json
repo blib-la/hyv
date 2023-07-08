@@ -15,6 +15,7 @@
     "demo:auto-book": "ts-node-esm examples/auto-book.ts",
     "demo:auto-tweet": "ts-node-esm examples/auto-tweet.ts",
     "demo:book": "ts-node-esm examples/book.ts",
+    "demo:stephen-king": "ts-node-esm examples/stephen-king.ts",
     "demo:super-simple": "ts-node-esm examples/super-simple.ts",
     "demo:code-optimizer": "ts-node-esm examples/code-optimizer.ts",
     "demo:simple": "ts-node-esm examples/simple.ts",

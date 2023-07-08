@@ -7,7 +7,7 @@ characters from the 'The Simpsons' series - Homer Simpson and Moe Szyslak.
 To simulate a debate, we're going to create two `Agents` each embodying a character and have them
 interact with each other.
 
-## 1. Import Necessary Modules
+## Import Necessary Modules
 
 Start by importing `Agent`, `ModelMessage`, `GPTModelAdapter`, and `createInstructionPersona`:
 
@@ -16,7 +16,7 @@ import type { ModelMessage } from "@hyv/core";
 import { Agent, GPTModelAdapter, createInstructionPersona } from "@hyv/openai";
 ```
 
-## 2. Define Characteristics
+## Define Characteristics
 
 We need to define the characteristics of both characters. This will help in generating responses
 that align with their personas.
@@ -38,7 +38,7 @@ const characteristics = {
 };
 ```
 
-## 3. Create Agents
+## Create Agents
 
 Next, create two agents representing the characters. We'll use the `createInstructionPersona`
 function to create a persona instruction for the agent. The instruction includes details like the
@@ -108,7 +108,7 @@ const moeSzyslak = new Agent(
 );
 ```
 
-## 4. Simulate a Debate
+## Simulate a Debate
 
 Now that we have our agents set up, we can start the debate. We'll create a loop where Homer and Moe
 exchange messages:
