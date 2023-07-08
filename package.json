@@ -11,6 +11,7 @@
   "scripts": {
     "demo:persona": "ts-node-esm examples/persona.ts",
     "demo:autodocs": "ts-node-esm examples/autodocs.ts",
+    "demo:ai-debate": "ts-node-esm examples/ai-presidential-debate.ts",
     "demo:auto-book": "ts-node-esm examples/auto-book.ts",
     "demo:auto-tweet": "ts-node-esm examples/auto-tweet.ts",
     "demo:book": "ts-node-esm examples/book.ts",

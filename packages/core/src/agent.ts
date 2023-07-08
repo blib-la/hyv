@@ -69,7 +69,7 @@ export class Agent<
 	 * @private
 	 * @async
 	 * @param inputMessage - The message to be assigned.
-	 * @param args
+	 * @param args - optional additional args
 	 * @returns - A Promise that resolves to the next messageId.
 	 */
 	async _assign(inputMessage: ModelMessage, ...args: unknown[]) {
@@ -96,6 +96,8 @@ export class Agent<
 			console.log(modifiedOutputMessage);
 		}
 
+		// For every property-value pair in the modifiedOutputMessage,
+		// if a side effect exists for the property, it is invoked with the value.
 		Object.entries(modifiedOutputMessage).forEach(([prop, value]) => {
 			const sideEffect = this.findSideEffect(prop);
 			if (sideEffect) {
@@ -107,6 +109,8 @@ export class Agent<
 			}
 		});
 
+		// If verbosity level is more than 0, all the modifiedOutputMessage properties and their
+		// values are logged.
 		if (this._verbosity > 0) {
 			Object.entries(modifiedOutputMessage).forEach(([key, value], index) => {
 				console.log(
@@ -132,10 +136,10 @@ export class Agent<
 	}
 
 	/**
-	 * Performs the current task using the provided messageId.
+	 * The do method performs the current task using the provided messageId.
 	 *
 	 * @param messageId - The messageId to the task.
-	 * @param args
+	 * @param args - optional additional args
 	 * @returns - The id to the next message
 	 */
 	async do(messageId: string, ...args: unknown[]) {
@@ -143,10 +147,10 @@ export class Agent<
 	}
 
 	/**
-	 * Performs the current task using the provided message.
+	 * The assign method performs the current task using the provided message.
 	 *
 	 * @param message - The message to the task.
-	 * @param args
+	 * @param args - optional additional args
 	 * @returns - The next message and its id
 	 */
 	async assign<T extends ModelMessage>(
@@ -227,5 +231,13 @@ export class Agent<
 	 */
 	get model() {
 		return this._model;
+	}
+
+	/**
+	 * Sets the model.
+	 * @param model - The new model.
+	 */
+	set model(model) {
+		this._model = model;
 	}
 }

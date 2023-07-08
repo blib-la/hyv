@@ -101,6 +101,7 @@ const agent = new Agent(
 	new GPTModelAdapter({
 		model: "gpt-4",
 		historySize: 2,
+		maxTokens: 1024,
 		systemInstruction: createInstructionPersona(
 			{
 				profession: "TypeScript expert",
@@ -150,10 +151,13 @@ if (refresh) {
 		})
 	);
 
-	const sourceCode = await globby([
-		path.join(process.cwd(), "packages/**/*.ts"),
-		"!packages/**dist/*",
-	]);
+	const sourceCode = await globby(
+		[
+			path.join(process.cwd(), "packages/**/*.ts"),
+			`!${path.join(process.cwd(), "packages/*/dist")}`,
+		],
+		{ ignoreFiles: ["*.d.ts", "*.js"] }
+	);
 	await Promise.all(
 		sourceCode.map(async filePath => {
 			const content = await fs.readFile(filePath, "utf-8");
@@ -203,7 +207,7 @@ const chat = async () => {
 				"content filePath",
 				[userInput],
 				{
-					distance: 0.25,
+					distance: 0.23,
 					limit: 2,
 				}
 			);
