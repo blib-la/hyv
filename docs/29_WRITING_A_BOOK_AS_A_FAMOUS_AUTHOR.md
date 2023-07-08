@@ -68,9 +68,13 @@ const tolkienInstruction = createInstructionPersona(
 
 ## Create the agent
 
-Now, create an agent using the `GPTModelAdapter` and your Tolkien persona:
+Now, create an agent using the `GPTModelAdapter` and your Tolkien persona. The fileWriter is added
+as a sideEffect. To allow the story to make sense and all chapters to build on the previous, we
+increase the historySize to 3.
 
 ```typescript
+const dir = path.join(process.cwd(), `examples/output/${Date.now()}`);
+const fileWriter = createFileWriter(dir);
 const tolkienAgent = new Agent(
     new GPTModelAdapter({
         model: "gpt-4",
@@ -79,6 +83,7 @@ const tolkienAgent = new Agent(
     }),
     {
         verbosity: 1,
+        sideEffects: [fileWriter],
     }
 );
 ```
@@ -97,12 +102,7 @@ const tasks = [
 const fileWriter = createFileWriter();
 
 for (let i = 0; i < tasks.length; i++) {
-    tolkienAgent
-        .assign({ task: tasks[i], wordCount: ">=1000" })
-        .then(({ files }) => {
-            files.forEach(fileWriter);
-        })
-        .catch(console.error);
+    await tolkienAgent.assign({ task: tasks[i], wordCount: ">=1000" }).catch(console.error);
 }
 ```
 
