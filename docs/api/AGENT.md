@@ -1,7 +1,7 @@
 # Agent API
 
 | Option                | Type           | Description                                                                                                                                                                                      |
-| --------------------- |----------------| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| --------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `model`               | `ModelAdapter` | The model instance used by the agent.                                                                                                                                                            |
 | `options`             | `AgentOptions` | Configuration options for the agent.                                                                                                                                                             |
 | `options.before`      | `Function`     | An optional asynchronous function executed before the task is processed. Receives the task and should return an object containing the updated task.                                              |

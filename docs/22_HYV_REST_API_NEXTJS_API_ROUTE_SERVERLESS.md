@@ -5,7 +5,8 @@ creating a REST API using the Hyv library. The REST API allows the interaction w
 using HTTP requests.
 
 ## Prerequisites
-~~~~
+
+````
 Before starting, ensure you have the necessary dependencies installed in your project. If not, you
 can install them with the following command:
 
@@ -65,3 +66,4 @@ the user's message:
 ```
 
 In response, the API will return a JSON object containing the Hyv agent's response.
+````

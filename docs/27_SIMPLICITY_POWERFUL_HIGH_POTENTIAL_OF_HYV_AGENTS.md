@@ -45,9 +45,9 @@ streamlined task management, and broad compatibility. Its bee-inspired model fac
 interaction among different AI models, unlocking an entirely new realm of possibilities in the AI
 sphere.
 
-
 References:
 
-[^1]: [Hyv: The AI Framework for Synergistic Computing](https://github.com/failfa-st/hyv/docs/20_WHAT_DOES_HYV_MEAN_WHAT_IS_HYV.md)
+[^1]:
+    [Hyv: The AI Framework for Synergistic Computing](https://github.com/failfa-st/hyv/docs/20_WHAT_DOES_HYV_MEAN_WHAT_IS_HYV.md)
 
 [^2]: [Hyv: The Hub for Your AI Models](https://github.com/failfa-st/hyv/README.md)

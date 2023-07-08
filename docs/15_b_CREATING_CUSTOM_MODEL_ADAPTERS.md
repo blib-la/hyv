@@ -19,6 +19,10 @@ sequence({ task: "Generate a happy birthday song for John" }, [songAgent])
     .catch(console.error);
 ```
 
-In this example, we use the `SongModelAdapter` to send a prompt to a song lyrics generation API. The API will then generate a happy birthday song for John. The generated song will be printed to the console.
+In this example, we use the `SongModelAdapter` to send a prompt to a song lyrics generation API. The
+API will then generate a happy birthday song for John. The generated song will be printed to the
+console.
 
-Please note that this is a simplified example. Depending on your tasks' complexity and the diversity of the model responses, you might want to implement additional error checking, task formatting, or result processing.
+Please note that this is a simplified example. Depending on your tasks' complexity and the diversity
+of the model responses, you might want to implement additional error checking, task formatting, or
+result processing.

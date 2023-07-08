@@ -2,7 +2,9 @@
 
 ## Installing Dependencies
 
-First, make sure you have the necessary dependencies installed. You will need `@hyv/core`, `@hyv/openai`, `@hyv/stable-diffusion`, and `@hyv/utils`. To install these dependencies, run the following command:
+First, make sure you have the necessary dependencies installed. You will need `@hyv/core`,
+`@hyv/openai`, `@hyv/stable-diffusion`, and `@hyv/utils`. To install these dependencies, run the
+following command:
 
 ```shell
 npm install @hyv/core @hyv/openai @hyv/stable-diffusion @hyv/utils

@@ -28,7 +28,8 @@ try {
 
 ## Running the Script
 
-Save the script in a `.ts` (TypeScript) file and execute it using the `ts-node` command (install it via npm if you don't have it):
+Save the script in a `.ts` (TypeScript) file and execute it using the `ts-node` command (install it
+via npm if you don't have it):
 
 ```bash
 ts-node your_script_file.ts
@@ -36,8 +37,11 @@ ts-node your_script_file.ts
 
 ## Checking the Output
 
-Once you've run the script, check the output directory (by default, `examples/output/auto-book/`). You'll find a story authored by the `author` agent with reading time and word count added, as well as images created by the `illustrator` agent inlined in the story.
+Once you've run the script, check the output directory (by default, `examples/output/auto-book/`).
+You'll find a story authored by the `author` agent with reading time and word count added, as well
+as images created by the `illustrator` agent inlined in the story.
 
 ## Error Handling
 
-If any errors occur while running the script, they'll be logged to the console, thanks to the try/catch block surrounding the sequence function.
+If any errors occur while running the script, they'll be logged to the console, thanks to the
+try/catch block surrounding the sequence function.
