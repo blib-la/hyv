@@ -1,6 +1,6 @@
 {
   "name": "@hyv/core",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "license": "AGPL",
   "type": "module",
   "homepage": "https://github.com/failfa-st/hyv/",
@@ -57,7 +57,7 @@
     "clean": "npx rimraf dist"
   },
   "dependencies": {
-    "@hyv/utils": "^0.7.0",
+    "@hyv/utils": "^0.8.0",
     "chalk": "5.3.0",
     "humanize-string": "3.0.0",
     "lru-cache": "10.0.0",

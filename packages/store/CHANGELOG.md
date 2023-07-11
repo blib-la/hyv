@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/failfa-st/hyv/compare/v0.7.0...v0.8.0) (2023-07-11)
+
+### Features
+
+- add weaviate adapter ([#8](https://github.com/failfa-st/hyv/issues/8))
+  ([6fd10a0](https://github.com/failfa-st/hyv/commit/6fd10a090ceed0aaba3feceaff6206dad3bb89e5))
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See
+[Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
 # [0.7.0](https://github.com/failfa-st/hyv/compare/v0.6.0...v0.7.0) (2023-06-30)
 
 ### Features

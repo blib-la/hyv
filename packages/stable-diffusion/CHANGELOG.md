@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/failfa-st/hyv/compare/v0.7.0...v0.8.0) (2023-07-11)
+
+### Features
+
+- **openai:** add functions
+  ([b2227af](https://github.com/failfa-st/hyv/commit/b2227af2e10eb8a43000d6b3d8496d211b0e4001))
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See
+[Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
 # [0.7.0](https://github.com/failfa-st/hyv/compare/v0.6.0...v0.7.0) (2023-06-30)
 
 ### Features

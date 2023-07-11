@@ -1,6 +1,6 @@
 {
   "name": "@hyv/store",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "license": "AGPL",
   "type": "module",
   "homepage": "https://github.com/failfa-st/hyv/",
@@ -45,8 +45,8 @@
     "clean": "npx rimraf dist"
   },
   "dependencies": {
-    "@hyv/core": "^0.7.0",
-    "@hyv/utils": "^0.7.0",
+    "@hyv/core": "^0.8.0",
+    "@hyv/utils": "^0.8.0",
     "nanoid": "4.0.2"
   },
   "optionalDependencies": {

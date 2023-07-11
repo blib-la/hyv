@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/failfa-st/hyv/compare/v0.7.0...v0.8.0) (2023-07-11)
+
+### Features
+
+- simplify format option
+  ([4d12cae](https://github.com/failfa-st/hyv/commit/4d12cae67b300711a020d7b8beedab480a79a58d))
+
+# Change Log
+
+All notable changes to this project will be documented in this file. See
+[Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
 # [0.7.0](https://github.com/failfa-st/hyv/compare/v0.6.0...v0.7.0) (2023-06-30)
 
 ### Features
