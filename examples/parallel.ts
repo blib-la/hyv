@@ -65,7 +65,6 @@ const agent3 = new Agent(
 	new GPTModelAdapter({
 		model: "gpt-4", // Use GPT-4 model
 		maxTokens: 4096, // Limit the response to 4096 tokens
-		format: "json", // Set the response format to json
 		systemInstruction: systemInstruction2, // Set the instruction for the agent
 	}),
 	{
@@ -79,7 +78,6 @@ async function doAndGetResult(task: ModelMessage) {
 		new GPTModelAdapter({
 			model: "gpt-4", // Use GPT-4 model
 			maxTokens: 2048, // Limit the response to 2048 tokens
-			format: "json", // Set the response format to json
 			systemInstruction, // Set the instruction for the agent
 		}),
 		{

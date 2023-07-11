@@ -16,7 +16,6 @@ const termAgent = new Agent(
 		model: "gpt-4",
 		maxTokens: 1024,
 		temperature: 0.8,
-		format: "json",
 		systemInstruction: createInstruction(
 			"mastermind, random term creator, very funny, hilarious",
 			minify`
@@ -52,7 +51,6 @@ const tweeter = new Agent(
 	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 1024,
-		format: "json",
 		systemInstruction: createInstruction(
 			"Comedic Writer, Twitter trend expert",
 			minify`\

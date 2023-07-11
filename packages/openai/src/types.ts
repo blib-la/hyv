@@ -14,7 +14,7 @@ import type { Except } from "type-fest";
  * @property presencePenalty - Optional, influences the penalty for new tokens in the output.
  * @property maxTokens - Optional, sets the maximum number of tokens in the output response.
  * @property historySize - Optional, dictates the number of chat messages to keep in history.
- * @property format - Optional, determines the format of the output response. Can be either "markdown" or "json".
+ * @property stream - Optional, determines if the response should be streamed.
  * @property systemInstruction - Optional, provides an initial system instruction to guide the model's behavior.
  */
 export type GPTOptions = {
@@ -28,8 +28,13 @@ export type GPTOptions = {
 	presencePenalty?: number;
 	maxTokens?: number;
 	historySize?: number;
-	format?: "markdown" | "json";
-	systemInstruction?: { systemInstruction: string; template: string };
+	// Streaming is disabled
+	// stream?: boolean;
+	systemInstruction?: {
+		systemInstruction: string;
+		template: string;
+		format: "markdown" | "json";
+	};
 };
 
 /**

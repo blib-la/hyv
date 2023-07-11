@@ -74,7 +74,6 @@ const agent = new Agent(
 		historySize: 3,
 		temperature: 1,
 		maxTokens: 2048,
-		format: "json",
 		systemInstruction: createInstructionPersona(
 			{
 				profession: "TypeScript expert",

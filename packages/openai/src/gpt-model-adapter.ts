@@ -29,7 +29,6 @@ const defaultOptions: GPTOptions = {
 	model: "gpt-3.5-turbo",
 	historySize: 2,
 	maxTokens: 512,
-	format: "markdown",
 	systemInstruction: defaultInstruction,
 };
 
@@ -159,6 +158,8 @@ export class GPTModelAdapter<
 			const request: CreateChatCompletionRequest = {
 				model: this._options.model,
 				temperature: this._options.temperature,
+				// Streaming is disabled
+				// stream: this._options.stream,
 				/* eslint-disable camelcase */
 				max_tokens: this._options.maxTokens,
 				top_p: this._options.topP,
@@ -181,10 +182,43 @@ export class GPTModelAdapter<
 				})),
 			};
 			const completion = await this._openAI.createChatCompletion(request);
+			// Streaming is disabled
+			// const completion = await this._openAI.createChatCompletion(request, {
+			// 	responseType: this._options.stream ? "stream" : undefined,
+			// });
+			// if (this._options.stream) {
+			// 	const stream = completion.data;
+			// 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+			// 	// @ts-ignore
+			// 	let text = "";
+			// 	stream.on("data", data => {
+			// 		const lines = data
+			// 			.toString()
+			// 			.split("\n")
+			// 			.filter(line => line.trim() !== "");
+			// 		for (const line of lines) {
+			// 			const message = line.replace(/^data: /, "");
+			// 			if (message === "[DONE]") {
+			// 				return; // Stream finished
+			// 			}
+			//
+			// 			try {
+			// 				const parsed = JSON.parse(message);
+			// 				text += parsed.choices[0].delta.content;
+			// 				console.clear();
+			// 				console.log(text);
+			// 			} catch (error) {
+			// 				console.error("Could not JSON parse stream message", message, error);
+			// 			}
+			// 		}
+			// 	});
+			// 	return {};
+			// }
+
 			const content = await this.handleResponse(request, completion);
 
 			gptResponse.content = content;
-			if (this._options.format === "markdown") {
+			if (this._options.systemInstruction.format === "markdown") {
 				this.addMessageToHistory({ role: "assistant", content });
 				return parseMarkdown<Output>(content);
 			}

@@ -47,7 +47,6 @@ const finalJury = new Agent(
 	new GPTModelAdapter({
 		model: "gpt-4",
 		maxTokens: 1024,
-		format: "json",
 		systemInstruction: juryInstruction,
 	}),
 	{
@@ -57,7 +56,7 @@ const finalJury = new Agent(
 
 async function createAndAssign<T>(
 	task: ModelMessage,
-	systemInstruction: string,
+	systemInstruction: { systemInstruction: string; template: string; format: "markdown" | "json" },
 	options: AgentOptions = {}
 ) {
 	return (await new Agent(
@@ -65,7 +64,6 @@ async function createAndAssign<T>(
 			model: "gpt-4",
 			maxTokens: 1024,
 			temperature: 0.9,
-			format: "json",
 			systemInstruction,
 		}),
 		{

@@ -46,7 +46,6 @@ const bookAgent = new Agent(
 		model: "gpt-4",
 		maxTokens: 1024,
 		temperature: 0.9,
-		format: "json",
 		systemInstruction: createInstruction(
 			"Book Agent, Trend Expert",
 			minify`
@@ -133,7 +132,6 @@ const author = new Agent(
 		model: "gpt-4",
 		maxTokens: 4096,
 		temperature: 0.7,
-		format: "json",
 		systemInstruction: createInstruction(
 			"Author named Morgan Casey Patel",
 			minify`

@@ -18,7 +18,6 @@ const imageWriter = createFileWriter(dir, "base64");
 const author = new Agent(
 	new GPTModelAdapter({
 		model: "gpt-4",
-		format: "json",
 	}),
 	{
 		sideEffects: [fileWriter],

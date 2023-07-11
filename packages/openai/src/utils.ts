@@ -26,7 +26,7 @@ export function ensurePunctuation(text: string, character = ".") {
  *
  * @param role - The role of the AI agent.
  * @param tasks - The tasks that the AI agent should perform.
- * @param format - The expected output format of the AI agent.
+ * @param template - The expected output template of the AI agent.
  * @returns - The formatted instruction string.
  */
 export function createInstruction<T extends Record<string, unknown>>(
@@ -46,6 +46,7 @@ export function createInstruction<T extends Record<string, unknown>>(
 		**answer EXCLUSIVELY as "VALID JSON" in this template Format**:
 	`,
 		template: JSON.stringify(template),
+		format: "json" as const,
 	};
 }
 
@@ -54,13 +55,13 @@ export function createInstruction<T extends Record<string, unknown>>(
  *
  * @param role - The role of the AI agent.
  * @param tasks - The tasks that the AI agent should perform.
- * @param format - The expected output format of the AI agent.
+ * @param template - The expected output template of the AI agent.
  * @returns - The formatted instruction string.
  */
 export function createInstructionTemplate<T extends Record<string, unknown>>(
 	role: string,
 	tasks: string,
-	format: T
+	template: T
 ) {
 	return {
 		systemInstruction: minify`
@@ -69,7 +70,8 @@ export function createInstructionTemplate<T extends Record<string, unknown>>(
 		Answer using *valid* Markdown!
 		**answer EXCLUSIVELY using the format of this TEMPLATE**:
 	`,
-		template: createTemplateFromJSON(format),
+		template: createTemplateFromJSON(template),
+		format: "markdown" as const,
 	};
 }
 
@@ -89,7 +91,7 @@ export function createInstructionPersona<
 	P extends Record<string, unknown>,
 	R extends unknown[],
 	T extends Record<string, unknown>
->(persona: P, rules: R, template: T, { format = "markdown" } = { format: "markdown" }) {
+>(persona: P, rules: R, template: T, { format = "markdown" }: { format: "markdown" | "json" }) {
 	return {
 		systemInstruction: `**PRECISELY act as this persona**:
 ${JSON.stringify(persona)}
@@ -109,5 +111,6 @@ ${JSON.stringify(
 **TEMPLATE**:
 `,
 		template: formatters[format](template),
+		format,
 	};
 }

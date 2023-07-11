@@ -41,7 +41,6 @@ const stephenKingAgent = new Agent(
 		model: "gpt-4",
 		historySize: 3,
 		maxTokens: 2048,
-		format: "json",
 		systemInstruction: stephenKingPersona,
 	}),
 	{

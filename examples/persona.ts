@@ -80,7 +80,6 @@ const person = new Agent(
 		maxTokens: 1024,
 		model: "gpt-4",
 		temperature: 0.7,
-		format: "markdown",
 		systemInstruction,
 	}),
 	{
