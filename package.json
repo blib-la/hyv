@@ -9,6 +9,7 @@
   "license": "AGPL",
   "private": true,
   "scripts": {
+    "demo:functions": "ts-node-esm examples/functions.ts",
     "demo:persona": "ts-node-esm examples/persona.ts",
     "demo:autodocs": "ts-node-esm examples/autodocs.ts",
     "demo:ai-debate": "ts-node-esm examples/ai-presidential-debate.ts",

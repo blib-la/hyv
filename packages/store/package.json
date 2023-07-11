@@ -40,8 +40,8 @@
     "dist"
   ],
   "scripts": {
-    "watch": "tsc --watch",
-    "build": "tsc",
+    "watch": "tsc --watch --project tsconfig.production.json",
+    "build": "tsc --project tsconfig.production.json",
     "clean": "npx rimraf dist"
   },
   "dependencies": {
