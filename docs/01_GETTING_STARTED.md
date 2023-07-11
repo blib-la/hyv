@@ -1,49 +1,56 @@
-# Getting started with Hyv
+# Getting Started with Hyv Agents
 
-## Installing Dependencies
+## Overview
 
-To begin using Hyv, you must first install the necessary dependencies. You will need the Hyv Agent
-and a model adapter. To install these, use the following command:
+This guide will help you understand how to get started with Hyv agents, and how to use them
+effectively in your TypeScript projects. It addresses questions like how to install the Hyv library,
+create an agent, and assign tasks to it.
+
+## Prerequisites
+
+You must have a basic understanding of TypeScript and Node.js. Additionally, you need to have
+Node.js and npm installed on your system. The Hyv library can be installed using npm:
 
 ```shell
-npm install @hyv/core @hyv/openai
+npm install @hyv/core
 ```
 
-## Receiving a Response
+## Guide
 
-### Importing Modules
+### Importing the Hyv Core Module
 
-Start by importing `Agent` and `GPTModelAdapter`:
+Start by importing the core module of Hyv:
 
 ```typescript
 import { Agent } from "@hyv/core";
-import { GPTModelAdapter } from "@hyv/openai";
 ```
 
-### Creating an Agent
+### Creating a Hyv Agent
 
-Create an `Agent` using a `GPTModelAdapter`:
+You can create a new agent by instantiating the `Agent` class. The `Agent` constructor accepts an
+adapter as its argument. For this guide, we will use the `GPTModelAdapter` from `@hyv/openai`:
 
 ```typescript
+import { GPTModelAdapter } from "@hyv/openai";
+
 const agent = new Agent(new GPTModelAdapter());
 ```
 
-### Assigning a Message
+### Assigning a Task to the Agent
 
-Provide a question to the agent and obtain the answer:
+To assign a task to the agent, you can use the `assign` method. This method accepts an object with a
+`question` property:
 
 ```typescript
-try {
-    const answer = await agent.assign({ question: "What is time?" });
-    console.log(answer.message);
-} catch (error) {
-    console.error("Error:", error);
-}
+const response = await agent.assign({ question: "What is time?" });
+console.log(response.message);
 ```
 
-### Running the Script
+## Expected Output
 
-Execute the script and check the console output:
+After running the above code, you should see the agent's response to your question in the console.
+The response is an object with several properties, including `message`, which contains the agent's
+answer:
 
 ```json
 {
@@ -54,6 +61,12 @@ Execute the script and check the console output:
 }
 ```
 
-Next:
+## Summary
 
--   [System Instructions](02_SYSTEM_INSTRUCTIONS.md)
+This guide introduced you to the basics of using Hyv agents in TypeScript. You learned how to
+install the Hyv library, create an agent, and assign tasks to it. For more detailed information, you
+can refer to the [official Hyv documentation](https://github.com/failfa-st/hyv).
+
+## Tags
+
+Hyv, TypeScript, AI, Agents, Getting Started, GPT, OpenAI

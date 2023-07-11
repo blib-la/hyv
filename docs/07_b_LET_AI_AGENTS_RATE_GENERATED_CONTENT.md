@@ -1,8 +1,21 @@
-# Judging Entries and Declaring a Winner in Hyv Competitions
+# Conducting Judgement and Announcing a Winner in Hyv-based Competitions
 
-## Instructions for Jurors
+## Overview
 
-First, we provide instructions for the jurors, detailing what is expected of them.
+This guide follows up from the previous guide, "Implementing a Hyv-based Story Writing Competition".
+Here, we will explain how to use Hyv to judge the competition entries and announce a winner.
+
+## Prerequisites
+
+You should have already completed the guide, "Implementing a Hyv-based Story Writing Competition".
+Make sure you understand how to create AI agents and assign tasks to them.
+
+## Guide
+
+### Creating Instructions for Jurors
+
+Firstly, define the instructions for the jurors. These instructions should clarify what is expected
+of the jurors in their judgement process.
 
 ```typescript
 const juryInstruction = createInstruction(
@@ -20,10 +33,10 @@ const juryInstruction = createInstruction(
 );
 ```
 
-## Judging the Competition Entries
+### Judging the Entries
 
-Next, multiple AI agents, acting as jurors, review the entries. Each juror is assigned the
-`juryInstruction` to read the stories and choose a winner:
+Next, create multiple AI agents acting as jurors to review the competition entries. Each juror
+follows the `juryInstruction` to read the stories and choose a winner.
 
 ```typescript
 const votes = (await Promise.all(
@@ -45,10 +58,10 @@ const votes = (await Promise.all(
 )) as FileContentWithPath[];
 ```
 
-## Deciding the Final Winner
+### Determining the Winner
 
-Finally, a separate agent, `finalJury`, counts the votes from all the jurors and declares the
-winner:
+Lastly, assign another agent, `finalJury`, to count the votes from all jurors and declare the
+winner.
 
 ```typescript
 await finalJury.assign({
@@ -57,7 +70,14 @@ await finalJury.assign({
 });
 ```
 
-With these steps, Hyv enables you to conduct a full competition where entries are created, evaluated
-by multiple jurors, and a final winner is selected based on the collective decision. Each AI agent
-carries out its role following the defined instructions, ensuring a fair and systematic evaluation
-process.
+## Summary
+
+By following this guide, you should now be able to conduct a complete AI-powered competition using
+Hyv. We walked through the process of defining instructions for jurors, assigning agents to judge
+the entries, and declaring a final winner. By leveraging AI, you can ensure a fair and systematic
+evaluation process.
+
+## Tags
+
+hyv, competition, story-writing, gpt-4, AI-jury, AI-agent, artificial-intelligence,
+content-generation

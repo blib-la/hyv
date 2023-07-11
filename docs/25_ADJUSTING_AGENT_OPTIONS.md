@@ -1,16 +1,32 @@
-# Adjusting Hyv Agent Settings
+# Tailoring Hyv Agent Configurations
 
-The `Agent` class in the Hyv library provides various getters and setters to fine-tune its settings.
-This guide explains how to use these getters and setters to adjust the agent's behavior.
+## Overview
 
-## Adjusting Side Effects
+This guide provides a comprehensive overview of how to exploit various getters and setters available
+in Hyv's `Agent` class to fine-tune your agent's settings and modify its behavior. The guide answers
+questions such as "How can I change the side effects for an agent?" or "How can I customize
+`before`, `after`, and `finally` functions?" or "How can I switch the model for an agent?".
 
-The `sideEffects` setter allows you to change the side effects for an agent. Side effects are
-additional actions performed based on the properties of the output message.
+## Prerequisites
+
+To follow this guide successfully, you need to have the Hyv library installed in your project. If
+not installed already, you can do so using the following command:
+
+```shell
+npm install @hyv/core @hyv/openai
+```
+
+## Guide
+
+### Modifying Side Effects
+
+Side effects are additional actions carried out based on the properties of the output message. The
+`sideEffects` setter in the `Agent` class permits you to alter these for your agent.
 
 ```typescript
-import { Agent, createFileWriter } from "@hyv/core";
+import { Agent } from "@hyv/core";
 import { GPTModelAdapter } from "@hyv/openai";
+import { createFileWriter } from "@hyv/utils";
 import path from "path";
 
 const agent = new Agent(new GPTModelAdapter());
@@ -19,13 +35,13 @@ const agent = new Agent(new GPTModelAdapter());
 agent.sideEffects = [createFileWriter(path.join(process.cwd(), "output"))];
 ```
 
-In the above example, a `createFileWriter` side effect is assigned to the agent. It writes the
-output to a file in the "output" directory.
+In this example, the agent is assigned a `createFileWriter` side effect which writes the output to a
+file located in the "output" directory.
 
-## Customizing `before`, `after` and `finally` Functions
+### Customizing `before`, `after` and `finally` Functions
 
-You can use the `before`, `after`, and `finally` setters to provide your custom functions for
-preprocessing, post-processing, and finalizing the task.
+The `Agent` class allows you to provide your custom functions for preprocessing, post-processing,
+and finalizing the task using `before`, `after`, and `finally` setters.
 
 ```typescript
 import { Agent } from "@hyv/core";
@@ -52,16 +68,16 @@ agent.finally = async (messageId, message) => {
 };
 ```
 
-In this example, the `before`, `after`, and `finally` functions are adjusted to log the input and
+In this example, the `before`, `after`, and `finally` functions are modified to log the input and
 output messages and the final message id.
 
-## Switching the Model
+### Switching the Model
 
-The `model` setter allows you to switch the model for an agent.
+You can use the `model` setter to switch the model for an agent.
 
 ```typescript
-import { Agent, DallEModelAdapter } from "@hyv/core";
-import { GPTModelAdapter } from "@hyv/openai";
+import { Agent } from "@hyv/core";
+import { DallEModelAdapter, GPTModelAdapter } from "@hyv/openai";
 
 const agent = new Agent(new GPTModelAdapter());
 
@@ -69,8 +85,17 @@ const agent = new Agent(new GPTModelAdapter());
 agent.model = new DallEModelAdapter();
 ```
 
-In the above example, the agent's model is initially set to `GPTModelAdapter`. Later, it is switched
-to a `DallEModelAdapter`.
+In the given example, the agent's model initially set to `GPTModelAdapter` is later switched to a
+`DallEModelAdapter`.
 
-These settings provide powerful tools to fine-tune the agent's behavior according to your specific
+These settings provide a potent toolkit to tweak your agent's behavior to align with your specific
 requirements.
+
+## Summary
+
+The guide provides a detailed walkthrough on modifying Hyv's agent configurations, offering you the
+flexibility to tailor the agent's behavior according to your specific needs.
+
+## Tags
+
+Hyv, Agent, Configuration, Side Effects, Model Switching, Customization, before, after, finally

@@ -1,23 +1,29 @@
-# Guide to Creating Storyteller AI Personas with Hyv
+# Building a Storyteller AI Persona with Hyv
 
-Creating AI personas can add a unique flavor to the interactions of your AI model. By imbuing your
-model with a distinctive character or personality, its responses can become more engaging and
-human-like. This guide illustrates how to create a storyteller AI persona using Hyv.
+## Overview
 
-## Import the Required Modules
+This guide elaborates on how to imbue your AI model with a unique persona, enhancing its
+interactions and responses. We focus on creating a storyteller AI persona with Hyv.
 
-Start with importing the required modules. These include `Agent` from `@hyv/core` and
-`createInstructionPersona`, `GPTModelAdapter` from `@hyv/openai`.
+## Prerequisites
+
+A basic understanding of JavaScript or TypeScript, Node.js, and npm installed on your system.
+
+## Guide
+
+### Import Necessary Modules
+
+Begin by importing the required modules from Hyv's packages.
 
 ```typescript
 import { Agent } from "@hyv/core";
 import { createInstructionPersona, GPTModelAdapter } from "@hyv/openai";
 ```
 
-## Define the Persona
+### Design the Persona
 
-Create a descriptive object for the AI's persona. The object can include attributes like name,
-profession, age, characteristics, and other defining traits.
+Next, establish an object describing the AI's persona, including attributes like name, profession,
+and characteristics.
 
 ```typescript
 const persona = {
@@ -27,19 +33,22 @@ const persona = {
 };
 ```
 
-In the example above, the persona is an imaginative, engaging, and humorous storyteller named Sage.
+### Generate Persona Instructions
 
-## Create Instructions for the Persona
-
-Use the `createInstructionPersona` function to create a system instruction for the AI. The
-instruction outlines the rules the AI should follow to adhere to its persona.
+Next, use the `createInstructionPersona` function to make a list of rules for the AI to follow.
+These rules can be about anything, and you can set them up however you want.
 
 ```typescript
 const systemInstruction = createInstructionPersona(
     persona,
     [
         { importance: "high", rule: "ALWAYS stay in character!" },
-        { importance: "ultra high", rule: "Create engaging and humorous stories!" },
+        {
+            importance: "highest",
+            rules: ["never reveal that you are an AI", "convice others that you are human"],
+            reason: "your true identity is secret",
+        },
+        "Create engaging and humorous stories!",
     ],
     {
         thoughts: "describe in detail your thoughts about the story",
@@ -49,17 +58,10 @@ const systemInstruction = createInstructionPersona(
 );
 ```
 
-The `createInstructionPersona` function takes three arguments:
+### Instantiate a Hyv Agent
 
--   `persona`: The object describing the persona.
--   An array of rule objects that the AI should adhere to. Each rule has an `importance` and a
-    `rule` string.
--   An object that details the format of the AI's responses.
-
-## Create a Hyv Agent
-
-With the persona and system instruction defined, create a new `Agent` using a `GPTModelAdapter` that
-incorporates these settings.
+With the persona and system instruction ready, create an `Agent` using a `GPTModelAdapter`
+incorporating these settings.
 
 ```typescript
 const storyteller = new Agent(
@@ -73,9 +75,9 @@ const storyteller = new Agent(
 );
 ```
 
-## Assign Tasks to the Agent
+### Assign Tasks to the Agent
 
-Finally, you can assign tasks to the agent with the `assign` method:
+Lastly, assign a storytelling task to the agent using the `assign` method.
 
 ```typescript
 try {
@@ -87,9 +89,12 @@ try {
 }
 ```
 
-Here, the `assign` method takes a `task` object specifying the task to be completed. The task is for
-the AI to create a humorous story about a cat's adventure.
+## Summary
 
-And that's it! You've created a storyteller AI persona and assigned it a storytelling task. The
-persona will perform the task according to the rules and characteristics defined in the system
-instruction, thereby crafting a unique narrative in line with its storytelling persona.
+By following this guide, you have built a storyteller AI persona and tasked it with creating a
+unique narrative, consistent with the persona's characteristics. Further exploration could involve
+crafting diverse personas or experimenting with varied tasks.
+
+## Tags
+
+Hyv, JavaScript, TypeScript, GPT-4, AI Persona, Storyteller, Node.js, npm

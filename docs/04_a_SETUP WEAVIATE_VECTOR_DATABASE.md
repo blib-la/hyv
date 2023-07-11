@@ -1,15 +1,24 @@
-# Setting up a Vector Database with Weaviate for Hyv Agents
+# Developer Guide: Vector Database Setup with Weaviate for Hyv Agents
 
-## What You Need to Start
+## Overview
 
-To start, make sure you've set up your
-[free Weaviate sandbox](https://weaviate.io/developers/weaviate/quickstart#create-a-weaviate-instance).
-Keep your **API key** and **API host** at the ready.
+This guide helps you understand how to set up a vector database with Weaviate for Hyv Agents. It
+covers how to connect to the database, and how to create and save data in two classes: "Answer" and
+"Message".
 
-## Connecting to the Database
+## Prerequisites
 
-We'll use the `WeaviateAdapter` class to connect to the Weaviate vector database. Be ready to
-provide the scheme, host, and API key.
+Before proceeding, ensure you have a
+[free Weaviate sandbox](https://weaviate.io/developers/weaviate/quickstart#create-a-weaviate-instance)
+setup. Keep your **API key** and **API host** accessible as they will be required in the subsequent
+steps.
+
+## Guide
+
+### Connecting to the Vector Database
+
+In this step, we will use the `WeaviateAdapter` class to establish a connection to the Weaviate
+vector database. Be ready to provide the scheme, host, and API key.
 
 ```typescript
 import type { WeaviateMessage } from "@hyv/store";
@@ -24,12 +33,12 @@ const store = new WeaviateAdapter({
 });
 ```
 
-## Creating and Saving Data
+### Creating Classes to store Messages
 
-We'll create two classes: "Answer" and "Message". We'll use these to store and track user
+Next, we will create two classes: "Answer" and "Message". These will be used to store and track user
 interactions and responses.
 
-Creating the "Answer" class:
+Creation of the "Answer" class:
 
 ```typescript
 const ANSWER = "Answer";
@@ -49,7 +58,7 @@ await store.createClass(
 );
 ```
 
-Creating the "Message" class:
+Creation of the "Message" class:
 
 ```typescript
 const MESSAGE = "Message";
@@ -68,3 +77,13 @@ await store.createClass(
     true
 );
 ```
+
+## Summary
+
+Upon following this guide, you will have established a connection with a Weaviate vector database
+and created two classes: "Answer" and "Message". These classes will be used to track and store user
+interactions and responses.
+
+## Tags
+
+Weaviate, Vector Database, Hyv Agents, Database Connection, Creating Classes

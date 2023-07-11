@@ -1,23 +1,27 @@
-# Setting Up a Serverless REST API with Next.js and Hyv
+# Establishing a Serverless REST API with Hyv and Next.js
 
-This guide will take you through the process of establishing a serverless function in Next.js for
-creating a REST API using the Hyv library. The REST API allows the interaction with a Hyv agent
-using HTTP requests.
+## Overview
+
+This guide provides step-by-step instructions on how to set up a serverless function using Next.js
+to create a REST API with Hyv. It aims to answer questions such as: How to set up a serverless
+function in a Next.js application? How to handle different HTTP requests in the serverless function?
+How to use the created REST API to interact with the Hyv agent?
 
 ## Prerequisites
 
-````
-Before starting, ensure you have the necessary dependencies installed in your project. If not, you
-can install them with the following command:
+Ensure you have Next.js, React, and Hyv libraries installed in your project. If they are not
+installed, you can do so using the following command:
 
 ```shell
 npm install next react react-dom @hyv/core @hyv/openai
 ```
 
-## Creating an Agent
+## Guide
 
-Start by creating an `Agent` using the `GPTModelAdapter`. The agent will handle the conversation and
-provide the main interaction point with the Hyv library.
+### Creating an Agent
+
+Begin by creating an `Agent` using the `GPTModelAdapter`. The agent handles the conversation and
+provides the main interaction point with the Hyv library.
 
 ```typescript
 import { Agent } from "@hyv/core";
@@ -26,11 +30,10 @@ import { GPTModelAdapter } from "@hyv/openai";
 const agent = new Agent(new GPTModelAdapter());
 ```
 
-## Setting Up a Serverless Function
+### Setting Up a Serverless Function
 
-Next, create a new file in the `pages/api` directory of your Next.js application. For instance,
-`pages/api/hyv.ts`. This file will serve as your serverless function and be the endpoint of your
-API.
+Next, create a serverless function which will be the endpoint of your API. This file should be in
+the `pages/api` directory of your Next.js application, for example, `pages/api/hyv.ts`.
 
 ```typescript
 import { NextApiRequest, NextApiResponse } from "next";
@@ -49,15 +52,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 ```
 
-In this function, we first verify if the incoming request is a `POST` request. If so, we pass the
+In this function, we verify if the incoming request is a `POST` request. If it is, we pass the
 user's message to the Hyv agent using the `assign` method and return the response from the agent in
-JSON format. For request methods other than `POST`, we return a `405 Method Not Allowed` error.
+JSON format. For any other request methods, a `405 Method Not Allowed` error is returned.
 
-## Utilizing the REST API
+### Utilizing the REST API
 
-With the serverless function ready, you now have a REST API for Hyv at the `/api/hyv` endpoint. To
-interact with the Hyv agent, send a `POST` request to this endpoint with a JSON body that contains
-the user's message:
+With the serverless function ready, a REST API is set up at the `/api/hyv` endpoint. To interact
+with the Hyv agent, send a `POST` request to this endpoint with a JSON body containing the user's
+message:
 
 ```json
 {
@@ -65,5 +68,14 @@ the user's message:
 }
 ```
 
-In response, the API will return a JSON object containing the Hyv agent's response.
-````
+In response, the API returns a JSON object containing the Hyv agent's response.
+
+## Summary
+
+The guide provides a comprehensive procedure for creating a serverless REST API using Next.js and
+Hyv. It allows for efficient interaction with a Hyv agent using HTTP requests, enhancing the
+flexibility and usability of your application.
+
+## Tags
+
+Next.js, Hyv, REST API, Serverless Function, Agent, HTTP Requests

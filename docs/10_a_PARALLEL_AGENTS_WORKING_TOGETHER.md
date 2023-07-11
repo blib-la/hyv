@@ -1,14 +1,21 @@
-# Creating Parallel Agents in Hyv
+# Establishing Concurrent Agents in Hyv
 
-## Understanding Parallel Agents
+## Overview
 
-Parallel agents in Hyv are used when multiple agents are required to work concurrently on different
-tasks or different parts of the same task. This first guide will show you how to create parallel
+Hyv allows the establishment of parallel agents which can work simultaneously on diverse tasks or
+distinct portions of a shared task. This guide will demonstrate how to create these concurrent
 agents.
 
-## Importing Necessary Modules
+## Prerequisites
 
-First, you need to import the necessary modules.
+Knowledge of TypeScript and a basic understanding of Hyv library are prerequisites for executing
+this guide successfully.
+
+## Guide
+
+### Importing Necessary Libraries
+
+Initially, the essential libraries are imported.
 
 ```typescript
 import type { ModelMessage } from "@hyv/core";
@@ -18,9 +25,10 @@ import type { FileContentWithPath } from "@hyv/utils";
 import { minify } from "@hyv/utils";
 ```
 
-## Defining Instructions for Each Agent
+### Specifying Agent Instructions
 
-Create a system instruction for each parallel agent, outlining the rules and expectations of the AI.
+Instructions for each parallel agent need to be defined next, setting the guidelines and
+expectations for the AI.
 
 ```typescript
 const systemInstruction1 = createInstruction(
@@ -47,9 +55,9 @@ const systemInstruction1 = createInstruction(
 );
 ```
 
-## Creating the Parallel Agents
+### Establishing Concurrent Agents
 
-After defining the instructions for each agent, use the `Agent` class and `GPTModelAdapter` to
+Once instructions for each agent are defined, the `Agent` class and `GPTModelAdapter` are used to
 create the agents.
 
 ```typescript
@@ -65,3 +73,13 @@ const agent1 = new Agent(
     }
 );
 ```
+
+## Summary
+
+By following this guide, you've learned how to create parallel agents in Hyv. These agents can work
+concurrently, thereby allowing simultaneous processing of multiple tasks or different parts of a
+shared task.
+
+## Tags
+
+Hyv, Concurrent Agents, GPT-4, TypeScript, AI, Parallel Processing

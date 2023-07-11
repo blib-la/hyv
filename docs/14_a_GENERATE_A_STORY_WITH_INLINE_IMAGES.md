@@ -1,33 +1,42 @@
-# Setup for Generating a Story with Inlined Images using Hyv, OpenAI, and Stable Diffusion
+# Initial Setup for Generating Illustrated Stories with Hyv, OpenAI, and DALL-E
 
-## Installing Dependencies
+## Overview
 
-First, make sure you have the necessary dependencies installed. You will need `@hyv/core`,
-`@hyv/openai`, `@hyv/stable-diffusion`, and `@hyv/utils`. To install these dependencies, run the
-following command:
+This guide provides a walk-through on setting up the necessary modules to create an illustrated
+story with Hyv, OpenAI's GPT-4, and DALL-E.
+
+## Prerequisites
+
+Ensure that Node.js and npm are installed on your system. Familiarity with TypeScript is beneficial.
+
+## Guide
+
+### Installing Required Packages
+
+The initial step involves installing the necessary packages: `@hyv/core`, `@hyv/openai` and
+`@hyv/utils`. Use the npm install command to add these packages to your project.
 
 ```shell
-npm install @hyv/core @hyv/openai @hyv/stable-diffusion @hyv/utils
+npm install @hyv/core @hyv/openai @hyv/utils
 ```
 
-## Importing Modules
+### Importing Essential Modules
 
-Afterward, import all the necessary modules for our story generation task:
+After installing the required packages, proceed to import the necessary modules that will be used
+for our story generation task.
 
 ```typescript
 import path from "node:path";
 import type { ModelMessage } from "@hyv/core";
 import { Agent, sequence } from "@hyv/core";
 import { createInstruction, GPTModelAdapter } from "@hyv/openai";
-import type { FilesMessage, ImageMessage } from "@hyv/stable-diffusion";
-import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
-import { minify, createFileWriter, writeFile } from "@hyv/utils";
 import type { FileContentWithPath, SideEffect } from "@hyv/utils";
 ```
 
-## Creating Helper Functions
+### Constructing Helper Functions
 
-Next, create some utility functions which we'll use for writing and optimizing our story:
+With the necessary modules imported, create utility functions that will aid in writing and
+optimizing the story.
 
 ```typescript
 export function createFileWriterWithReadingTime(
@@ -60,3 +69,13 @@ function getWordCount(text: string) {
     return text.split(" ").filter(Boolean).length;
 }
 ```
+
+## Summary
+
+This guide covers the initial steps needed to set up a project for generating illustrated stories
+using Hyv, OpenAI GPT, and DALL-E. The subsequent guides will delve into assigning tasks to agents
+and generating the story itself.
+
+## Tags
+
+Hyv, OpenAI, GPT-4, Dall-E, TypeScript, Story Generation, AI, Setup

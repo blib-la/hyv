@@ -1,15 +1,31 @@
-# Handling Errors in Hyv
+# Proper Error Handling in Hyv
 
-Handling errors correctly is crucial when building robust applications. In this guide, we will cover
-how to handle errors while using Hyv.
+## Overview
 
-Hyv uses promises extensively, which means most errors will be handled in the form of promise
-rejections.
+In this guide, we delve into the importance of error handling in Hyv and illustrate how to manage
+errors correctly. It addresses key questions such as: How are errors typically presented in Hyv? How
+can you catch and log these errors? What information does a Hyv error usually contain?
 
-## Catching Errors
+## Prerequisites
 
-Any error that occurs within an asynchronous function will result in the Promise returned by that
-function being rejected. Here's an example of how to handle these errors:
+Knowledge of JavaScript or TypeScript, with a basic understanding of Promises and asynchronous
+programming. Familiarity with Hyv and its core operations is beneficial.
+
+## Guide
+
+### Recognizing Hyv's Error Pattern
+
+Hyv extensively employs Promises, leading to most errors being delivered as promise rejections.
+
+```typescript
+const response = await agent.assign({ message: userInput });
+```
+
+### Catching Errors
+
+To handle these errors, enclose your Hyv operations within a `try...catch` block. Any error
+occurring within the `try` block (e.g., an error from the `assign` method) results in immediate
+execution shift to the `catch` block.
 
 ```typescript
 try {
@@ -20,26 +36,24 @@ try {
 }
 ```
 
-In this example, we use a `try...catch` block to handle errors. If any error occurs within the `try`
-block (such as an error in the `assign` method), execution immediately moves to the `catch` block.
+### Understanding Errors
 
-## Understanding Errors
+Typically, the caught error object in the `catch` block is an `Error` instance or a subclass
+thereof. This object has a `message` property encapsulating a string that describes the error.
+Depending on the error context, there may be additional properties providing further error details.
 
-The error object caught in the `catch` block will usually be an instance of `Error` or a subclass of
-`Error`. This object will have a `message` property that contains a string describing the error.
+### Logging Errors
 
-Depending on the context, the error object may also have additional properties that provide more
-information about what went wrong.
+In the `catch` block, we log the error to the console, providing a basic error handling approach. In
+more complex applications, you could display an error message to the user, forward the error message
+to a logging service, or attempt error recovery.
 
-## Logging Errors
+## Summary
 
-In the catch block, we log the error to the console. This is a basic way of handling the error. In a
-real-world application, you might choose to handle it differently. For example, you could show an
-error message to the user, send the error message to a logging service, or even attempt to recover
-from the error if possible.
+Correct error handling is vital for any robust application. With Hyv, you should surround your code
+with `try...catch` blocks to manage errors effectively and maintain predictable application
+behavior.
 
-## Conclusion
+## Tags
 
-Error handling is an essential part of any application. When using Hyv, be sure to wrap your code
-with `try...catch` blocks to handle errors properly and ensure that your application behaves
-predictably.
+Hyv, JavaScript, TypeScript, Error Handling, Promises, Asynchronous Programming, try-catch

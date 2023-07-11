@@ -1,23 +1,39 @@
-# Creating a sequence
+# Create a Sequence with Hyv to Process Multiple Agents
 
-## Before You Begin
+## Overview
 
-Make sure you've completed the [Getting Started with Hyv](01_GETTING_STARTED.md) and
-[System Instructions](02_SYSTEM_INSTRUCTIONS.md) guides.
+This guide will help you understand how to create a sequence with Hyv to process multiple agents.
+You will learn how to chain agents to follow a main goal while generating new tasks.
 
-## Running a sequence
+## Prerequisites
 
-Create a sequence with Hyv to process multiple agents in a chain, one after another.
+You should have a basic understanding of TypeScript and have the Hyv library installed in your
+project.
 
-The `sequence` function is linear and takes a message and an array of agents. By setting the
-`verbosity` of the agent to `1`, you will receive a prettified output in the console.
+## Guide
+
+### Import Necessary Modules
+
+First, import the necessary modules from the Hyv library.
 
 ```typescript
 import { Agent, sequence } from "@hyv/core";
 import { GPTModelAdapter } from "@hyv/openai";
+```
 
+### Create an Agent
+
+Next, create a new agent with the GPTModelAdapter and set the verbosity to 1.
+
+```typescript
 const agent = new Agent(new GPTModelAdapter(), { verbosity: 1 });
+```
 
+### Run the Sequence
+
+Now, you can run the sequence with a message and an array of agents.
+
+```typescript
 try {
     await sequence({ question: "What is life?" }, [agent]);
 } catch (error) {
@@ -25,47 +41,27 @@ try {
 }
 ```
 
-**output**
+### Add More Agents
 
-```
- Thought
-
-Life is a characteristic that distinguishes physical entities that have biological processes, such as signaling and self-sustaining processes, from those that do not, either because such functions have ceased (death), or because they never had such functions and are classified as inanimate.
-
- Reason
-
-Life is a complex concept that has been studied by scientists, philosophers, and theologians for centuries. It is a fundamental aspect of our existence that is difficult to define in a concise manner.
-
- Reflection
-
-The concept of life raises many questions about the nature of existence, the purpose of our existence, and the meaning of life. It is a topic that has fascinated humans for ages and continues to do so today.
-
- Answer
-
-Life can be defined as a characteristic that distinguishes physical entities that have biological processes, such as signaling and self-sustaining processes, from those that do not.
-
-```
-
-## Adding more agents
-
-Change the model to `gpt-4` (not required) for improved answers and modify the system instruction.
-Create three agents and chain them to follow a main goal while generating new tasks.
+To add more agents, you can create additional agents and include them in the array passed to the
+sequence function.
 
 ```typescript
-import { Agent, sequence } from "@hyv/core";
-import { createInstruction, GPTModelAdapter } from "@hyv/openai";
-
+const mainGoal = "Make the world a better place!";
+const numberOfAgent = 5;
+// Create an array of agents
 const agents = Array.from<undefined, Agent>(
-    { length: 3 },
+    { length: numberOfAgent },
     () =>
         new Agent(
             new GPTModelAdapter({
+                // Use a larger/better model
                 model: "gpt-4",
+                // Adust the system instruction so that an agent creates a new task
                 systemInstruction: createInstruction(
                     "AI",
                     "think about the task, reason your thoughts, create a new task based on your decision!",
                     {
-                        mainGoal: "{{mainGoal}}",
                         thoughts: "detailed string",
                         reason: "detailed string",
                         task: "full and detailed task without references",
@@ -73,7 +69,7 @@ const agents = Array.from<undefined, Agent>(
                 ),
             }),
             {
-                async before({ task, mainGoal }) {
+                async before({ task }) {
                     // Only use the mainGoal and task
                     return {
                         task,
@@ -86,11 +82,21 @@ const agents = Array.from<undefined, Agent>(
 );
 
 try {
-    await sequence(
-        { task: "Make the world a better place!", mainGoal: "Make the world a better place!" },
-        agents
-    );
+    await sequence({ task: mainGoal }, agents);
 } catch (error) {
     console.error("Error:", error);
 }
 ```
+
+## Expected Output
+
+After running the sequence, you should expect to see the output of each agent in the console.
+
+## Summary
+
+You have now learned how to create a sequence with Hyv to process multiple agents. This allows you
+to chain agents together to follow a main goal while generating new tasks.
+
+## Tags
+
+Hyv, TypeScript, sequence, agents, GPTModelAdapter, multi-agent processing

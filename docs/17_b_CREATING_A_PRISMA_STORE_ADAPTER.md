@@ -1,11 +1,20 @@
-# Implementing the Prisma Store Adapter for Hyv
+# Building Out the Prisma Store Adapter for Your Hyv Project
 
-Now that we have our project set up and our Prisma client generated, we can move on to implementing
-our Prisma store adapter.
+## Overview
 
-## Creating the Prisma Store Adapter
+Having set up the project and generated our Prisma client, we can now progress to building out our
+Prisma store adapter. This guide will detail the creation and implementation of the adapter.
 
-Create a new file named `PrismaStoreAdapter.ts` and open it:
+## Prerequisites
+
+In addition to the prerequisites from the first part, you'll need a running PostgreSQL database that
+the Prisma store adapter can interact with.
+
+## Guide
+
+### Initiating the Prisma Store Adapter
+
+To begin, create a new file titled `PrismaStoreAdapter.ts` and open it.
 
 ```shell
 touch PrismaStoreAdapter.ts
@@ -18,7 +27,7 @@ import { PrismaClient } from "@prisma/client";
 import type { ModelMessage, StoreAdapter } from "@hyv/core";
 ```
 
-Next, define the Prisma store adapter class, which implements the `StoreAdapter` interface:
+Subsequently, define the Prisma store adapter class, which implements the `StoreAdapter` interface:
 
 ```typescript
 /**
@@ -33,8 +42,10 @@ export class PrismaStoreAdapter implements StoreAdapter {
 }
 ```
 
-Inside the class, define the `set` method, which stores a message in the database and returns its
-ID:
+### Implementing the Set Method
+
+Inside the class, define the `set` method. This method is responsible for storing a message in the
+database and returning its ID:
 
 ```typescript
 export class PrismaStoreAdapter implements StoreAdapter {
@@ -57,7 +68,9 @@ export class PrismaStoreAdapter implements StoreAdapter {
 }
 ```
 
-Define the `get` method, which retrieves a message by its ID from the database:
+### Implementing the Get Method
+
+Finally, define the `get` method, which retrieves a message by its ID from the database:
 
 ```typescript
 export class PrismaStoreAdapter implements StoreAdapter {
@@ -84,7 +97,8 @@ export class PrismaStoreAdapter implements StoreAdapter {
 
 ## Using the Prisma Store Adapter
 
-You can now use the `PrismaStoreAdapter` as the store for an `Agent` in Hyv:
+Upon successful implementation, the `PrismaStoreAdapter` can now be utilized as a store for an
+`Agent` within Hyv:
 
 ```typescript
 import { Agent } from "@hyv/core";
@@ -97,7 +111,16 @@ const agent = new Agent(new GPTModelAdapter(), { store });
 // Now you can use the agent to assign and retrieve messages...
 ```
 
-And that's it! You've created a custom Prisma store adapter for Hyv. You can use a similar process
-to create store adapters for any other database or storage system. Just make sure to implement the
-`StoreAdapter` interface according to the specifications of your particular database or storage
-system.
+## Summary
+
+In this guide, we have detailed the process of building out the Prisma store adapter for a Hyv
+project. We initiated the Prisma store adapter, implemented the `set` and `get` methods, and
+finally, employed the adapter in a Hyv `Agent`. This illustrates how a Prisma store adapter
+interacts with a PostgreSQL database in a Hyv project. The same approach can be used to create store
+adapters for other databases or storage systems. It only requires the implementation of the
+`StoreAdapter` interface according to the specifications of your chosen database or storage system.
+
+## Tags
+
+Hyv, StoreAdapter, Prisma, PostgreSQL, Node.js, npm, Prisma CLI, Message model, Prisma Client,
+Agent, GPTModelAdapter

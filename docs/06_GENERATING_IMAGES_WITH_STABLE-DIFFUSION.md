@@ -1,26 +1,32 @@
-# Initiating Hyv with Automatic1111ModelAdapter
+# Using Automatic1111ModelAdapter with Hyv
 
-## Configuring Dependencies
+## Overview
 
-In order to use Hyv with the `Automatic1111ModelAdapter`, follow the subsequent steps:
+This guide illustrates the use of the `Automatic1111ModelAdapter` with Hyv for image generation. It
+addresses questions such as: How to use stable diffusion in Hyv? How to generate images using
+automatic1111 image-generation-web-ui?
 
-### Importing Necessary Modules
+## Prerequisites
 
-Start by importing the necessary modules from `@hyv/core`, `@hyv/stable-diffusion`, and
-`@hyv/utils`. This will include `Agent`, `sequence`, `Automatic1111ModelAdapter`, and
-`createFileWriter`.
+A basic understanding of JavaScript or TypeScript, Node.js, and npm installed on your system.
+
+## Guide
+
+### Import Required Modules
+
+Begin by importing necessary modules from Hyv's packages.
 
 ```typescript
 import path from "node:path";
-import { Agent, sequence } from "@hyv/core";
+import { Agent } from "@hyv/core";
 import { Automatic1111ModelAdapter } from "@hyv/stable-diffusion";
 import { createFileWriter } from "@hyv/utils";
 ```
 
-### Constructing an Image Writer
+### Establish an Image Writer
 
-Employ the `createFileWriter` function to establish an image writer that will pen down the generated
-image at a specific path.
+Next, utilize the `createFileWriter` function to set up an image writer that will save the generated
+image at a specified path.
 
 ```typescript
 const imageWriter = createFileWriter(
@@ -29,10 +35,10 @@ const imageWriter = createFileWriter(
 );
 ```
 
-### Instituting an Agent
+### Create an Agent
 
-Set up an `Agent` using the `Automatic1111ModelAdapter` and specify the `sideEffects` to comprise
-the `imageWriter`.
+Then, instantiate an `Agent` using the `Automatic1111ModelAdapter` and assign the `sideEffects` to
+include the `imageWriter`.
 
 ```typescript
 const agent = new Agent(new Automatic1111ModelAdapter({ steps: 20, cfgScale: 7 }), {
@@ -40,27 +46,34 @@ const agent = new Agent(new Automatic1111ModelAdapter({ steps: 20, cfgScale: 7 }
 });
 ```
 
-### Creating Images
+### Generate Images
 
-Employ the `sequence` function to produce images. Supply an object with an `images` array, each
-featuring a `path`, `prompt`, and `negativePrompt`. In this case, we're fabricating a "portrait of a
-clown" while circumventing "worst quality".
+Lastly, use the `sequence` function to generate images. Provide an object with an `images` array,
+each containing a `path`, `prompt`, and `negativePrompt`.
 
 ```typescript
 try {
-    await sequence(
-        {
-            images: [
-                {
-                    path: "image.png",
-                    prompt: "portrait of a clown",
-                    negativePrompt: "worst quality",
-                },
-            ],
-        },
-        [agent]
-    );
+    await agent.assign({
+        images: [
+            {
+                path: "clown.png",
+                prompt: "portrait of a clown",
+                negativePrompt: "worst quality",
+            },
+        ],
+    });
 } catch (error) {
     console.error("Error:", error);
 }
 ```
+
+## Summary
+
+This guide provided a walkthrough on how to configure the `Automatic1111ModelAdapter` with Hyv for
+image generation with stable diffusion. For deeper exploration, try altering the model's parameters
+or using different prompts.
+
+## Tags
+
+Hyv, JavaScript, TypeScript, Automatic1111ModelAdapter, Image Generation, Node.js, npm, gradio,
+stable diffusion

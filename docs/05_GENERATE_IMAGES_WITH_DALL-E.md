@@ -1,39 +1,46 @@
-# Kickstarting with Hyv
+# Introduction to Image generation with Hyv
 
-## Setting Up Dependencies
+## Overview
 
-To get started with Hyv, the initial step involves installing the essential dependencies, including
-Hyv's core, openai and utils. To do this, run the command:
+This guide details how to start using Hyv to generate images. It answers questions such as: How to
+use DALL-E in Hyv? How to generate images using DALL-E model?
+
+## Prerequisites
+
+Familiarity with JavaScript or TypeScript, Node.js, and npm installed on your system.
+
+## Guide
+
+### Install Hyv Dependencies
+
+First, install the necessary Hyv dependencies including core, openai, and utils.
 
 ```shell
 npm install @hyv/core @hyv/openai @hyv/utils
 ```
 
-## Generating Images
+### Import Modules
 
-### Integrating Modules
-
-Begin by importing `Agent`, `sequence` from Hyv's core, `DallEModelAdapter` from Hyv's openai, and
-`createFileWriter` from Hyv's utils:
+Next, import required modules from Hyv's packages.
 
 ```typescript
 import path from "node:path";
-import { Agent, sequence } from "@hyv/core";
+import { Agent } from "@hyv/core";
 import { DallEModelAdapter } from "@hyv/openai";
 import { createFileWriter } from "@hyv/utils";
 ```
 
-### Establishing a DallEModelAdapter
+### Create DallEModelAdapter
 
-Set up a `DallEModelAdapter` which is utilized to generate images with OpenAI's DALL-E model:
+Now, set up a `DallEModelAdapter` which can generate images.
 
 ```typescript
 const adapter = new DallEModelAdapter({ size: "256x256", n: 1 }, openAI);
 ```
 
-### Crafting an Agent
+### Set up an Agent
 
-Generate an `Agent` using a `DallEModelAdapter` and a file writer side effect:
+Then, create an `Agent` using the `DallEModelAdapter` and a file writer side effect.
 
 ```typescript
 const imageWriter = createFileWriter(
@@ -45,22 +52,32 @@ const agent = new Agent(new DallEModelAdapter(), {
 });
 ```
 
-### Tasking the Agent
+### Assign Task to Agent
 
-Assign a task to the agent to create an image:
+Next, assign the task of creating an image to the agent.
 
 ```typescript
 try {
-    await sequence({ images: [{ path: "assets/bar.png", prompt: "red apple" }] }, [agent]);
+    await agent.assign({ images: [{ path: "assets/red-apple.png", prompt: "red apple" }] });
 } catch (error) {
     console.error("Error:", error);
 }
 ```
 
-### Executing the Script
+## Expected Output
 
-Run the script and check the designated path for the generated image:
+After running the script, you should find the generated image at the following path:
 
 ```text
 examples/output/dall-e/timestamp
 ```
+
+## Summary
+
+We have learned how to set up and use Hyv to generate images using OpenAI's DALL-E model. For
+further learning, explore different configuration options for the DallEModelAdapter and other
+utilities provided by Hyv.
+
+## Tags
+
+Hyv, JavaScript, TypeScript, OpenAI, DALL-E, Image Generation, Node.js, npm

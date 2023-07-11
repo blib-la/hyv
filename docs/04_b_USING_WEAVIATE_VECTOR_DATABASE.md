@@ -1,15 +1,29 @@
-# Setting Up a Conversational Agent with Hyv and Weaviate
+# Developer Guide: Establishing a Conversational Agent with Hyv and Weaviate
 
-## Setting up the Agent
+## Overview
 
-We're going to use the `GPTModelAdapter` from `@hyv/openai` as our base model, which uses the GPT-4
-version of OpenAI's language model.
+This guide demonstrates how to set up a conversational agent using Hyv and Weaviate. It highlights
+the process of configuring the agent and handling user interactions, eventually creating a chatbot
+capable of recalling past user interactions for a personalized experience.
+
+## Prerequisites
+
+Before diving into this guide, ensure you're equipped with basic TypeScript knowledge and have
+access to the Hyv and Weaviate libraries.
+
+## Guide
+
+### Configuring the Conversational Agent
+
+Our first step involves utilizing the `GPTModelAdapter` from `@hyv/openai` as our foundation model,
+specifically the GPT-4 version of OpenAI's language model.
 
 ```typescript
 const agent = new Agent(
     new GPTModelAdapter({
         model: "gpt-4",
         historySize: 2,
+        // Create a persona for the agent
         systemInstruction: createInstructionPersona(
             {
                 gender: "female",
@@ -39,6 +53,7 @@ const agent = new Agent(
         ),
     }),
     {
+        // Add the Weaviate Store here to store all responses automatically
         store,
         verbosity: 1,
         async after(message) {
@@ -48,10 +63,11 @@ const agent = new Agent(
 );
 ```
 
-## Handling User Interactions
+### Managing User Interactions
 
-We'll use the `readline` library to get user inputs from the console. The agent processes each user
-message, and its response is stored as an "Answer" object in our Weaviate instance.
+In this step, we employ the `readline` library to obtain user inputs from the console. The agent
+processes every user message, with its response being saved as an "Answer" object in our Weaviate
+instance.
 
 ```typescript
 const rl = readline.createInterface({
@@ -69,26 +85,21 @@ const chat = async () => {
         };
 
         try {
-            agent.finally = async messageId => {
-                await store.set(message, MESSAGE);
-                return messageId;
-            };
-        } catch (error) {
-            console.log(error);
-        }
-
-        try {
+            // Get the name message and userId and date of related messages
+            // This information is given to the agent as memory
             const messageResults = await store.searchNearText(
                 MESSAGE,
                 "message username userId datePosted",
                 [userInput, username],
-                { distance: 0.17 }
+                // Adjust the distance and limit
+                { distance: 0.17, limit: 10 }
             );
             const answerResults = await store.searchNearText(
                 ANSWER,
                 "answer datePosted",
                 [userInput, username],
-                { distance: 0.17 }
+                // Adjust the distance and limit
+                { distance: 0.17, limit: 10 }
             );
             await agent.assign(
                 {
@@ -100,6 +111,8 @@ const chat = async () => {
                 },
                 ANSWER
             );
+
+            await store.set(message, MESSAGE);
         } catch (error) {
             try {
                 await agent.assign(
@@ -126,5 +139,11 @@ const chat = async () => {
 chat();
 ```
 
-By following these steps, you'll have a chatbot that can remember past interactions with users,
-providing a more engaging and personalized experience.
+## Summary
+
+After completing the steps mentioned in this guide, you should now have a functioning chatbot that
+can recall and use past interactions to create a more engaging and personalized user experience.
+
+## Tags
+
+Hyv, Weaviate, Conversational Agent, Chatbot, User Interactions, GPT-4, TypeScript

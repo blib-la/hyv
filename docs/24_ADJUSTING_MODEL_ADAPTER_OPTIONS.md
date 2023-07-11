@@ -1,56 +1,79 @@
-# Customizing Hyv Models and Agent Options
+# Tailoring Hyv Models and Agent Configuration
 
-The Hyv library provides a set of configurations that allow you to customize the behavior of your
-models and agents. This guide will cover how to adjust the options of the `GPTModelAdapter` model
-and the `Agent`.
+## Overview
 
-## Customizing GPTModelAdapter
+The guide presents comprehensive steps on how to utilize Hyv's flexible configuration setup to
+customize the behavior of your models and agents. Questions such as "How can I adjust the options of
+the `GPTModelAdapter` model and the `Agent`?" or "How can I modify the `temperature` or other model
+options?" will be answered throughout this guide.
 
-The `GPTModelAdapter` class in Hyv allows you to set various properties, including the
-`temperature`, `model`, `maxTokens`, `historySize`, `format`, and `systemInstruction`.
+## Prerequisites
 
-### Adjusting the Temperature
+To successfully follow this guide, you should have the Hyv library installed in your project. If not
+already installed, you can do so using the following command:
 
-The `temperature` property controls the randomness of the model's output. A higher value increases
-randomness, while a lower value makes it more deterministic. To adjust the `temperature`, you can
-use the `temperature` setter in the `GPTModelAdapter` class.
+```shell
+npm install @hyv/core @hyv/openai
+```
+
+## Guide
+
+### Modifying the GPTModelAdapter
+
+Hyv's `GPTModelAdapter` class permits you to adjust various properties such as `temperature`,
+`model`, `maxTokens`, `historySize`, `format`, and `systemInstruction`.
+
+#### Adjusting the Temperature
+
+The `temperature` property controls the randomness of the model's output. A higher value will result
+in increased randomness, while a lower value leans towards a more deterministic outcome. To tweak
+the `temperature`, utilize the `temperature` setter in the `GPTModelAdapter` class.
 
 ```typescript
 import { GPTModelAdapter } from "@hyv/openai";
 
-// Create an instance of the GPTModelAdapter class
+// Instantiate the GPTModelAdapter class
 const gptAdapter = new GPTModelAdapter();
 
-// Adjust the temperature of the GPT model
-gptAdapter.temperature = 0.7; // Set the temperature to your desired value
+// Modify the temperature of the GPT model
+gptAdapter.temperature = 0.7; // Adjust the temperature to your preferred value
 ```
 
-## Customizing Agent
+### Tailoring the Agent
 
-While the `Agent` class doesn't provide a direct method to adjust the temperature or other model
+Although the `Agent` class doesn't provide a direct method to adjust the temperature or other model
 options, you can access the model instance from the agent and then set the properties.
 
 ```typescript
 import { Agent } from "@hyv/core";
 import { GPTModelAdapter } from "@hyv/openai";
 
-// Create an instance of the GPTModelAdapter class
+// Instantiate the GPTModelAdapter class
 const gptAdapter = new GPTModelAdapter();
 
-// Create an instance of the Agent class
+// Instantiate the Agent class
 const agent = new Agent(gptAdapter);
 
 // Access the model instance from the agent and set the temperature
-(agent.model as GPTModelAdapter).temperature = 0.7; // Set the temperature to your desired value
+(agent.model as GPTModelAdapter).temperature = 0.7; // Adjust the temperature to your preferred value
 ```
 
-In addition to `temperature`, you can also set the following properties:
+Apart from `temperature`, you can also adjust the following properties:
 
 -   `model`: The model ID (default is 'gpt-3').
 -   `maxTokens`: The maximum number of tokens in the response (default is 2048).
--   `historySize`: The number of previous messages to keep in memory (default is 1).
+-   `historySize`: The number of previous messages to retain in memory (default is 1).
 -   `format`: The output format, which can be either 'markdown' or 'json' (default is 'markdown').
 -   `systemInstruction`: An instruction that's always prepended to the message given to the model.
 
-Adjusting these properties allows you to control the behavior of your models and agents to meet your
-specific requirements.
+These properties allow you to fine-tune the behavior of your models and agents according to your
+specific needs.
+
+## Summary
+
+The guide provides a detailed walkthrough on adjusting Hyv's models and agent configuration,
+offering extensive flexibility and adaptability to meet your specific requirements.
+
+## Tags
+
+Hyv, GPTModelAdapter, Agent, Configuration, Customization, Model Options, Temperature

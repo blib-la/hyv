@@ -1,25 +1,24 @@
-# Writing a Developer Guide Template
+# Developer Guide Template
 
-Please follow the instructions below to create a guide in the prescribed format/style:
+Follow this concise template to ensure consistency and clarity in all developer guides:
 
 ---
 
-# {Title}
+# {Title (no punctuation or special-characters)}
 
-## Introduction
+## Overview
 
-Provide a brief overview of what the guide is about and what the reader will achieve by following
-it.
+Describe the guide's purpose and goals. Include questions that this guide addresses.
 
 ## Prerequisites
 
-List any prerequisites or dependencies the reader needs to have installed or be familiar with before
-they can successfully follow your guide.
+Mention required knowledge, tools, or installations the reader must possess to successfully execute
+this guide.
 
-## Step-by-step Guide
+## Guide
 
-Divide your guide into clear and logical steps. For each step, provide a clear title, a brief
-description, and relevant code samples if necessary.
+Divide your guide into logical, easily-followable steps. Each step should have a title (not
+numbered), description, and related code (if needed).
 
 ### {Step 1 Title}
 
@@ -37,31 +36,22 @@ description, and relevant code samples if necessary.
 {code related to step 2}
 ```
 
-Continue this pattern for all necessary steps.
+Repeat for all necessary steps.
 
-## Results and Outputs
+## Expected Output (optional if needed, otherwise skip and continue with Summary)
 
-Describe the expected result or output after successfully completing your guide. If necessary,
-provide a code sample for checking the output.
+Detail what outcomes the reader should expect after successfully following the guide. If applicable,
+provide a code sample to verify the output.
 
 ```{relevant programming language}
-{code for checking output}
+{verification code}
 ```
 
-## Troubleshooting
+## Summary
 
-Provide a list of common errors or issues that the reader might encounter while following your
-guide. For each issue, provide a brief description and the solution.
+Conclude by summarizing the achievements and providing further resources or more advanced guides.
 
-### {Error 1}
+## Tags
 
-{Description of error and solution}
-
-### {Error 2}
-
-{Description of error and solution}
-
-## Conclusion
-
-Wrap up your guide by summarizing what the reader has accomplished. You can also include references
-to further reading or more advanced guides here.
+List important keywords, separated by commas, to assist in discovering this guide. E.g., gpt-4,
+stable-diffusion, image-generation, ...

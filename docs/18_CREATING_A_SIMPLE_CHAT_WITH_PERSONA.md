@@ -1,19 +1,34 @@
-# Creating a Simple Chat with a Persona using Hyv
+# Implementing Interactive AI Chat with Hyv
 
-Hyv provides a straightforward way to create interactive chats with an AI persona. This can be done
-using the Node.js `readline` library for reading user input from the terminal.
+## Overview
 
-## Creating an Interactive Chat
+This guide demonstrates how to implement an interactive chat with a distinct AI persona using the
+Hyv library and Node.js `readline` for terminal-based user input. It addresses questions such as:
+How to create an AI persona in Hyv? How to set up user input from the terminal? How to process and
+respond to user input using the AI persona?
 
-Here is an example of how to create a simple chat with a persona named "James", a Software Engineer,
-using Hyv:
+## Prerequisites
+
+Familiarity with JavaScript or TypeScript, Node.js, and npm installed on your system. Knowledge of
+Hyv's `Agent`, `createInstructionPersona`, and `GPTModelAdapter` is beneficial.
+
+## Guide
+
+### Setting Up Required Imports
+
+Begin by importing the necessary modules from Node.js and Hyv's packages.
 
 ```typescript
 import readline from "readline";
-import { Agent, createInstructionPersona } from "@hyv/core";
-import { GPTModelAdapter } from "@hyv/openai";
+import { Agent } from "@hyv/core";
+import { GPTModelAdapter, createInstructionPersona } from "@hyv/openai";
+```
 
-// Create an agent with a persona
+### Constructing an Agent with Persona
+
+Next, create an `Agent` with a defined persona using the `GPTModelAdapter`.
+
+```typescript
 const agent = new Agent(
     new GPTModelAdapter({
         model: "gpt-4",
@@ -33,14 +48,25 @@ const agent = new Agent(
     }),
     { verbosity: 1 }
 );
+```
 
-// Create a readline interface
+### Initiating Readline Interface
+
+Then, initialize the `readline` interface to read user input from the terminal.
+
+```typescript
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
 });
+```
 
-// Function to handle the chat
+### Implementing the Chat Function
+
+Define the function that facilitates user-agent interaction, receives user input, assigns the input
+to the agent, and logs the agent's response.
+
+```typescript
 const chat = async () => {
     rl.question("> ", async userInput => {
         // Assign the user's input to the agent
@@ -54,26 +80,22 @@ const chat = async () => {
         chat();
     });
 };
+```
 
-// Start the chat
+### Starting the Chat
+
+Lastly, initiate the chat by calling the `chat` function.
+
+```typescript
 chat();
 ```
 
-## Understanding the Code
+## Summary
 
-Here's a breakdown of the code:
+By following this guide, you have set up an interactive terminal chat with an AI persona. The chat
+will continue until manually terminated. Further exploration could involve creating diverse personas
+or handling more complex conversational structures.
 
-1. **Creating an Agent**: A new `Agent` object is created with a persona. In this case, the persona
-   is 'James', a 'Software Engineer' who is 'analytical', 'detail-oriented', and 'patient'.
+## Tags
 
-2. **Setting up the Readline Interface**: The `readline` library is used to read the user's input
-   from the terminal on a line-by-line basis.
-
-3. **Defining the Chat Function**: This function handles the interaction between the user and the
-   agent. It uses the `question` method from `readline` to get the user's input, assigns the input
-   to the agent, and logs the agent's response.
-
-4. **Running the Chat**: The chat function is called to start the interaction.
-
-This code will create an interactive chat in the terminal with the persona 'James'. The chat will
-continue until the program is manually terminated.
+Hyv, JavaScript, TypeScript, Node.js, readline, AI Chat, GPT-4, Agent, Persona, GPTModelAdapter

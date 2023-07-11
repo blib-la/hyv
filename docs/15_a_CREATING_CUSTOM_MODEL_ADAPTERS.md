@@ -1,8 +1,25 @@
-# Creating a Custom ModelAdapter with Hyv
+# Developing a Custom ModelAdapter with the Hyv Library
 
-A `ModelAdapter` is a crucial part of the Hyv library as it outlines the interaction with a specific
-AI model. This guide will walk you through the process of creating a custom `ModelAdapter` for an
-imaginary AI model that generates songs. We will call this adapter `SongModelAdapter`.
+## Overview
+
+This guide's primary purpose is to instruct you on building a custom `ModelAdapter` within the Hyv
+library for a fictitious AI model that generates songs, referred to as the `SongModelAdapter`. This
+guide will address questions such as: How to outline the interaction with a specific AI model? How
+to create and assign tasks to the `ModelAdapter`?
+
+## Prerequisites
+
+To execute this guide successfully, you must have a basic understanding of Typescript and the Hyv
+library. Tools and installations required include Typescript, a text editor (like VSCode), and the
+necessary libraries such as axios and decamelize-keys.
+
+## Guide
+
+### Initializing the SongModelAdapter
+
+We'll start by importing the necessary modules and defining the song options for our adapter. We
+create a `SongOptions` type to outline the necessary parameters (`model`, `rootUrl`,
+`endpointBase`), and an instance of the `SongModelAdapter` class.
 
 ```typescript
 import type { ModelAdapter, ModelMessage } from "@hyv/core";
@@ -10,7 +27,6 @@ import { urlJoin } from "@hyv/utils";
 import axios from "axios";
 import decamelizeKeys from "decamelize-keys";
 
-// Define the song options for the adapter.
 type SongOptions = {
     model: string;
     rootUrl: string;
@@ -20,23 +36,20 @@ type SongOptions = {
 export class SongModelAdapter implements ModelAdapter<ModelMessage, ModelMessage> {
     private _options: SongOptions;
 
-    /**
-     * Creates an instance of the SongModelAdapter class.
-     *
-     * @param options - The song model options.
-     */
     constructor(options: SongOptions) {
         this._options = options;
     }
+}
+```
 
-    /**
-     * Assigns a task to the SongModelAdapter and returns the result.
-     *
-     * @async
-     * @param task - The task to assign.
-     * @returns - A Promise that resolves to the result of the assigned task.
-     * @throws - If there is an error assigning the task.
-     */
+### Task Assignment to the SongModelAdapter
+
+Next, we create the `assign` method. This method is asynchronous and accepts a `task` parameter,
+which it assigns to the `SongModelAdapter`. If successful, it returns the result of the assigned
+task, but if there's an error, it throws an exception.
+
+```typescript
+export class SongModelAdapter implements ModelAdapter<ModelMessage, ModelMessage> {
     async assign(task: ModelMessage): Promise<ModelMessage> {
         try {
             const response = await axios.post<{ song: string }>(
@@ -47,7 +60,6 @@ export class SongModelAdapter implements ModelAdapter<ModelMessage, ModelMessage
                 }
             );
 
-            // Return the generated song as the result.
             return { result: response.data.song };
         } catch (error) {
             throw new Error(`Error assigning task in SongModelAdapter: ${error.message}`);
@@ -56,7 +68,17 @@ export class SongModelAdapter implements ModelAdapter<ModelMessage, ModelMessage
 }
 ```
 
-This adapter connects to a custom API endpoint that generates songs using a specific AI model. The
-adapter is initialized with a set of options (`model`, `rootUrl`, `endpointBase`). When you assign a
-task, it sends a POST request to the specified API endpoint, with the task's content as the `prompt`
-and the chosen `model`. The generated song is then returned as the task result.
+The `assign` method sends a POST request to a custom API endpoint that generates songs using a
+specific AI model. The task's content serves as the `prompt` and the chosen `model`. Finally, the
+generated song is returned as the task result.
+
+## Summary
+
+In this guide, we have walked through the process of creating a custom `ModelAdapter` with the Hyv
+library. We created an adapter for an imaginary AI model that generates songs, and we outlined how
+to initialize it and assign tasks. With this foundation, you can expand this concept to create
+`ModelAdapters` for other AI models as well.
+
+## Tags
+
+Hyv, ModelAdapter, Custom ModelAdapter, AI model, SongModelAdapter, TypeScript, axios

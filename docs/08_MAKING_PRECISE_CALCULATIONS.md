@@ -1,24 +1,30 @@
-# Guide to Making Precise Calculations with Hyv
+# Performing Calculations with Hyv
 
-In Hyv, the GPT-4 AI model can be leveraged to perform detailed mathematical calculations. To make
-Hyv do precise calculations, follow the steps below:
+## Overview
 
-## Import Necessary Modules
+This guide outlines how to utilize the GPT-4 AI model in Hyv for executing detailed mathematical
+calculations. It addresses questions such as: How to get step by step answers? How to create a
+mathematical model? How to assign a problem to the agent?
 
-Start by importing the necessary modules. This includes `Agent` from `@hyv/core` and
-`createInstructionTemplate` and `GPTModelAdapter` from `@hyv/openai`.
+## Prerequisites
+
+Basic knowledge of JavaScript or TypeScript, Node.js, and npm installed on your system.
+
+## Guide
+
+### Import Required Modules
+
+Start by importing necessary modules from Hyv's packages.
 
 ```typescript
 import { Agent } from "@hyv/core";
 import { createInstructionTemplate, GPTModelAdapter } from "@hyv/openai";
 ```
 
-## Create a Mathematical Model
+### Set Up a Mathematical Model
 
-Next, define a `GPTModelAdapter` that is specialized for mathematical calculations. To do this,
-create a new `GPTModelAdapter` and specify a custom `systemInstruction`. The
-`createInstructionTemplate` function is used to generate a `systemInstruction` that instructs the AI
-to solve mathematical problems.
+Next, establish a `GPTModelAdapter` specialized for mathematical calculations, using a custom
+`systemInstruction`.
 
 ```typescript
 const mathModel = new GPTModelAdapter({
@@ -36,22 +42,18 @@ const mathModel = new GPTModelAdapter({
 });
 ```
 
-In the above code, `"Mathematician"` is the role that the AI is instructed to take on. The AI is
-asked to think about the problem, reason its thoughts, and solve the problem step by step.
+### Create an Agent
 
-## Create an Agent
-
-After defining the model, create a new `Agent` with the `mathModel`:
+Then, instantiate an `Agent` with the `mathModel`, with `verbosity` set to `1` to provide detailed
+output.
 
 ```typescript
 const mathAgent = new Agent(mathModel, { verbosity: 1 });
 ```
 
-The `verbosity` option is set to `1`, which means that the agent will provide detailed output.
+### Assign a Problem to the Agent
 
-## Assign a Problem
-
-Finally, assign a mathematical problem to the agent using the `assign` method:
+Lastly, assign a mathematical problem to the agent using the `assign` method.
 
 ```typescript
 try {
@@ -62,9 +64,12 @@ try {
 }
 ```
 
-In the above code, the `assign` method is called with a `problem` object, which specifies the
-mathematical problem to solve. The answer is then logged to the console.
+## Summary
 
-With these steps, you can use Hyv to make precise calculations. The agent will approach the problem
-like a mathematician, thinking about the problem, reasoning its thoughts, and solving the problem
-step by step.
+This guide walked you through the process of using Hyv to perform precise calculations, treating the
+AI agent as a mathematician. Further exploration could include assigning more complex problems or
+altering the model's parameters.
+
+## Tags
+
+Hyv, JavaScript, TypeScript, GPT-4, Calculations, AI, Node.js, npm

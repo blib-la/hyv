@@ -1,8 +1,21 @@
-# Assigning Tasks and Merging Results with Parallel Agents in Hyv
+# Deploying Tasks and Consolidating Outputs with Concurrent Agents in Hyv
 
-## Defining a Task Assignment Function
+## Overview
 
-Create a function to assign tasks to an agent and retrieve the results.
+Upon establishing concurrent agents in Hyv, as shown in the previous guide, the next steps involve
+deploying tasks to these agents and unifying the results. This guide will elaborate on how to
+perform these steps.
+
+## Prerequisites
+
+To follow this guide, you should have completed the previous guide on creating concurrent agents in
+Hyv. Familiarity with TypeScript and a basic understanding of the Hyv library is also needed.
+
+## Guide
+
+### Formulating a Function to Assign Tasks
+
+Develop a function to delegate tasks to an agent and fetch the results.
 
 ```typescript
 async function doAndGetResult(task: ModelMessage) {
@@ -21,9 +34,10 @@ async function doAndGetResult(task: ModelMessage) {
 }
 ```
 
-## Assigning Tasks to the Agents
+### Delegating Tasks to Agents
 
-Assign tasks to your agents. These tasks are performed concurrently due to the use of `Promise.all`.
+Next, assign tasks to the agents. The usage of `Promise.all` ensures that these tasks are executed
+concurrently.
 
 ```typescript
 const mainTask = { task: "Write a simple React todo-list app, be creative" };
@@ -33,12 +47,11 @@ const files = (
 ).flat() as FileContentWithPath[];
 ```
 
-In the example above, the same main task is assigned to two agents which are set to run
-concurrently.
+In the preceding example, the same main task is assigned to two agents which perform concurrently.
 
-## Merging the Results
+### Unifying the Outcomes
 
-Finally, use another agent to merge the outputs from the parallel tasks, if needed.
+Lastly, if necessary, employ an additional agent to unify the results from the parallel tasks.
 
 ```typescript
 const agent3 = new Agent(
@@ -66,6 +79,15 @@ const result = await agent3.assign(mergeTask);
 console.log("merged", result.message);
 ```
 
-In this example, the outputs of the parallel tasks are merged by a third agent, `agent3`. This agent
-is specifically trained to analyze and merge TypeScript code. This concludes the guide on how to use
-parallel agents in Hyv to perform tasks concurrently and improve the efficiency of your AI model.
+In this instance, the results of the concurrent tasks are merged by a third agent, `agent3`. This
+agent is uniquely trained to analyze and unify TypeScript code.
+
+## Summary
+
+By following this guide, you've learned how to assign tasks to and unify the results from parallel
+agents in Hyv. The capability to carry out tasks concurrently enhances the efficiency of your AI
+model.
+
+## Tags
+
+Hyv, Concurrent Agents, Task Assignment, Merging Results, GPT-4, TypeScript, AI, Parallel Processing

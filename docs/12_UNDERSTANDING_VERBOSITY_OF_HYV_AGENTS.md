@@ -1,48 +1,46 @@
-# Understanding Verbosity in Hyv
+# Configuring Verbosity in Hyv
 
-`Verbosity` in Hyv's context is a configurable property that determines the amount of logging detail
-provided by an `Agent` during its operation. You can consider it as a kind of logging level. The
-verbosity level can be set when creating an instance of the `Agent` class via its options.
+## Overview
 
-The verbosity level is represented as an integer, with each level providing a different degree of
-logging detail:
+This guide explores the concept of `Verbosity` in Hyv, a configurable property influencing the
+amount of detail logged by an `Agent` during operation. Questions like: How to set verbosity levels?
+What each verbosity level entails? And why is verbosity useful, are answered in this guide.
 
-## Verbosity Levels
+## Prerequisites
 
--   `0`: No logging (default if no verbosity is set during agent creation)
--   `1`: Basic logging (provides a detailed display of the agent's output message)
--   `2`: Detailed logging (provides a detailed view of both the input and output messages)
+Familiarity with JavaScript or TypeScript, basic understanding of Hyv's `Agent` and
+`GPTModelAdapter`.
 
-## Usage
+## Guide
 
-Here's an example of how to set verbosity levels during agent instantiation:
+### Understanding Verbosity Levels
+
+Verbosity, represented as an integer, determines the level of logging detail:
+
+-   `0`: No logging (default if not set)
+-   `1`: Basic logging (detailed output message)
+-   `2`: Detailed logging (input and output messages)
+
+### Setting Verbosity Levels
+
+Set the verbosity level when creating an `Agent` instance via its options.
 
 ```typescript
 const agent = new Agent(new GPTModelAdapter(), { verbosity: 2 });
 ```
 
-In the example above, the `Agent` is created with a verbosity level of `2`, which means that it will
-log detailed information about both the input messages to the agent and the output messages from the
-agent.
+### Logging Details per Verbosity Level
 
-## What gets logged?
+-   **Level 1**: Logs key-value pairs in the output message received after task processing.
+-   **Level 2**: Logs input message before and after processing, output message before and after
+    processing, in addition to level `1` logs.
 
--   **Verbosity Level 1**: When verbosity is set to `1`, the agent logs the key-value pairs in the
-    output message it received after processing the task.
+## Summary
 
--   **Verbosity Level 2**: When verbosity is set to `2`, in addition to what gets logged in
-    verbosity level `1`, it also logs the input message before it is processed, the modified input
-    message after running the `before` function, the output message received from the model before
-    running the `after` function, and the modified output message after running the `after`
-    function.
+Using the verbosity option, you can have a deeper insight into your `Agent` operation, which aids in
+debugging. However, higher verbosity levels can impact application performance due to more logged
+information, so it's advisable to use these during development or debugging sessions only.
 
-## Why is Verbosity useful?
+## Tags
 
-The verbosity option allows you to better understand what's happening within your `Agent` during its
-operation. This can be particularly helpful when debugging your agent's behavior. By using a higher
-verbosity level, you can see exactly what messages are being sent to and received from your agent,
-which can help you identify any issues or misunderstandings that may arise.
-
-Remember, verbosity levels might affect the performance of your application, especially if the
-verbosity level is high (2), because it logs more information. Therefore, it is recommended to use
-higher verbosity levels only during development or debugging sessions.
+Hyv, JavaScript, TypeScript, Verbosity, Logging, Agent, GPTModelAdapter
