@@ -4,7 +4,7 @@ import type { OpenAIApi } from "openai";
 import { defaultOpenAI } from "./config.js";
 import type { DallEOptions, FilesMessage, ImageMessage } from "./types.js";
 
-export class DallEModelAdapter implements ModelAdapter<ImageMessage, FilesMessage> {
+export class DallEModelAdapter implements ModelAdapter<ImageMessage> {
 	private readonly _options: DallEOptions;
 	private _openAI: OpenAIApi;
 

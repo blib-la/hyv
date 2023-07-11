@@ -1,36 +1,52 @@
 import type { ModelAdapter, ModelMessage } from "@hyv/core";
-import { extractCode, parseMarkdown } from "@hyv/utils";
+import { parseMarkdown } from "@hyv/utils";
 import type { AxiosError } from "axios";
 import JSON5 from "json5";
-import type { ChatCompletionRequestMessage, CreateChatCompletionRequest, OpenAIApi } from "openai";
+import type {
+	ChatCompletionRequestMessage,
+	ChatCompletionRequestMessageFunctionCall,
+	CreateChatCompletionRequest,
+	CreateChatCompletionResponse,
+	OpenAIApi,
+} from "openai";
 
 import { defaultOpenAI } from "./config.js";
 import type { GPTOptions } from "./types.js";
 import { createInstructionTemplate } from "./utils.js";
 
+const defaultInstruction = createInstructionTemplate("AI", "think, reason, reflect, answer", {
+	thought: "your thoughts",
+	reason: "reason your thoughts",
+	reflection: "reflect on your reasoning",
+	answer: "your answer",
+});
+
 const defaultOptions: GPTOptions = {
 	temperature: 0.5,
+	topP: 1,
+	frequencyPenalty: 0,
+	presencePenalty: 0,
 	model: "gpt-3.5-turbo",
-	historySize: 1,
+	historySize: 2,
 	maxTokens: 512,
 	format: "markdown",
-	systemInstruction: createInstructionTemplate("AI", "think, reason, reflect, answer", {
-		thought: "string",
-		reason: "string",
-		reflection: "string",
-		answer: "string",
-	}),
+	systemInstruction: defaultInstruction,
 };
 
 /**
  * Represents a GPT model adapter that can assign tasks and move to the next task.
  *
  */
-export class GPTModelAdapter<Input extends ModelMessage, Output extends ModelMessage>
-	implements ModelAdapter<Input, Output>
+export class GPTModelAdapter<
+	Input extends ModelMessage,
+	Output extends ModelMessage | ChatCompletionRequestMessageFunctionCall
+> implements ModelAdapter<Input>
 {
 	private _options: GPTOptions;
 	private _openAI: OpenAIApi;
+	private _functions: Record<string, (args: Record<string, any>) => Promise<string> | string> =
+		{};
+
 	readonly history: ChatCompletionRequestMessage[];
 
 	/**
@@ -42,6 +58,12 @@ export class GPTModelAdapter<Input extends ModelMessage, Output extends ModelMes
 	constructor(options: Partial<GPTOptions> = defaultOptions, openAI: OpenAIApi = defaultOpenAI) {
 		this._options = { ...defaultOptions, ...options } as GPTOptions;
 		this._openAI = openAI;
+		if (this._options.functions) {
+			this._options.functions.forEach(({ name, fn }) => {
+				this._functions[name] = fn;
+			});
+		}
+
 		this.history = [];
 	}
 
@@ -53,9 +75,70 @@ export class GPTModelAdapter<Input extends ModelMessage, Output extends ModelMes
 	 */
 	private addMessageToHistory(message: ChatCompletionRequestMessage) {
 		this.history.push(message);
-		while (this.history.length >= this._options.historySize * 2) {
+		while (this.history.length >= this._options.historySize) {
 			this.history.shift();
 		}
+	}
+
+	/**
+	 * Handles responses from GPT. If the response contains a function call it resolves those and
+	 * then returns the final answer. The function call responses are sent back to GPT but are not
+	 * part of the history (since they are only needed until they are used by GPT), which gives
+	 * better control of the historySize.
+	 *
+	 * @param request
+	 * @param response
+	 * @private
+	 */
+	private async handleResponse(
+		request: CreateChatCompletionRequest,
+		response: { data: CreateChatCompletionResponse }
+	): Promise<string> {
+		const [choice] = response.data.choices;
+		if (choice.finish_reason === "function_call") {
+			const result = await this._functions[choice.message.function_call.name](
+				JSON.parse(choice.message.function_call.arguments)
+			);
+
+			// Messages are pushed into the last request but not added to the overall history
+			request.messages.push({
+				role: "function",
+				name: choice.message.function_call.name,
+				content: result,
+			});
+			const completion = await this._openAI.createChatCompletion(request);
+			return this.handleResponse(request, completion);
+		}
+
+		return choice.message.content.trim();
+	}
+
+	/**
+	 * This method can be used to use GPT to try to fix broken answers. It uses a very low
+	 * temperature since creativity is not desired  at this stage. It is only called if the format
+	 * was JSON
+	 *
+	 * @param input
+	 * @private
+	 */
+	private async fixJSON(input: string) {
+		const completion = await this._openAI.createChatCompletion({
+			model: this._options.model,
+			// eslint-disable-next-line camelcase
+			max_tokens: this._options.maxTokens,
+			temperature: 0,
+			messages: [
+				{
+					role: "system",
+					content: `Take the user input and put it into this template:\n${this._options.systemInstruction.template}`,
+				},
+				{
+					role: "user",
+					content: `put this text into the JSON template: ${input}`,
+				},
+			],
+		});
+		return completion.data.choices[0].message.content.trim();
 	}
 
 	/**
@@ -66,39 +149,63 @@ export class GPTModelAdapter<Input extends ModelMessage, Output extends ModelMes
 	 * @returns - A Promise that resolves to the result of the assigned task.
 	 * @throws - If there is an error assigning the task.
 	 */
-	async assign(task: Input): Promise<Output> {
+	async assign(task: Input): Promise<Output | ChatCompletionRequestMessageFunctionCall> {
+		const gptResponse: { content: string | ChatCompletionRequestMessageFunctionCall } = {
+			content: "NO RESPONSE",
+		};
 		try {
 			this.addMessageToHistory({ role: "user", content: JSON.stringify(task) });
+
 			const request: CreateChatCompletionRequest = {
 				model: this._options.model,
-				// eslint-disable-next-line camelcase
-				max_tokens: this._options.maxTokens,
 				temperature: this._options.temperature,
+				/* eslint-disable camelcase */
+				max_tokens: this._options.maxTokens,
+				top_p: this._options.topP,
+				frequency_penalty: this._options.frequencyPenalty,
+				presence_penalty: this._options.presencePenalty,
+				/* eslint-enable camelcase */
 				messages: [
-					{ role: "system", content: this._options.systemInstruction },
+					{
+						role: "system",
+						content:
+							this._options.systemInstruction.systemInstruction +
+							`\n${this._options.systemInstruction.template}`,
+					},
 					...this.history,
 				],
+				functions: this._options.functions?.map(({ name, description, parameters }) => ({
+					name,
+					description,
+					parameters,
+				})),
 			};
 			const completion = await this._openAI.createChatCompletion(request);
+			const content = await this.handleResponse(request, completion);
 
-			const { content } = completion.data.choices[0].message;
+			gptResponse.content = content;
 			if (this._options.format === "markdown") {
 				this.addMessageToHistory({ role: "assistant", content });
 				return parseMarkdown<Output>(content);
 			}
 
-			const { code: jsonString } = extractCode(content);
+			let message: ModelMessage = { content };
 
-			this.addMessageToHistory({ role: "assistant", content: jsonString });
 			try {
-				return JSON.parse(jsonString);
-			} catch {
-				return JSON5.parse(jsonString);
+				message = JSON5.parse(content);
+			} catch (error) {
+				console.log(error.message);
+
+				const content_ = await this.fixJSON(content);
+				gptResponse.content = content_;
+				message = JSON5.parse(content_);
+			} finally {
+				this.addMessageToHistory({ role: "assistant", content: JSON.stringify(message) });
 			}
-		} catch (error: unknown) {
-			console.error(
-				(error as AxiosError)?.response?.data.message ?? (error as Error).message
-			);
+
+			return message as Output;
+		} catch (error) {
+			console.log((error as AxiosError)?.response?.data.message ?? (error as Error).message);
 			throw error;
 		}
 	}

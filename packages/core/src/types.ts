@@ -6,16 +6,16 @@ export type ModelMessage = Record<string, any>;
  * Represents a model adapter that can assign tasks and move to the next task.
  *
  * @template Input - A type that extends ModelMessage for input tasks.
- * @template Output - A type that extends ModelMessage for output results.
  */
-export interface ModelAdapter<Input extends ModelMessage, Output extends ModelMessage> {
+export interface ModelAdapter<Input extends ModelMessage> {
 	/**
 	 * Assigns a task to the model and moves to the next task.
 	 *
 	 * @param task - A task represented as an Input object.
-	 * @returns - A Promise that resolves with the resulting Output object after the task is completed.
+	 * @returns - A Promise that resolves with the resulting Output after the task is completed.
 	 */
-	assign(task: Input): Promise<Output>;
+	assign(task: Input): Promise<any>;
+	verbosity?: number;
 }
 
 /**
@@ -47,7 +47,7 @@ export interface AgentOptions<Store extends StoreAdapter = StoreAdapter> {
 	 * @param message - The processed ModelMessage.
 	 * @returns - A Promise that resolves with the messageId.
 	 */
-	finally?(messageId: string, message: ModelMessage): Promise<string>;
+	finally?<T>(messageId: string, message: ModelMessage): Promise<{ id: string; message: T }>;
 
 	/**
 	 * An array of sideEffects that the Agent can use.

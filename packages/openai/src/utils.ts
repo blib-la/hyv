@@ -32,9 +32,10 @@ export function ensurePunctuation(text: string, character = ".") {
 export function createInstruction<T extends Record<string, unknown>>(
 	role: string,
 	tasks: string,
-	format: T
+	template: T
 ) {
-	return minify`
+	return {
+		systemInstruction: minify`
 		You are a ${ensurePunctuation(role)}
 		Your tasks: ${ensurePunctuation(tasks)}
 		Strict Rules:
@@ -43,8 +44,9 @@ export function createInstruction<T extends Record<string, unknown>>(
 		ALWAYS follow the template!
 		EXCLUSIVELY communicate **VALID JSON**!
 		**answer EXCLUSIVELY as "VALID JSON" in this template Format**:
-		${JSON.stringify(format)}
-	`;
+	`,
+		template: JSON.stringify(template),
+	};
 }
 
 /**
@@ -60,19 +62,20 @@ export function createInstructionTemplate<T extends Record<string, unknown>>(
 	tasks: string,
 	format: T
 ) {
-	return `${minify`
+	return {
+		systemInstruction: minify`
 		You are a ${ensurePunctuation(role)}
 		Your tasks: ${ensurePunctuation(tasks)}
 		Answer using *valid* Markdown!
 		**answer EXCLUSIVELY using the format of this TEMPLATE**:
-	`}
-${createTemplateFromJSON(format)}
-`;
+	`,
+		template: createTemplateFromJSON(format),
+	};
 }
 
 const formatters = {
-	json(obj) {
-		return JSON.stringify(obj);
+	json(json: Record<string, any>) {
+		return JSON.stringify(json);
 	},
 	markdown: createTemplateFromJSON,
 };
@@ -87,17 +90,24 @@ export function createInstructionPersona<
 	R extends unknown[],
 	T extends Record<string, unknown>
 >(persona: P, rules: R, template: T, { format = "markdown" } = { format: "markdown" }) {
-	return `Act PRECISELY as this persona:
+	return {
+		systemInstruction: `**PRECISELY act as this persona**:
 ${JSON.stringify(persona)}
-(this is VERY IMPORTANT)
 
-PRECISELY follow these rules:
-${JSON.stringify(rules)}
-(this is ULTRA IMPORTANT)
+**STRICTLY follow these rules**:
+${JSON.stringify(
+	[
+		{ importance: "highest", rule: `ONLY respond using **valid** ${formats[format]} format` },
+		{ importance: "highest", rule: `ONLY respond in form of the provided **TEMPLATE**` },
+		format === "json"
+			? { importance: "highest", rule: `escape new-lines in JSON value (\\n)` }
+			: null,
+		...rules,
+	].filter(Boolean)
+)}
 
-EXCLUSIVELY answer using **valid** ${formats[format]}!
-**EXCLUSIVELY answer using the format of this TEMPLATE**:
-${formatters[format](template)}
-(this is MOST IMPORTANT)
-`;
+**TEMPLATE**:
+`,
+		template: formatters[format](template),
+	};
 }

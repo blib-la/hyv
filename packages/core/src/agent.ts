@@ -21,10 +21,7 @@ import type { AgentOptions, ModelAdapter, ModelMessage, StoreAdapter } from "./t
  * @property verbosity - Enables verbose logging to a certain degree.
  */
 export class Agent<
-	Model extends ModelAdapter<ModelMessage, ModelMessage> = ModelAdapter<
-		ModelMessage,
-		ModelMessage
-	>,
+	Model extends ModelAdapter<ModelMessage> = ModelAdapter<ModelMessage>,
 	Store extends StoreAdapter = StoreAdapter
 > {
 	private _model: Model;
@@ -32,7 +29,11 @@ export class Agent<
 	private _sideEffects: SideEffect[] = [];
 	private _before: AgentOptions["before"] = async message => message;
 	private _after: AgentOptions["after"] = async message => message;
-	private _finally: AgentOptions["finally"] = async messageId => messageId;
+	private _finally: AgentOptions["finally"] = async <T extends ModelMessage>(id, message) => ({
+		id,
+		message: message as T,
+	});
+
 	private readonly _verbosity: number = 0;
 	/**
 	 * Creates an instance of the Agent class.
@@ -42,7 +43,6 @@ export class Agent<
 	 */
 	constructor(model: Model, options: Partial<AgentOptions<Store>> = {}) {
 		this._model = model;
-
 		this._store = options.store ?? memoryStore;
 		this._verbosity = options.verbosity ?? 0;
 
@@ -70,9 +70,9 @@ export class Agent<
 	 * @async
 	 * @param inputMessage - The message to be assigned.
 	 * @param args - optional additional args
-	 * @returns - A Promise that resolves to the next messageId.
+	 * @returns - A Promise that resolves to the next messageId and the message.
 	 */
-	async _assign(inputMessage: ModelMessage, ...args: unknown[]) {
+	async _assign<T extends ModelMessage>(inputMessage: ModelMessage, ...args: unknown[]) {
 		if (this._verbosity > 1) {
 			console.log("Input Message:");
 			console.log(inputMessage);
@@ -122,7 +122,7 @@ export class Agent<
 		}
 
 		const messageId = await this._store.set(modifiedOutputMessage, ...args);
-		return this._finally(messageId, modifiedOutputMessage);
+		return this._finally<T>(messageId, modifiedOutputMessage);
 	}
 
 	/**
@@ -143,7 +143,8 @@ export class Agent<
 	 * @returns - The id to the next message
 	 */
 	async do(messageId: string, ...args: unknown[]) {
-		return this._assign(await this._store.get(messageId, ...args));
+		const { id } = await this._assign(await this._store.get(messageId, ...args));
+		return id;
 	}
 
 	/**
@@ -157,8 +158,7 @@ export class Agent<
 		message: ModelMessage,
 		...args: unknown[]
 	): Promise<{ id: string; message: T }> {
-		const messageId = await this._assign(message, ...args);
-		return { id: messageId, message: (await this._store.get(messageId, ...args)) as T };
+		return this._assign(message, ...args);
 	}
 
 	/**

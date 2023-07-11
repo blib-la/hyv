@@ -11,7 +11,7 @@ import type { ModelAdapter, ModelMessage, StoreAdapter } from "./types.js";
  */
 export async function sequence<Store extends StoreAdapter = StoreAdapter>(
 	message: ModelMessage,
-	chain: Agent<ModelAdapter<ModelMessage, ModelMessage>, Store>[],
+	chain: Agent<ModelAdapter<ModelMessage>, Store>[],
 	store = memoryStore
 ) {
 	const featureId = await store.set(message);

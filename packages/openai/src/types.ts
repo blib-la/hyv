@@ -1,24 +1,35 @@
 import type { ModelMessage } from "@hyv/core";
 import type { FileContentWithPath } from "@hyv/utils";
-import type { CreateImageRequest } from "openai";
+import type { ChatCompletionFunctions, CreateImageRequest } from "openai";
 import type { Except } from "type-fest";
 
 /**
- * Represents options for the GPT model.
+ * Defines options for the GPT model.
  *
- * @property model - The model name.
- * @property temperature - The temperature value, controlling the randomness of the model's output.
- * @property maxTokens - The maximum number of tokens in the output response.
- * @property historySize - The number of chat messages to maintain in history.
- * @property systemInstruction - An initial system instruction to guide the model's behavior.
+ * @property functions - Optional, defines the chat completion functions.
+ * @property model - Optional, specifies the model name.
+ * @property temperature - Optional, determines the randomness of the model's output.
+ * @property topP - Optional, determines the nucleus sampling parameter.
+ * @property frequencyPenalty - Optional, controls the penalty for frequent tokens in the output.
+ * @property presencePenalty - Optional, influences the penalty for new tokens in the output.
+ * @property maxTokens - Optional, sets the maximum number of tokens in the output response.
+ * @property historySize - Optional, dictates the number of chat messages to keep in history.
+ * @property format - Optional, determines the format of the output response. Can be either "markdown" or "json".
+ * @property systemInstruction - Optional, provides an initial system instruction to guide the model's behavior.
  */
 export type GPTOptions = {
+	functions?: (ChatCompletionFunctions & {
+		fn(args: Record<string, any>): Promise<string> | string;
+	})[];
 	model?: string;
 	temperature?: number;
+	topP?: number;
+	frequencyPenalty?: number;
+	presencePenalty?: number;
 	maxTokens?: number;
 	historySize?: number;
 	format?: "markdown" | "json";
-	systemInstruction?: string;
+	systemInstruction?: { systemInstruction: string; template: string };
 };
 
 /**

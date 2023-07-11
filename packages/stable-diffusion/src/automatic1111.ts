@@ -22,7 +22,7 @@ const defaultOptions: Automatic1111Options = {
  * @property _endpointBase - The base path for the AUTOMATIC1111 API endpoints.
  */
 export class Automatic1111ModelAdapter<Input extends ImageMessage = ImageMessage>
-	implements ModelAdapter<Input, FilesMessage>
+	implements ModelAdapter<Input>
 {
 	private _options: Automatic1111Options;
 	private readonly _rootUrl: string = "http://127.0.0.1:7861";
