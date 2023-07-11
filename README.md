@@ -6,11 +6,20 @@
 
 ## What is Hyv?
 
-Hyv is a library designed to streamline the integration and interaction of diverse AI models. It provides a clean, intuitive, and unified API to manage and collaborate different AI models with ease.
+Hyv is a library designed to streamline the integration and interaction of diverse AI models. It
+provides a clean, intuitive, and unified API to manage and collaborate different AI models with
+ease.
 
 Get started with Hyv now:
+
 ```shell
 npm i @hyv/core @hyv/openai
+```
+
+Provide your apiKey in a `.env` file
+
+```
+OPENAI_API_KEY=sk-xxxxxxxx
 ```
 
 Try this simple example to see Hyv in action:
@@ -21,26 +30,30 @@ import { GPTModelAdapter, DallEModelAdapter } from "@hyv/openai";
 
 // Create agents
 const writer = new Agent(new GPTModelAdapter());
-const artist = new Agent(new DallEModelAdapter());
+const artist = new Agent(new DallEModelAdapter(), {
+    // Preprocess the task
+    async before(message) {
+        return { images: [{ path: "the-future.png", prompt: message.answer }] };
+    },
+});
 
 // Assign tasks
-writer
-    .assign({ question: "Describe the future to an artist so that they can draw it" })
-    .then(({ message }) =>
-        artist.assign({ images: [{ path: "the-future.png", prompt: message.answer }] })
-    )
-    .then(({ message }) => {
-        // The result
-        console.log(message.content);
-    });
+const writerResult = writer.assign({
+    question: "Describe the future to an artist so that they can draw it",
+});
+const artistResult = artist.assign(writerResult.message);
+// Do something with the result
+console.log(artistResult.message.content);
 ```
 
 ## Discover Hyv
 
-* **[Examples](examples)**: Browse practical applications and use-cases of Hyv.
-* **[Documentation](docs)**: Dive into detailed guides and extensive documentation.
-* **[Lingo](https://github.com/failfa-st/lingo/)**: Enhance your usage of large language models with Lingo, an efficient pseudo-language.
-* **[Discord](https://discord.com/invite/m3TBB9XEkb)**: Join our community, share your work, and learn from others.
+-   **[Examples](examples)**: Browse practical applications and use-cases of Hyv.
+-   **[Documentation](docs)**: Dive into detailed guides and extensive documentation.
+-   **[Lingo](https://github.com/failfa-st/lingo/)**: Enhance your usage of large language models
+    with Lingo, an efficient pseudo-language.
+-   **[Discord](https://discord.com/invite/m3TBB9XEkb)**: Join our community, share your work, and
+    learn from others.
 
 ---
 
@@ -48,8 +61,9 @@ writer
 
 Hyv offers compelling advantages for developers:
 
-* **Streamlined Task Management**: Handle complex tasks involving multiple AI models seamlessly.
-* **Flexible, Plug-and-play Architecture**: Integrate Hyv into any tech stack easily. Adapt it to your specific needs.
-* **Broad Compatibility**: Hyv supports diverse AI models. The possibilities are limitless.
+-   **Streamlined Task Management**: Handle complex tasks involving multiple AI models seamlessly.
+-   **Flexible, Plug-and-play Architecture**: Integrate Hyv into any tech stack easily. Adapt it to
+    your specific needs.
+-   **Broad Compatibility**: Hyv supports diverse AI models. The possibilities are limitless.
 
 Start shaping the future with Hyv today!
