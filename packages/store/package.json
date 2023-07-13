@@ -34,6 +34,10 @@
     "./fs-adapter": {
       "types": "./dist/fs-adapter.d.ts",
       "default": "./dist/fs-adapter.js"
+    },
+    "./weaviate-adapter": {
+      "types": "./dist/weaviate-adapter.d.ts",
+      "default": "./dist/weaviate-adapter.js"
     }
   },
   "files": [
