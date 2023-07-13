@@ -91,22 +91,22 @@ export function createInstructionPersona<
 	P extends Record<string, unknown>,
 	R extends unknown[],
 	T extends Record<string, unknown>
->(persona: P, rules: R, template: T, { format = "markdown" }: { format: "markdown" | "json" }) {
+>(
+	persona: P,
+	rules: R,
+	template: T,
+	{ format = "markdown" }: { format?: "markdown" | "json" } = { format: "markdown" }
+) {
 	return {
 		systemInstruction: `**PRECISELY act as this persona**:
 ${JSON.stringify(persona)}
 
 **STRICTLY follow these rules**:
-${JSON.stringify(
-	[
-		{ importance: "highest", rule: `ONLY respond using **valid** ${formats[format]} format` },
-		{ importance: "highest", rule: `ONLY respond in form of the provided **TEMPLATE**` },
-		format === "json"
-			? { importance: "highest", rule: `escape new-lines in JSON value (\\n)` }
-			: null,
-		...rules,
-	].filter(Boolean)
-)}
+${JSON.stringify([
+	{ importance: "highest", rule: `ONLY respond using **valid** ${formats[format]} format` },
+	{ importance: "highest", rule: `ONLY respond in form of the provided **TEMPLATE**` },
+	...rules,
+])}
 
 **TEMPLATE**:
 `,
