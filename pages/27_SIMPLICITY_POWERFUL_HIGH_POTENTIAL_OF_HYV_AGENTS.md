@@ -48,6 +48,6 @@ sphere.
 References:
 
 [^1]:
-    [Hyv: The AI Framework for Synergistic Computing](https://github.com/failfa-st/hyv/docs/20_WHAT_DOES_HYV_MEAN_WHAT_IS_HYV.md)
+    [Hyv: The AI Framework for Synergistic Computing](https://github.com/failfa-st/hyv/pages/20_WHAT_DOES_HYV_MEAN_WHAT_IS_HYV.md)
 
 [^2]: [Hyv: The Hub for Your AI Models](https://github.com/failfa-st/hyv/README.md)

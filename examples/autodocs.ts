@@ -1,72 +1,20 @@
+import { ANSWER, DOCS, EXAMPLE, SOURCE_CODE, store } from "../docs-gui/weaviate.js";
+
+import { Agent } from "@hyv/core";
+import { GPTModelAdapter } from "@hyv/openai";
+import { createInstructionPersona } from "@hyv/openai/utils";
 import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import { inspect } from "node:util";
 import readline from "readline";
-
-import { Agent } from "@hyv/core";
-import { GPTModelAdapter } from "@hyv/openai";
-import { createInstructionPersona } from "@hyv/openai/utils";
-import { WeaviateAdapter } from "@hyv/store";
-import { config } from "dotenv";
-import { globby } from "globby";
-import { ApiKey } from "weaviate-ts-client";
-
-config();
-
-inspect.defaultOptions.depth = null;
-
+import "../templates/setup-weaviate.js";
 /**
  * This example demonstrates how to get help with a library.
  * In this example we use Hyv to teach users how to use Hyv.
  */
 
-const store = new WeaviateAdapter({
-	scheme: "https",
-	host: process.env.WEAVIATE_HOST,
-	apiKey: new ApiKey(process.env.WEAVIATE_API_KEY),
-	headers: { "X-OpenAI-Api-Key": process.env.OPENAI_API_KEY },
-});
-const ANSWER = "Answer";
-const EXAMPLE = "Example";
-const DOCS = "Docs";
-const SOURCE_CODE = "SourceCode";
-
-// We use "force: true" here to not have the same kind of example data
-// over and over in our store. This will delete the data every time
-// To keep the data  you can set the `refresh` value to false
-const refresh = true;
-
-async function createClass(className) {
-	await store.createClass(
-		{
-			class: className,
-			vectorizer: "text2vec-openai",
-			moduleConfig: {
-				"text2vec-openai": {
-					model: "ada",
-					modelVersion: "002",
-					type: "text",
-				},
-			},
-		},
-		refresh
-	);
-}
-
-try {
-	await createClass(EXAMPLE);
-	await createClass(SOURCE_CODE);
-	await createClass(ANSWER);
-	await createClass(DOCS);
-} catch (error) {
-	console.log("STORE SETUP FAILED");
-	console.log(error);
-}
-
-function pathFromRoot(filePath: string) {
-	return path.join(process.cwd(), filePath);
-}
+inspect.defaultOptions.depth = null;
 
 const agent = new Agent(
 	new GPTModelAdapter({
@@ -122,50 +70,6 @@ const agent = new Agent(
 	}
 );
 
-// If we want to refresh (force) the new dataset, we need to populate the vector store
-if (refresh) {
-	// Get al related documents
-	const docs = await globby(
-		[
-			pathFromRoot("docs/**/*.md"),
-			pathFromRoot("docs/*.md"),
-			pathFromRoot("README.md"),
-			`!${pathFromRoot("docs/00_DOCUMENTATION_GUIDE_TEMPLATE.md")}`,
-		],
-		{ gitignore: true }
-	);
-
-	const examples = await globby([pathFromRoot("examples/*.ts")], { gitignore: true });
-
-	const sourceCode = await globby(
-		[
-			pathFromRoot("package.json"),
-			pathFromRoot("**/package.json"),
-			pathFromRoot("packages/**/*.ts"),
-			`!${pathFromRoot("packages/*/dist")}`,
-		],
-		{ ignoreFiles: ["*.d.ts", "*.js"], gitignore: true }
-	);
-
-	await Promise.all([
-		...docs.map(async filePath => {
-			const content = await fs.readFile(filePath, "utf-8");
-			const relativePath = filePath.replace(process.cwd(), "");
-			return store.set({ content, filePath: relativePath }, "Docs");
-		}),
-		...examples.map(async filePath => {
-			const content = await fs.readFile(filePath, "utf-8");
-			const relativePath = filePath.replace(process.cwd(), "");
-			return store.set({ content, filePath: relativePath }, "Example");
-		}),
-		...sourceCode.map(async filePath => {
-			const content = await fs.readFile(filePath, "utf-8");
-			const relativePath = filePath.replace(process.cwd(), "");
-			return store.set({ content, filePath: relativePath }, "SourceCode");
-		}),
-	]);
-}
-
 // Using readline to get user input
 const rl = readline.createInterface({
 	input: process.stdin,
@@ -191,7 +95,7 @@ const chat = async () => {
 			),
 			guideTemplate: userInput.startsWith("GUIDE:")
 				? await fs.readFile(
-						pathFromRoot("docs/00_DOCUMENTATION_GUIDE_TEMPLATE.md"),
+						path.join(process.cwd(), "templates/00_DOCUMENTATION_GUIDE_TEMPLATE.md"),
 						"utf-8"
 				  )
 				: undefined,

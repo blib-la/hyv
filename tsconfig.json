@@ -21,16 +21,42 @@
     "sourceMap": true,
     "strict": false,
     "target": "ES2022",
-    "typeRoots": ["node_modules/@types", "./types"],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "baseUrl": ".",
     "paths": {
-      "@hyv/utils/*": ["./packages/utils/src/*"],
-      "@hyv/openai/*": ["./packages/openai/src/*"],
-      "@hyv/store/*": ["./packages/store/src/*"],
-      "@hyv/stable-diffusion/*": ["./packages/stable-diffusion/src/*"],
-      "@hyv/core/*": ["./packages/core/src/*"]
-    }
+      "@hyv/utils/*": [
+        "./packages/utils/src/*"
+      ],
+      "@hyv/openai/*": [
+        "./packages/openai/src/*"
+      ],
+      "@hyv/store/*": [
+        "./packages/store/src/*"
+      ],
+      "@hyv/stable-diffusion/*": [
+        "./packages/stable-diffusion/src/*"
+      ],
+      "@hyv/core/*": [
+        "./packages/core/src/*"
+      ],
+      "@/docs/*": [
+        "./docs-gui/*"
+      ]
+    },
+    "incremental": true
   },
-  "include": ["packages/**/*.d.ts", "packages/**/*.ts", "packages/**/*.tsx", "examples/*.ts"],
-  "exclude": ["/**/node_modules", "/node_modules"]
+  "include": [
+    "**/*.d.ts",
+    "**/*.tsx",
+    "**/*.ts",
+    "*.d.ts",
+    "*.tsx",
+    "*.ts"
+  ],
+  "exclude": [
+    "**/node_modules",
+    "node_modules"
+  ]
 }

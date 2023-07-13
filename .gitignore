@@ -43,6 +43,16 @@ node_modules/
 # dotenv environment variable files
 .env
 
+# local env files
+.env*.local
+
+# next.js
+/.next/
+/out/
+
+# vercel
+.vercel
+
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 

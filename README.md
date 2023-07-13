@@ -46,10 +46,58 @@ const artistResult = artist.assign(writerResult.message);
 console.log(artistResult.message.content);
 ```
 
+## Running the Hyv Docs locally
+
+> ⚠️ The AI helper might hallucinate from time to time.  
+> To get more reliable answers, try to ask very specific questions with various keywords
+
+### Prerequisites
+
+Before proceeding, ensure you have a
+[free Weaviate sandbox](https://weaviate.io/developers/weaviate/quickstart#create-a-weaviate-instance)
+setup. Keep your **API key** and **API host** accessible as they will be required in the subsequent
+steps.
+
+### Provide environmental variables
+
+Provide these variables in a `.env` file
+
+```shell
+OPENAI_API_KEY=sk-xxxxx
+WEAVIATE_HOST=xxx-xxx-xxxxx.weaviate.network
+WEAVIATE_API_KEY=xxxxx
+```
+
+You can run the docs in a GUI with AI support to help you understand how Hyv works.
+
+You have the following options:
+
+-   Search for existing docs (check "Search")
+-   Get a custom guide (check "Write a guide")
+-   Get an explanation (check nothing)
+-   explanation & guide support various languages
+    -   Not all languages offer the same quality
+    -   Questions should be asked in english
+
+```shell
+# This has to be done once for a new database
+# It will populate the database
+npm run dev:setup-weaviate
+# Run the dev server
+npm run dev:next
+```
+
+Additionally, you run the bot in the terminal as a CLI chat
+
+```shell
+# This demo will automatically populate the database for you
+npm run demo:autodocs
+```
+
 ## Discover Hyv
 
 -   **[Examples](examples)**: Browse practical applications and use-cases of Hyv.
--   **[Documentation](docs)**: Dive into detailed guides and extensive documentation.
+-   **[Documentation](pages)**: Dive into detailed guides and extensive documentation.
 -   **[Lingo](https://github.com/failfa-st/lingo/)**: Enhance your usage of large language models
     with Lingo, an efficient pseudo-language.
 -   **[Discord](https://discord.com/invite/m3TBB9XEkb)**: Join our community, share your work, and
