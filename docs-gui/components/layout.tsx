@@ -131,7 +131,8 @@ export function Layout({ children }: { children: ReactNode }) {
 					left: 0,
 					top: 0,
 					right: 0,
-					px: 6,
+					pl: 6,
+					pr: pathname === "/" ? 0 : 6,
 					boxShadow: "sm",
 				}}
 			>
@@ -144,30 +145,36 @@ export function Layout({ children }: { children: ReactNode }) {
 				>
 					<MenuIcon />
 				</IconButton>
-				<ClickAwayListener onClickAway={closeToc}>
-					<Tooltip
-						open={openToc}
-						color="primary"
-						variant="outlined"
-						title={
-							<ReactMarkdown components={tocComponents as Components}>
-								{pageData?.toc}
-							</ReactMarkdown>
-						}
-						sx={{ boxShadow: "md" }}
-					>
-						<IconButton
-							aria-label="Open table of contents"
-							variant="plain"
-							sx={{ position: "fixed", top: 0, right: 0, m: 1 }}
-							onClick={toggleToc}
+				{pathname !== "/" && (
+					<ClickAwayListener onClickAway={closeToc}>
+						<Tooltip
+							open={openToc}
+							color="primary"
+							variant="outlined"
+							title={
+								<ReactMarkdown components={tocComponents as Components}>
+									{pageData?.toc}
+								</ReactMarkdown>
+							}
+							sx={{ boxShadow: "md" }}
 						>
-							<Tooltip disableInteractive placement="left" title="Table of Contents">
-								<TocIcon />
-							</Tooltip>
-						</IconButton>
-					</Tooltip>
-				</ClickAwayListener>
+							<IconButton
+								aria-label="Open table of contents"
+								variant="plain"
+								sx={{ position: "fixed", top: 0, right: 0, m: 1 }}
+								onClick={toggleToc}
+							>
+								<Tooltip
+									disableInteractive
+									placement="left"
+									title="Table of Contents"
+								>
+									<TocIcon />
+								</Tooltip>
+							</IconButton>
+						</Tooltip>
+					</ClickAwayListener>
+				)}
 			</Sheet>
 			<Container sx={{ mt: 4, mb: 8 }}>
 				<MDXProvider components={components}>{children}</MDXProvider>

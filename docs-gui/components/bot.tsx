@@ -195,15 +195,31 @@ export default function HyvSearch() {
 				<Container sx={{ height: "calc(100% - 6rem)", my: "3rem" }}>
 					<Card variant="plain" sx={{ boxShadow: "lg", height: "100%" }}>
 						<Bot onAnswer={handleAnswer} onQuestion={handleQuestion} />
-						<Box sx={{ overflow: "auto", overscrollBehavior: "contain" }}>
-							<CardContent>
+						<Box
+							sx={{
+								display: "flex",
+								flex: 1,
+								overflow: "auto",
+								overscrollBehavior: "contain",
+							}}
+						>
+							<CardContent
+								sx={{
+									display: "flex",
+									flexDirection: "column",
+									flex: 1,
+									minHeight: "max-content",
+								}}
+							>
 								{loading ? (
 									<Box
 										sx={{
 											width: "50%",
-											mx: "auto",
+											maxWidth: 300,
+											display: "flex",
+											alignItems: "center",
+											m: "auto",
 											bgcolor: "var(--joy-palette-background-level3)",
-											mt: 3,
 											borderRadius: "50%",
 										}}
 									>
