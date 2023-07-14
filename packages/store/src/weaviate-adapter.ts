@@ -61,9 +61,7 @@ export class WeaviateAdapter implements StoreAdapter {
 		try {
 			await this.#client.schema.classCreator().withClass(schemaClass).do();
 		} catch (error) {
-			if (error instanceof Error && error.message.includes("(422)")) {
-				// Ignore the error if it's a 422 error, as this just means that the schema already exists
-			} else {
+			if (!(error instanceof Error && error.message.includes("(422)"))) {
 				// Throw the error for other non-422 errors
 				throw error;
 			}
