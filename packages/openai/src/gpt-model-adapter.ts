@@ -37,7 +37,7 @@ const defaultOptions: GPTOptions = {
  */
 export class GPTModelAdapter<
 	Input extends ModelMessage,
-	Output extends ModelMessage | ChatCompletionRequestMessageFunctionCall
+	Output extends ModelMessage | ChatCompletionRequestMessageFunctionCall,
 > implements ModelAdapter<Input>
 {
 	private _options: GPTOptions;

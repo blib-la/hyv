@@ -90,7 +90,7 @@ const formats = {
 export function createInstructionPersona<
 	P extends Record<string, unknown>,
 	R extends unknown[],
-	T extends Record<string, unknown>
+	T extends Record<string, unknown>,
 >(
 	persona: P,
 	rules: R,

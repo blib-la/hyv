@@ -22,7 +22,7 @@ import type { AgentOptions, ModelAdapter, ModelMessage, StoreAdapter } from "./t
  */
 export class Agent<
 	Model extends ModelAdapter<ModelMessage> = ModelAdapter<ModelMessage>,
-	Store extends StoreAdapter = StoreAdapter
+	Store extends StoreAdapter = StoreAdapter,
 > {
 	private _model: Model;
 	private _store: Store | MemoryAdapter;
