@@ -1,21 +1,34 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+// @ts-ignore
+
+// @ts-ignore
 import { DotLottiePlayer } from "@dotlottie/react-player";
 import { Box, Card, CardContent, Checkbox, Container, Modal } from "@mui/joy";
 import axios from "axios";
-import { atom, useAtom } from "jotai";
+import { useAtom } from "jotai";
 import { useEffect } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import "@dotlottie/react-player/dist/index.css";
 
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import { answerAtom, modalAtom } from "@/docs/atoms";
+import {
+	answerAtom,
+	guideAtom,
+	languageAtom,
+	loadingAtom,
+	modalAtom,
+	questionAtom,
+	searchAtom,
+	// @ts-ignore
+} from "@/docs/atoms";
 // @ts-ignore
 import { ChatInput } from "@/docs/components/chat-input";
 // @ts-ignore
 import { LanguageSelect } from "@/docs/components/language-select";
 // @ts-ignore
 import { Markdown } from "@/docs/components/markdown";
+
 /* eslint-enable @typescript-eslint/ban-ts-comment */
+import "@dotlottie/react-player/dist/index.css";
 
 interface Guide {
 	_additional: {
@@ -32,12 +45,6 @@ export function generateMarkdown(guides: Guide[]): string {
 		.join("\n");
 }
 
-const questionAtom = atom("");
-const searchAtom = atom(true);
-const guideAtom = atom(false);
-const languageAtom = atom("english");
-const loadingAtom = atom(false);
-
 export function Bot({
 	onAnswer,
 	onQuestion,
@@ -50,7 +57,12 @@ export function Bot({
 	const [search, setSearch] = useAtom(searchAtom);
 	const [guide, setGuide] = useAtom(guideAtom);
 	const [language, setLanguage] = useAtom(languageAtom);
-	const methods = useForm({
+	const methods = useForm<{
+		question: string;
+		guide: boolean;
+		language: string;
+		search: boolean;
+	}>({
 		defaultValues: { question, guide, language, search },
 	});
 
@@ -101,12 +113,14 @@ export function Bot({
 		}
 	);
 
+	const { setValue } = methods;
+
 	useEffect(() => {
-		methods.setValue("question", question);
-		methods.setValue("language", language);
-		methods.setValue("search", search);
-		methods.setValue("guide", guide);
-	}, [guide, search, language, question]);
+		setValue("question", question);
+		setValue("language", language);
+		setValue("search", search);
+		setValue("guide", guide);
+	}, [setValue, guide, search, language, question]);
 
 	return (
 		<Box>
