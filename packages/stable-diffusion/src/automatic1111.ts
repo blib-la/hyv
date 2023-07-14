@@ -71,4 +71,8 @@ export class Automatic1111ModelAdapter<Input extends ImageMessage = ImageMessage
 			throw new Error(`Error assigning task in Automatic1111ModelAdapter: ${error.message}`);
 		}
 	}
+
+	get rootUrl() {
+		return this._rootUrl;
+	}
 }
