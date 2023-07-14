@@ -1,7 +1,10 @@
+import { DotLottiePlayer } from "@dotlottie/react-player";
 import { Box, Card, CardContent, Checkbox, Container, Modal } from "@mui/joy";
 import axios from "axios";
 import { atom, useAtom } from "jotai";
+import { useEffect } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
+import "@dotlottie/react-player/dist/index.css";
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
@@ -97,6 +100,14 @@ export function Bot({
 			}
 		}
 	);
+
+	useEffect(() => {
+		methods.setValue("question", question);
+		methods.setValue("language", language);
+		methods.setValue("search", search);
+		methods.setValue("guide", guide);
+	}, [guide, search, language, question]);
+
 	return (
 		<Box>
 			<FormProvider {...methods}>
@@ -124,7 +135,7 @@ export function Bot({
 									<Checkbox
 										{...field}
 										checked={value}
-										label="Write a guide"
+										label="Guide"
 										variant="soft"
 										sx={{ color: "inherit" }}
 									/>
@@ -143,10 +154,16 @@ export function Bot({
 export default function HyvSearch() {
 	const [open, setOpen] = useAtom(modalAtom);
 	const [answer, setAnswer] = useAtom(answerAtom);
+	const [loading] = useAtom(loadingAtom);
 
 	function handleAnswer(data) {
 		setAnswer(data.message.answer);
 		handleOpen();
+	}
+
+	function handleQuestion() {
+		setAnswer("");
+		setOpen(true);
 	}
 
 	function handleOpen() {
@@ -159,14 +176,28 @@ export default function HyvSearch() {
 
 	return (
 		<Box>
-			<Bot onAnswer={handleAnswer} onQuestion={handleOpen} />
+			<Bot onAnswer={handleAnswer} onQuestion={handleQuestion} />
 			<Modal disableAutoFocus open={open} onClose={handleClose}>
 				<Container sx={{ height: "calc(100% - 6rem)", my: "3rem" }}>
 					<Card variant="plain" sx={{ boxShadow: "lg", height: "100%" }}>
-						<Bot onAnswer={handleAnswer} onQuestion={handleOpen} />
+						<Bot onAnswer={handleAnswer} onQuestion={handleQuestion} />
 						<Box sx={{ overflow: "auto", overscrollBehavior: "contain" }}>
 							<CardContent>
-								<Markdown content={answer} />
+								{loading ? (
+									<Box
+										sx={{
+											width: "50%",
+											mx: "auto",
+											bgcolor: "var(--joy-palette-background-level3)",
+											mt: 3,
+											borderRadius: "50%",
+										}}
+									>
+										<DotLottiePlayer src="/lottie/Bee.lottie" autoplay loop />
+									</Box>
+								) : (
+									<Markdown content={answer} />
+								)}
 							</CardContent>
 						</Box>
 					</Card>
