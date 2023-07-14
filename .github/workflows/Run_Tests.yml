@@ -37,7 +37,12 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
 
       - run: npm ci
+
+      - name: Setup SWC
+        run: npm install swc-loader
+
       - run: npm test
+
       - uses: codacy/codacy-coverage-reporter-action@v1
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
