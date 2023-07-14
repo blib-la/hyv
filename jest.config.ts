@@ -1,5 +1,8 @@
 /** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
+import path from "node:path";
+
 import type { Config } from "jest";
+const toPath = path_ => path.join(process.cwd(), path_);
 
 const config: Config = {
 	clearMocks: true,
@@ -15,11 +18,11 @@ const config: Config = {
 	transformIgnorePatterns: ["node_modules/(?!humanize-string)/"],
 	moduleNameMapper: {
 		"(.+)\\.js": "$1",
-		"^@hyv/utils/(.*)$": "<rootDir>/packages/utils/src/$1",
-		"^@hyv/openai/(.*)$": "<rootDir>/packages/openai/src/$1",
-		"^@hyv/store/(.*)$": "<rootDir>/packages/store/src/$1",
-		"^@hyv/stable-diffusion/(.*)$": "<rootDir>/packages/stable-diffusion/src/$1",
-		"^@hyv/core/(.*)$": "<rootDir>/packages/core/src/$1",
+		"^@hyv/utils": toPath("/packages/utils/src"),
+		"^@hyv/openai": toPath("/packages/openai/src"),
+		"^@hyv/store": toPath("/packages/store/src"),
+		"^@hyv/stable-diffusion": toPath("/packages/stable-diffusion/src"),
+		"^@hyv/core": toPath("/packages/core/src"),
 	},
 	extensionsToTreatAsEsm: [".ts"],
 };
