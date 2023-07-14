@@ -1,11 +1,11 @@
 ---
 exclude_paths:
-  - "dist/*"
+  - "**/dist/*"
   - "examples/*"
   - "docs-gui/*"
   - "templates/*"
   - "public/*"
   - "assets/*"
   - "pages/*"
-  - "*.md"
+  - "**.md"
   - "**/tests/**"
