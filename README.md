@@ -83,6 +83,9 @@ You have the following options:
 # This has to be done once for a new database
 # It will populate the database
 npm run dev:setup-weaviate
+# Run this if new pages have been added or the content changed
+## It will generate data for the sidebar and TOC
+npm run template:pages
 # Run the dev server
 npm run dev:next
 ```
