@@ -148,9 +148,6 @@ export class GPTModelAdapter<
 	 * @throws - If there is an error assigning the task.
 	 */
 	async assign(task: Input): Promise<Output | ChatCompletionRequestMessageFunctionCall> {
-		const gptResponse: { content: string | ChatCompletionRequestMessageFunctionCall } = {
-			content: "NO RESPONSE",
-		};
 		try {
 			this.addMessageToHistory({ role: "user", content: JSON.stringify(task) });
 
@@ -181,42 +178,9 @@ export class GPTModelAdapter<
 				})),
 			};
 			const completion = await this._openAI.createChatCompletion(request);
-			// Streaming is disabled
-			// const completion = await this._openAI.createChatCompletion(request, {
-			// 	responseType: this._options.stream ? "stream" : undefined,
-			// });
-			// if (this._options.stream) {
-			// 	const stream = completion.data;
-			// 	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// 	// @ts-ignore
-			// 	let text = "";
-			// 	stream.on("data", data => {
-			// 		const lines = data
-			// 			.toString()
-			// 			.split("\n")
-			// 			.filter(line => line.trim() !== "");
-			// 		for (const line of lines) {
-			// 			const message = line.replace(/^data: /, "");
-			// 			if (message === "[DONE]") {
-			// 				return; // Stream finished
-			// 			}
-			//
-			// 			try {
-			// 				const parsed = JSON.parse(message);
-			// 				text += parsed.choices[0].delta.content;
-			// 				console.clear();
-			// 				console.log(text);
-			// 			} catch (error) {
-			// 				console.error("Could not JSON parse stream message", message, error);
-			// 			}
-			// 		}
-			// 	});
-			// 	return {};
-			// }
 
 			const content = await this.handleResponse(request, completion);
 
-			gptResponse.content = content;
 			if (this._options.systemInstruction.format === "markdown") {
 				this.addMessageToHistory({ role: "assistant", content });
 				return parseMarkdown<Output>(content);
@@ -230,7 +194,6 @@ export class GPTModelAdapter<
 				console.log(error.message);
 
 				const content_ = await this.fixJSON(content);
-				gptResponse.content = content_;
 				message = JSON5.parse(content_);
 			} finally {
 				this.addMessageToHistory({ role: "assistant", content: JSON.stringify(message) });
@@ -313,5 +276,14 @@ export class GPTModelAdapter<
 	 */
 	set historySize(historySize) {
 		this._options.historySize = historySize;
+	}
+
+	/**
+	 * Gets the functions value.
+	 *
+	 * @returns - The current functions value.
+	 */
+	get functions() {
+		return this._functions;
 	}
 }
