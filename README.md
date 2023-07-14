@@ -4,6 +4,15 @@
 
 [![Discord](https://img.shields.io/discord/1091306623819059300?color=7289da&label=Discord&logo=discord&logoColor=fff&style=for-the-badge)](https://discord.com/invite/m3TBB9XEkb)
 
+[![Codacy coverage](https://img.shields.io/codacy/coverage/e05334c7895344319e321c6d7bee2cf9?logo=jest&style=for-the-badge)](https://app.codacy.com/gh/failfa-st/hyv/dashboard?branch=main)
+[![Codacy grade](https://img.shields.io/codacy/grade/e05334c7895344319e321c6d7bee2cf9?logo=codacy&style=for-the-badge)](https://app.codacy.com/gh/failfa-st/hyv/dashboard?branch=main)
+
+[![@hyv/core](https://img.shields.io/npm/v/@hyv/core?style=for-the-badge&label=@hyv/core)](https://www.npmjs.com/package/@hyv/core)
+[![npm](https://img.shields.io/npm/v/@hyv/utils?style=for-the-badge&label=@hyv/utils)](https://www.npmjs.com/package/@hyv/utils)
+[![npm](https://img.shields.io/npm/v/@hyv/openai?style=for-the-badge&label=@hyv/openai)](https://www.npmjs.com/package/@hyv/openai)
+[![npm](https://img.shields.io/npm/v/@hyv/store?style=for-the-badge&label=@hyv/store)](https://www.npmjs.com/package/@hyv/store)
+[![npm](https://img.shields.io/npm/v/@hyv/stable-diffusion?style=for-the-badge&label=@hyv/stable-diffusion)](https://www.npmjs.com/package/@hyv/stable-diffusion)
+
 ## What is Hyv?
 
 Hyv is a library designed to streamline the integration and interaction of diverse AI models. It
