@@ -246,7 +246,7 @@ const pages = [
 		title: "29 b writing a book as a famous author",
 	},
 	{
-		toc: "- [Overview](#overview)\n- [Prerequisites](#prerequisites)\n- [Guide](#guide)\n  * [Creating the Custom Function](#creating-the-custom-function)\n  * [Setting up the Agent](#setting-up-the-agent)\n  * [Interacting with the Agent](#interacting-with-the-agent)\n- [Expected Output](#expected-output)\n- [Summary](#summary)\n- [Tags](#tags)",
+		toc: "- [Overview](#overview)\n- [Prerequisites](#prerequisites)\n- [Guide](#guide)\n  * [Import Necessary Modules](#import-necessary-modules)\n  * [Initialize the GPT Model Adapter](#initialize-the-gpt-model-adapter)\n  * [Define Function Capability](#define-function-capability)\n  * [Assign a Task to the Agent](#assign-a-task-to-the-agent)\n- [Expected Output](#expected-output)\n- [Summary](#summary)\n- [Tags](#tags)",
 		name: "30_OPENAI_GPT_CUSTOM_FUNCTION_CALL",
 		page: "pages/30_OPENAI_GPT_CUSTOM_FUNCTION_CALL.md",
 		title: "30 openai gpt custom function call",
