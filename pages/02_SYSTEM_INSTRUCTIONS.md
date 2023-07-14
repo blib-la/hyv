@@ -31,7 +31,6 @@ to create a system instruction for a mathematician model.
 
 ```typescript
 const mathModel = new GPTModelAdapter({
-    format: "json",
     systemInstruction: createInstruction(
         "Mathematician",
         "think about the problem, reason your thoughts, solve the problems step by step",

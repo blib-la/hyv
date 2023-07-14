@@ -51,7 +51,6 @@ defined.
 
 ```typescript
 const model = new GPTModelAdapter({
-    format: "json",
     systemInstruction: systemInstruction,
 });
 

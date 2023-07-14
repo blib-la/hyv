@@ -65,7 +65,6 @@ const agent1 = new Agent(
     new GPTModelAdapter({
         model: "gpt-4",
         maxTokens: 2048,
-        format: "json",
         systemInstruction: systemInstruction1,
     }),
     {

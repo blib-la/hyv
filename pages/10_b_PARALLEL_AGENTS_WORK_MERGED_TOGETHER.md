@@ -23,7 +23,6 @@ async function doAndGetResult(task: ModelMessage) {
         new GPTModelAdapter({
             model: "gpt-4",
             maxTokens: 2048,
-            format: "json",
             systemInstruction2,
         }),
         {
@@ -58,7 +57,6 @@ const agent3 = new Agent(
     new GPTModelAdapter({
         model: "gpt-4",
         maxTokens: 4096,
-        format: "json",
         systemInstruction: systemInstruction2,
     }),
     {
