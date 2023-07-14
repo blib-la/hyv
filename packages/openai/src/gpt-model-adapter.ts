@@ -1,6 +1,5 @@
 import type { ModelAdapter, ModelMessage } from "@hyv/core";
 import { parseMarkdown } from "@hyv/utils";
-import type { AxiosError } from "axios";
 import JSON5 from "json5";
 import type {
 	ChatCompletionRequestMessage,
@@ -239,7 +238,7 @@ export class GPTModelAdapter<
 
 			return message as Output;
 		} catch (error) {
-			console.log((error as AxiosError)?.response?.data.message ?? (error as Error).message);
+			console.log(error.message);
 			throw error;
 		}
 	}
