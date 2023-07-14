@@ -1,6 +1,6 @@
 {
   "name": "@hyv/stable-diffusion",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "license": "AGPL",
   "type": "module",
   "homepage": "https://github.com/failfa-st/hyv/",
@@ -51,8 +51,8 @@
     "clean": "npx rimraf dist"
   },
   "dependencies": {
-    "@hyv/core": "^0.8.0",
-    "@hyv/utils": "^0.8.0",
+    "@hyv/core": "^0.9.0",
+    "@hyv/utils": "^0.9.0",
     "axios": "1.4.0",
     "decamelize-keys": "2.0.1"
   },

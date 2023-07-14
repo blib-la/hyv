@@ -1,6 +1,6 @@
 {
   "name": "@hyv/openai",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "license": "AGPL",
   "type": "module",
   "homepage": "https://github.com/failfa-st/hyv/",
@@ -57,7 +57,7 @@
     "clean": "npx rimraf dist"
   },
   "dependencies": {
-    "@hyv/core": "^0.8.0",
+    "@hyv/core": "^0.9.0",
     "camelcase": "7.0.1",
     "dotenv": "16.3.1",
     "humanize-string": "3.0.0",

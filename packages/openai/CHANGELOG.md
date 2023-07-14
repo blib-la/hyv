@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/failfa-st/hyv/compare/v0.8.0...v0.9.0) (2023-07-14)
+
+
+### Bug Fixes
+
+* **openai:** error handling ([398cbf0](https://github.com/failfa-st/hyv/commit/398cbf0b8f46eb25356aa217b4478546bfee4eea))
+
+
+### Features
+
+* instruction persona format default ([41fefa1](https://github.com/failfa-st/hyv/commit/41fefa19d1237ad3abc15005c1364eca388722d9))
+
+
+
+
+
 # [0.8.0](https://github.com/failfa-st/hyv/compare/v0.7.0...v0.8.0) (2023-07-11)
 
 ### Features
