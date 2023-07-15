@@ -56,8 +56,7 @@ console.log(artistResult.message.content);
 
 ## Experience the Power of Hyv: Learn through Interaction in 11 Languages!
 
-<img src="assets/hyv-docs-01.png" alt="docs screenshot of a guide" width="49%"/>
-<img src="assets/hyv-docs-02.png" alt="docs screenshot of a guide" width="49%"/>
+<img src="assets/hyv-docs-01.png" alt="docs screenshot of a guide" width="50%"/><img src="assets/hyv-docs-02.png" alt="docs screenshot of a guide" width="50%"/>
 
 Dive into Hyv's universe with our interactive, multilingual docs. Powered by Hyv agents and GPT-4,
 they turn learning into a dynamic experience. Understand Hyv's features by engaging with them in
