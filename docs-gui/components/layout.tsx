@@ -86,7 +86,7 @@ export const tocComponents = {
 		const selected = scrollSpy === id;
 
 		return (
-			<NextLink scroll passHref legacyBehavior href={href}>
+			<NextLink shallow scroll={false} passHref legacyBehavior href={href}>
 				<ListItemButton
 					selected={selected}
 					component="a"

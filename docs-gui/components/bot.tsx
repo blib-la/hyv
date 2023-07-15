@@ -23,7 +23,7 @@ import { ChatInput } from "@/docs/components/chat-input";
 // @ts-ignore
 import { LanguageSelect } from "@/docs/components/language-select";
 // @ts-ignore
-import { Markdown } from "@/docs/components/markdown";
+import { SimpleMarkdown } from "@/docs/components/markdown";
 
 /* eslint-enable @typescript-eslint/ban-ts-comment */
 import "@dotlottie/react-player/dist/index.css";
@@ -192,7 +192,7 @@ export default function HyvSearch() {
 										<DotLottiePlayer src="/lottie/Bee.lottie" autoplay loop />
 									</Box>
 								) : (
-									<Markdown content={answer} />
+									<SimpleMarkdown content={answer} />
 								)}
 							</CardContent>
 						</Box>

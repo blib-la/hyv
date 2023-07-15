@@ -7,6 +7,7 @@ import { useAtom } from "jotai";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import NextLink from "next/link";
+import { useRef } from "react";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -20,12 +21,15 @@ import { useScrollSpy } from "@/docs/hooks/scroll-spy";
 
 function SpyTypography({ children, ...props }) {
 	const id = slugify(String(children));
+	const ref = useRef<HTMLDivElement>(null);
 	const [, setScrollSpy] = useAtom(scrollSpyAtom);
-	useScrollSpy(id);
+	useScrollSpy(ref);
 	return (
-		<Typography id={id} {...props}>
+		<Typography ref={ref} id={id} {...props}>
 			{children}
 			<NextLink
+				shallow
+				scroll={false}
 				aria-label={id}
 				href={`#${id}`}
 				onClick={() => {
@@ -38,47 +42,47 @@ function SpyTypography({ children, ...props }) {
 	);
 }
 
-export const components = {
+export const simpleComponents = {
 	h1({ children }) {
 		return (
-			<SpyTypography level="h1" my={2.5}>
+			<Typography level="h1" my={2.5}>
 				{children}
-			</SpyTypography>
+			</Typography>
 		);
 	},
 	h2({ children }) {
 		return (
-			<SpyTypography level="h2" my={2}>
+			<Typography level="h2" my={2}>
 				{children}
-			</SpyTypography>
+			</Typography>
 		);
 	},
 	h3({ children }) {
 		return (
-			<SpyTypography level="h3" my={1.5}>
+			<Typography level="h3" my={1.5}>
 				{children}
-			</SpyTypography>
+			</Typography>
 		);
 	},
 	h4({ children }) {
 		return (
-			<SpyTypography level="h4" my={1}>
+			<Typography level="h4" my={1}>
 				{children}
-			</SpyTypography>
+			</Typography>
 		);
 	},
 	h5({ children }) {
 		return (
-			<SpyTypography level="h5" my={1}>
+			<Typography level="h5" my={1}>
 				{children}
-			</SpyTypography>
+			</Typography>
 		);
 	},
 	h6({ children }) {
 		return (
-			<SpyTypography level="h6" my={0.5}>
+			<Typography level="h6" my={0.5}>
 				{children}
-			</SpyTypography>
+			</Typography>
 		);
 	},
 	p({ children }) {
@@ -136,6 +140,52 @@ export const components = {
 	},
 };
 
+export const components = {
+	...simpleComponents,
+	h1({ children }) {
+		return (
+			<SpyTypography level="h1" my={2.5}>
+				{children}
+			</SpyTypography>
+		);
+	},
+	h2({ children }) {
+		return (
+			<SpyTypography level="h2" my={2}>
+				{children}
+			</SpyTypography>
+		);
+	},
+	h3({ children }) {
+		return (
+			<SpyTypography level="h3" my={1.5}>
+				{children}
+			</SpyTypography>
+		);
+	},
+	h4({ children }) {
+		return (
+			<SpyTypography level="h4" my={1}>
+				{children}
+			</SpyTypography>
+		);
+	},
+	h5({ children }) {
+		return (
+			<SpyTypography level="h5" my={1}>
+				{children}
+			</SpyTypography>
+		);
+	},
+	h6({ children }) {
+		return (
+			<SpyTypography level="h6" my={0.5}>
+				{children}
+			</SpyTypography>
+		);
+	},
+};
+
 export interface MarkdownProps {
 	content: string;
 }
@@ -149,6 +199,19 @@ export function Markdown({ content }: MarkdownProps) {
 			}}
 		>
 			<ReactMarkdown components={components as Components}>{content}</ReactMarkdown>
+		</Box>
+	);
+}
+
+export function SimpleMarkdown({ content }: MarkdownProps) {
+	return (
+		<Box
+			sx={{
+				width: "100%",
+				"> pre": { overflow: "auto" },
+			}}
+		>
+			<ReactMarkdown components={simpleComponents as Components}>{content}</ReactMarkdown>
 		</Box>
 	);
 }
