@@ -2,6 +2,8 @@ import { MDXProvider } from "@mdx-js/react";
 import { ClickAwayListener } from "@mui/base";
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+// @ts-ignore
 import MenuIcon from "@mui/icons-material/Menu";
 // @ts-ignore
 import TocIcon from "@mui/icons-material/Toc";
@@ -12,6 +14,7 @@ import {
 	List,
 	ListItem,
 	ListItemButton,
+	ListItemDecorator,
 	Sheet,
 	Tooltip,
 	Typography,
@@ -77,12 +80,21 @@ export const tocComponents = {
 		);
 	},
 	a({ href, children }) {
+		const { asPath } = useRouter();
+		const [, hash] = asPath.split("#");
+		const selected = `#${hash}` === href;
 		return (
 			<NextLink passHref legacyBehavior href={href}>
 				<ListItemButton
+					selected={selected}
 					component="a"
 					target={href.startsWith("http") ? "_blank" : undefined}
 				>
+					{selected && (
+						<ListItemDecorator>
+							<ArrowRightIcon />
+						</ListItemDecorator>
+					)}
 					{children}
 				</ListItemButton>
 			</NextLink>
@@ -156,7 +168,7 @@ export function Layout({ children }: { children: ReactNode }) {
 									{pageData?.toc}
 								</ReactMarkdown>
 							}
-							sx={{ boxShadow: "md" }}
+							sx={{ boxShadow: "md", width: 300 }}
 						>
 							<IconButton
 								aria-label="Open table of contents"

@@ -7,8 +7,6 @@ import { DotLottiePlayer } from "@dotlottie/react-player";
 import { Box, Card, CardContent, Checkbox, Container, Modal } from "@mui/joy";
 import axios from "axios";
 import { useAtom } from "jotai";
-import { useEffect } from "react";
-import { Controller, FormProvider, useForm } from "react-hook-form";
 
 import {
 	answerAtom,
@@ -47,120 +45,88 @@ export function generateMarkdown(guides: Guide[]): string {
 
 export function Bot({
 	onAnswer,
+	onExpand,
 	onQuestion,
 }: {
+	onExpand?(): void;
 	onQuestion?(): void;
 	onAnswer?(data: { id: string; message: Record<string, any> }): void;
 }) {
 	const [loading, setLoading] = useAtom(loadingAtom);
-	const [question, setQuestion] = useAtom(questionAtom);
+
+	const [question] = useAtom(questionAtom);
 	const [search, setSearch] = useAtom(searchAtom);
 	const [guide, setGuide] = useAtom(guideAtom);
-	const [language, setLanguage] = useAtom(languageAtom);
-	const methods = useForm<{
-		question: string;
-		guide: boolean;
-		language: string;
-		search: boolean;
-	}>({
-		defaultValues: { question, guide, language, search },
-	});
+	const [language] = useAtom(languageAtom);
 
-	const onSubmit = methods.handleSubmit(
-		async (formData: {
-			question: string;
-			guide?: boolean;
-			search?: boolean;
-			language: string;
-		}) => {
-			setLoading(true);
-			setQuestion(formData.question);
-			setSearch(formData.search);
-			setGuide(formData.guide);
-			setLanguage(formData.language);
+	async function handleSubmit() {
+		setLoading(true);
 
-			if (onQuestion) {
-				onQuestion();
-			}
-
-			try {
-				const { data } = formData.search
-					? await axios.post("/api/search", {
-							q: formData.question,
-					  })
-					: await axios.post("/api/ama", {
-							question: formData.question,
-							guide: formData.guide,
-							language: formData.language,
-					  });
-				if (onAnswer) {
-					if (formData.search) {
-						onAnswer({
-							id: "search",
-							message: {
-								answer: generateMarkdown(data),
-							},
-						});
-					} else {
-						onAnswer(data);
-					}
-				}
-			} catch (error) {
-				console.error(error);
-			} finally {
-				setLoading(false);
-			}
+		if (onQuestion) {
+			onQuestion();
 		}
-	);
 
-	const { setValue } = methods;
-
-	useEffect(() => {
-		setValue("question", question);
-		setValue("language", language);
-		setValue("search", search);
-		setValue("guide", guide);
-	}, [setValue, guide, search, language, question]);
+		try {
+			const { data } = search
+				? await axios.post("/api/search", {
+						q: question,
+				  })
+				: await axios.post("/api/ama", {
+						question,
+						guide,
+						language,
+				  });
+			if (onAnswer) {
+				if (search) {
+					onAnswer({
+						id: "search",
+						message: {
+							answer: generateMarkdown(data),
+						},
+					});
+				} else {
+					onAnswer(data);
+				}
+			}
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setLoading(false);
+		}
+	}
 
 	return (
 		<Box>
-			<FormProvider {...methods}>
-				<Box sx={{ maxWidth: { md: 600, lg: 600 }, mx: "auto" }}>
-					<Box component="form" sx={{ p: 1 }} onSubmit={onSubmit}>
-						<ChatInput loading={loading} onSubmit={onSubmit} />
-						<Box mt={1} sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-							<Controller
-								name="search"
-								control={methods.control}
-								render={({ field: { value, ...field } }) => (
-									<Checkbox
-										{...field}
-										checked={value}
-										label="Search"
-										variant="soft"
-										sx={{ color: "inherit" }}
-									/>
-								)}
-							/>
-							<Controller
-								name="guide"
-								control={methods.control}
-								render={({ field: { value, ...field } }) => (
-									<Checkbox
-										{...field}
-										checked={value}
-										label="Guide"
-										variant="soft"
-										sx={{ color: "inherit" }}
-									/>
-								)}
-							/>
+			<Box sx={{ maxWidth: { md: 600, lg: 600 }, mx: "auto" }}>
+				<Box component="form" sx={{ p: 1 }} onSubmit={handleSubmit}>
+					<ChatInput loading={loading} onSubmit={handleSubmit} onExpand={onExpand} />
+					<Box mt={1} sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+						<Checkbox
+							name="search"
+							checked={search}
+							onChange={() => {
+								setSearch(!search);
+							}}
+							label="Search"
+							variant="soft"
+							sx={{ color: "inherit" }}
+						/>
 
-							<LanguageSelect />
-						</Box>
+						<Checkbox
+							name="guide"
+							checked={guide}
+							onChange={() => {
+								setGuide(!guide);
+							}}
+							label="Guide"
+							variant="soft"
+							sx={{ color: "inherit" }}
+						/>
+
+						<LanguageSelect />
 					</Box>
 				</Box>
-			</FormProvider>
+			</Box>
 		</Box>
 	);
 }
@@ -190,7 +156,7 @@ export default function HyvSearch() {
 
 	return (
 		<Box>
-			<Bot onAnswer={handleAnswer} onQuestion={handleQuestion} />
+			<Bot onAnswer={handleAnswer} onQuestion={handleQuestion} onExpand={handleOpen} />
 			<Modal disableAutoFocus open={open} onClose={handleClose}>
 				<Container sx={{ height: "calc(100% - 6rem)", my: "3rem" }}>
 					<Card variant="plain" sx={{ boxShadow: "lg", height: "100%" }}>

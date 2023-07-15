@@ -1,8 +1,10 @@
-import { Avatar, ListItemDecorator, Option, Select } from "@mui/joy";
-import type { ChangeEvent, SyntheticEvent } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Avatar, ListItemDecorator, Option, Select, SelectOption } from "@mui/joy";
+import { useAtom } from "jotai";
+import type { SyntheticEvent } from "react";
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import { languageAtom } from "@/docs/atoms";
 // @ts-ignore
 import FlagCn from "@/docs/components/flags/cn";
 // @ts-ignore
@@ -45,35 +47,46 @@ const options = [
 ];
 
 export function LanguageSelect() {
-	const { control } = useFormContext();
+	const [language, setLanguage] = useAtom(languageAtom);
+	function renderValue(option: SelectOption<string> | null) {
+		if (!option) {
+			return null;
+		}
+
+		return (
+			<>
+				<ListItemDecorator sx={{ mr: 1 }}>
+					<Avatar variant="outlined" size="sm">
+						{options.find(o => o.value === option.value)?.flag}
+					</Avatar>
+				</ListItemDecorator>
+				{option.label}
+			</>
+		);
+	}
+
 	return (
-		<Controller
+		<Select
 			name="language"
-			control={control}
-			render={({ field: { onChange, ...field } }) => (
-				<Select
-					{...field}
-					aria-label="Select a language"
-					variant="soft"
-					sx={{ flex: 1 }}
-					onChange={(event: SyntheticEvent, value) => {
-						onChange({
-							target: { value },
-						} as ChangeEvent<HTMLSelectElement>);
-					}}
-				>
-					{options.map(option => (
-						<Option key={option.id} value={option.value}>
-							<ListItemDecorator>
-								<Avatar variant="outlined" size="sm">
-									{option.flag}
-								</Avatar>
-							</ListItemDecorator>
-							{option.label}
-						</Option>
-					))}
-				</Select>
-			)}
-		/>
+			aria-label="Select a language"
+			variant="soft"
+			value={language}
+			sx={{ flex: 1 }}
+			renderValue={renderValue}
+			onChange={(event: SyntheticEvent, value) => {
+				setLanguage(value);
+			}}
+		>
+			{options.map(option => (
+				<Option key={option.id} value={option.value}>
+					<ListItemDecorator>
+						<Avatar variant="outlined" size="sm">
+							{option.flag}
+						</Avatar>
+					</ListItemDecorator>
+					{option.label}
+				</Option>
+			))}
+		</Select>
 	);
 }

@@ -46,10 +46,10 @@ const artist = new Agent(new DallEModelAdapter(), {
 });
 
 // Assign tasks
-const writerResult = writer.assign({
+const writerResult = await writer.assign({
     question: "Describe the future to an artist so that they can draw it",
 });
-const artistResult = artist.assign(writerResult.message);
+const artistResult = await artist.assign(writerResult.message);
 // Do something with the result
 console.log(artistResult.message.content);
 ```
