@@ -26,11 +26,11 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
-import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
+import ReactMarkdown from "react-markdown";
 
 // @ts-ignore
-import { drawerAtom, tocAtom } from "@/docs/atoms";
+import { drawerAtom, tocAtom, scrollSpyAtom } from "@/docs/atoms";
 // @ts-ignore
 import Bot from "@/docs/components/bot";
 // @ts-ignore
@@ -39,6 +39,7 @@ import Drawer from "@/docs/components/drawer";
 import { components } from "@/docs/components/markdown";
 // @ts-ignore
 import pages from "@/docs/pages";
+
 /* eslint-enable @typescript-eslint/ban-ts-comment */
 
 export function Menu() {
@@ -80,15 +81,19 @@ export const tocComponents = {
 		);
 	},
 	a({ href, children }) {
-		const { asPath } = useRouter();
-		const [, hash] = asPath.split("#");
-		const selected = `#${hash}` === href;
+		const [scrollSpy, setScrollSpy] = useAtom(scrollSpyAtom);
+		const id = href.replace(/^#/, "");
+		const selected = scrollSpy === id;
+
 		return (
-			<NextLink passHref legacyBehavior href={href}>
+			<NextLink scroll passHref legacyBehavior href={href}>
 				<ListItemButton
 					selected={selected}
 					component="a"
 					target={href.startsWith("http") ? "_blank" : undefined}
+					onClick={() => {
+						setScrollSpy(id);
+					}}
 				>
 					{selected && (
 						<ListItemDecorator>
@@ -160,6 +165,7 @@ export function Layout({ children }: { children: ReactNode }) {
 				{pathname !== "/" && (
 					<ClickAwayListener onClickAway={closeToc}>
 						<Tooltip
+							disablePortal
 							open={openToc}
 							color="primary"
 							variant="outlined"

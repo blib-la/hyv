@@ -9,3 +9,4 @@ export const searchAtom = atom(true);
 export const guideAtom = atom(false);
 export const languageAtom = atom("english");
 export const loadingAtom = atom(false);
+export const scrollSpyAtom = atom("");

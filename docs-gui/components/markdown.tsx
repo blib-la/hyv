@@ -1,50 +1,84 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import LinkIcon from "@mui/icons-material/Link";
 import { Box, Link, List, ListItem, ListItemDecorator, Typography } from "@mui/joy";
 import slugify from "@sindresorhus/slugify";
+import { useAtom } from "jotai";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import NextLink from "next/link";
 import ReactMarkdown from "react-markdown";
 import type { Components } from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { scrollSpyAtom } from "@/docs/atoms";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { useScrollSpy } from "@/docs/hooks/scroll-spy";
+
+function SpyTypography({ children, ...props }) {
+	const id = slugify(String(children));
+	const [, setScrollSpy] = useAtom(scrollSpyAtom);
+	useScrollSpy(id);
+	return (
+		<Typography id={id} {...props}>
+			{children}
+			<NextLink
+				aria-label={id}
+				href={`#${id}`}
+				onClick={() => {
+					setScrollSpy(id);
+				}}
+			>
+				<LinkIcon sx={{ ml: 2, fontSize: "1rem" }} />
+			</NextLink>
+		</Typography>
+	);
+}
+
 export const components = {
 	h1({ children }) {
 		return (
-			<Typography id={slugify(String(children))} level="h1" my={2.5}>
+			<SpyTypography level="h1" my={2.5}>
 				{children}
-			</Typography>
+			</SpyTypography>
 		);
 	},
 	h2({ children }) {
 		return (
-			<Typography id={slugify(String(children))} level="h2" my={2}>
+			<SpyTypography level="h2" my={2}>
 				{children}
-			</Typography>
+			</SpyTypography>
 		);
 	},
 	h3({ children }) {
 		return (
-			<Typography id={slugify(String(children))} level="h3" my={1.5}>
+			<SpyTypography level="h3" my={1.5}>
 				{children}
-			</Typography>
+			</SpyTypography>
 		);
 	},
 	h4({ children }) {
 		return (
-			<Typography id={slugify(String(children))} level="h4" my={1}>
+			<SpyTypography level="h4" my={1}>
 				{children}
-			</Typography>
+			</SpyTypography>
 		);
 	},
 	h5({ children }) {
 		return (
-			<Typography id={slugify(String(children))} level="h5" my={1}>
+			<SpyTypography level="h5" my={1}>
 				{children}
-			</Typography>
+			</SpyTypography>
 		);
 	},
 	h6({ children }) {
 		return (
-			<Typography id={slugify(String(children))} level="h6" my={0.5}>
+			<SpyTypography level="h6" my={0.5}>
 				{children}
-			</Typography>
+			</SpyTypography>
 		);
 	},
 	p({ children }) {

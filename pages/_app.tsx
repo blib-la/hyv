@@ -5,9 +5,12 @@ import { CssVarsProvider, extendTheme } from "@mui/joy/styles";
 import type { AppProps } from "next/app";
 // @ts-ignore
 import Head from "next/head";
+// @ts-ignore
 
 // @ts-ignore
+// @ts-ignore
 import { Layout } from "@/docs/components/layout";
+
 /* eslint-enable @typescript-eslint/ban-ts-comment */
 import "prism-theme-vars/base.css";
 
