@@ -3,7 +3,6 @@
 <p align="center"><img src="assets/logo.png" alt="Hyv logo" width="200"/></p>
 
 [![Discord](https://img.shields.io/discord/1091306623819059300?color=7289da&label=Discord&logo=discord&logoColor=fff&style=for-the-badge)](https://discord.com/invite/m3TBB9XEkb)
-
 [![Codacy coverage](https://img.shields.io/codacy/coverage/e05334c7895344319e321c6d7bee2cf9?logo=jest&style=for-the-badge)](https://app.codacy.com/gh/failfa-st/hyv/dashboard?branch=main)
 [![Codacy grade](https://img.shields.io/codacy/grade/e05334c7895344319e321c6d7bee2cf9?logo=codacy&style=for-the-badge)](https://app.codacy.com/gh/failfa-st/hyv/dashboard?branch=main)
 
@@ -13,11 +12,11 @@
 [![npm](https://img.shields.io/npm/v/@hyv/store?style=for-the-badge&label=@hyv/store)](https://www.npmjs.com/package/@hyv/store)
 [![npm](https://img.shields.io/npm/v/@hyv/stable-diffusion?style=for-the-badge&label=@hyv/stable-diffusion)](https://www.npmjs.com/package/@hyv/stable-diffusion)
 
-## What is Hyv?
+## Welcome to Hyv
 
-Hyv is a library designed to streamline the integration and interaction of diverse AI models. It
-provides a clean, intuitive, and unified API to manage and collaborate different AI models with
-ease.
+Hyv is a versatile library designed to streamline the integration and interaction of diverse AI
+models. With a clean, intuitive, and unified API, Hyv allows developers to manage and collaborate
+with various AI models effortlessly.
 
 Get started with Hyv now:
 
@@ -25,13 +24,13 @@ Get started with Hyv now:
 npm i @hyv/core @hyv/openai
 ```
 
-Provide your apiKey in a `.env` file
+Then, provide your apiKey in a `.env` file
 
-```
+```shell
 OPENAI_API_KEY=sk-xxxxxxxx
 ```
 
-Try this simple example to see Hyv in action:
+Try this simple example to experience Hyv in action:
 
 ```ts
 import { Agent } from "@hyv/core";
@@ -55,75 +54,32 @@ const artistResult = artist.assign(writerResult.message);
 console.log(artistResult.message.content);
 ```
 
-## Running the Hyv Docs locally
+## Experience the Power of Hyv: Learn through Interaction in 11 Languages!
 
-> ⚠️ The AI helper might hallucinate from time to time.  
-> To get more reliable answers, try to ask very specific questions with various keywords
+<img src="assets/hyv-docs-01.png" alt="docs screenshot of a guide" width="49%"/>
+<img src="assets/hyv-docs-02.png" alt="docs screenshot of a guide" width="49%"/>
 
-### Prerequisites
+Dive into Hyv's universe with our interactive, multilingual docs. Powered by Hyv agents and GPT-4,
+they turn learning into a dynamic experience. Understand Hyv's features by engaging with them in
+real-time across 11 languages. Simple setup, profound learning. Start your journey with our
+[easy setup guide](RUNNING_DOCS_LOCALLY.md) now!
 
-Before proceeding, ensure you have a
-[free Weaviate sandbox](https://weaviate.io/developers/weaviate/quickstart#create-a-weaviate-instance)
-setup. Keep your **API key** and **API host** accessible as they will be required in the subsequent
-steps.
+## Explore Hyv
 
-### Provide environmental variables
-
-Provide these variables in a `.env` file
-
-```shell
-OPENAI_API_KEY=sk-xxxxx
-WEAVIATE_HOST=xxx-xxx-xxxxx.weaviate.network
-WEAVIATE_API_KEY=xxxxx
-```
-
-You can run the docs in a GUI with AI support to help you understand how Hyv works.
-
-You have the following options:
-
--   Search for existing docs (check "Search")
--   Get a custom guide (check "Write a guide")
--   Get an explanation (check nothing)
--   explanation & guide support various languages
-    -   Not all languages offer the same quality
-    -   Questions should be asked in english
-
-```shell
-# This has to be done once for a new database
-# It will populate the database
-npm run dev:setup-weaviate
-# Run this if new pages have been added or the content changed
-## It will generate data for the sidebar and TOC
-npm run template:pages
-# Run the dev server
-npm run dev:next
-```
-
-Additionally, you run the bot in the terminal as a CLI chat
-
-```shell
-# This demo will automatically populate the database for you
-npm run demo:autodocs
-```
-
-## Discover Hyv
-
--   **[Examples](examples)**: Browse practical applications and use-cases of Hyv.
--   **[Documentation](pages)**: Dive into detailed guides and extensive documentation.
+-   **[Examples](examples)**: Discover practical applications and use-cases of Hyv.
+-   **[Documentation](pages)**: Dive deep into detailed guides and extensive documentation.
 -   **[Lingo](https://github.com/failfa-st/lingo/)**: Enhance your usage of large language models
     with Lingo, an efficient pseudo-language.
 -   **[Discord](https://discord.com/invite/m3TBB9XEkb)**: Join our community, share your work, and
     learn from others.
 
----
-
 ## Why Choose Hyv?
 
-Hyv offers compelling advantages for developers:
+Hyv is an all-in-one solution for developers:
 
 -   **Streamlined Task Management**: Handle complex tasks involving multiple AI models seamlessly.
--   **Flexible, Plug-and-play Architecture**: Integrate Hyv into any tech stack easily. Adapt it to
-    your specific needs.
--   **Broad Compatibility**: Hyv supports diverse AI models. The possibilities are limitless.
+-   **Flexible, Plug-and-play Architecture**: Integrate Hyv into any tech stack with ease. Adapt it
+    to your specific needs.
+-   **Broad Compatibility**: Hyv supports diverse AI models, offering limitless possibilities.
 
-Start shaping the future with Hyv today!
+Embrace the future with Hyv today!
